@@ -1,3 +1,27 @@
+// Anti-Inspect Protection Script
+document.addEventListener('contextmenu', function (e) {
+  e.preventDefault();
+});
+
+document.addEventListener('keydown', function (e) {
+  if (
+    e.keyCode === 123 || // F12
+    (e.ctrlKey && e.shiftKey && e.keyCode === 73) || // Ctrl+Shift+I
+    (e.ctrlKey && e.shiftKey && e.keyCode === 74) || // Ctrl+Shift+J
+    (e.ctrlKey && e.keyCode === 85) || // Ctrl+U
+    (e.ctrlKey && e.keyCode === 83)    // Ctrl+S
+  ) {
+    e.preventDefault();
+    return false;
+  }
+});
+
+document.addEventListener('dragstart', function (e) {
+  if (e.target.tagName === 'IMG' || e.target.tagName === 'SVG' || e.target.tagName === 'CANVAS') {
+    e.preventDefault();
+  }
+});
+
 // HH GOA 2026 - Standalone JavaScript Engine
 let activeFormat = 'formatA';
 let userPhoto = null;
