@@ -14,7 +14,7 @@ export default function Header() {
               DEVELOPED BY CODINGKOALAS
             </div>
             <div className="font-display font-black text-sm sm:text-lg text-[#ffe500] leading-none tracking-tight">
-              HH GOA <span className="text-[#ff007a] font-sans text-xs sm:text-sm">गोवा</span> 2026
+              HH <span className="text-[#ff007a] font-sans text-xs sm:text-sm">गोवा</span> 2026
             </div>
           </div>
         </div>
