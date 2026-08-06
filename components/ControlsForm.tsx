@@ -1,17 +1,21 @@
 import React from 'react';
-import { ZoomIn, Move, User, Code, RotateCcw, Sparkles, Palette } from 'lucide-react';
+import { ZoomIn, Move, User, Code, RotateCcw, Sparkles, Palette, Zap, Flame } from 'lucide-react';
 import { StylePreset } from '@/lib/canvas-generator';
 
 interface ControlsFormProps {
   format: 'formatA' | 'formatB';
   name: string;
   role: string;
+  builderTitle: string;
+  superpower: string;
   zoom: number;
   panX: number;
   panY: number;
   stylePreset: StylePreset;
   onNameChange: (val: string) => void;
   onRoleChange: (val: string) => void;
+  onBuilderTitleChange: (val: string) => void;
+  onSuperpowerChange: (val: string) => void;
   onZoomChange: (val: number) => void;
   onPanXChange: (val: number) => void;
   onPanYChange: (val: number) => void;
@@ -25,16 +29,40 @@ const STYLES: { id: StylePreset; label: string; color: string }[] = [
   { id: 'midnight', label: 'Midnight Beach', color: '#062B2B' },
 ];
 
+const RANDOM_TITLES = [
+  '⚡ Full-Stack Hacker',
+  '🤖 AI Architect',
+  '⛓️ Smart Contract Wizard',
+  '🛵 Scooter Rider & Shipper',
+  '🚀 10x Deployer',
+  '🔥 Zero-Bug Engine',
+  '🧠 Neural Prompt Engineer',
+];
+
+const RANDOM_SUPERPOWERS = [
+  'Turning Coconut Water into Full-Stack Apps',
+  'Debugging Production at 3 AM from Beach',
+  '10x Shipping Speed & Zero Merge Conflicts',
+  'Prompting LLMs While Scooter Riding',
+  'Deploying Smart Contracts Before Sun Rises',
+  'Converting Coffee & Feni into Zero-Bug Code',
+  'Refactoring Legacy Code in Flip-Flops',
+];
+
 export default function ControlsForm({
   format,
   name,
   role,
+  builderTitle,
+  superpower,
   zoom,
   panX,
   panY,
   stylePreset,
   onNameChange,
   onRoleChange,
+  onBuilderTitleChange,
+  onSuperpowerChange,
   onZoomChange,
   onPanXChange,
   onPanYChange,
@@ -52,6 +80,16 @@ export default function ControlsForm({
     if (STYLES[nextIndex]) {
       onStyleChange(STYLES[nextIndex].id);
     }
+  };
+
+  const handleRandomTitle = () => {
+    const random = RANDOM_TITLES[Math.floor(Math.random() * RANDOM_TITLES.length)];
+    onBuilderTitleChange(random);
+  };
+
+  const handleRandomSuperpower = () => {
+    const random = RANDOM_SUPERPOWERS[Math.floor(Math.random() * RANDOM_SUPERPOWERS.length)];
+    onSuperpowerChange(random);
   };
 
   return (
@@ -73,6 +111,28 @@ export default function ControlsForm({
           </div>
 
           <div>
+            <div className="flex items-center justify-between mb-1">
+              <label className="font-mono-tech text-xs text-[#ffe500] uppercase flex items-center gap-1.5 font-bold">
+                <Zap className="w-3.5 h-3.5 text-[#ff007a]" /> Builder Title
+              </label>
+              <button
+                type="button"
+                onClick={handleRandomTitle}
+                className="text-[10px] font-mono-tech text-[#ff007a] hover:text-[#ffe500] flex items-center gap-1 font-bold underline cursor-pointer"
+              >
+                🎲 Random Title
+              </button>
+            </div>
+            <input
+              type="text"
+              value={builderTitle}
+              onChange={(e) => onBuilderTitleChange(e.target.value)}
+              placeholder="e.g. ⚡ Full-Stack Hacker"
+              className="w-full bg-[#042616] text-white border border-[#148048] focus:border-[#ffe500] rounded-lg px-3 py-2 text-sm font-mono-tech outline-none transition"
+            />
+          </div>
+
+          <div>
             <label className="block font-mono-tech text-xs text-[#ffe500] uppercase mb-1 flex items-center gap-1.5 font-bold">
               <Code className="w-3.5 h-3.5 text-[#ff007a]" /> Stack / Role
             </label>
@@ -81,6 +141,28 @@ export default function ControlsForm({
               value={role}
               onChange={(e) => onRoleChange(e.target.value)}
               placeholder="e.g. Fullstack Developer / AI Eng"
+              className="w-full bg-[#042616] text-white border border-[#148048] focus:border-[#ffe500] rounded-lg px-3 py-2 text-sm font-mono-tech outline-none transition"
+            />
+          </div>
+
+          <div>
+            <div className="flex items-center justify-between mb-1">
+              <label className="font-mono-tech text-xs text-[#ffe500] uppercase flex items-center gap-1.5 font-bold">
+                <Flame className="w-3.5 h-3.5 text-[#ff007a]" /> Superpower
+              </label>
+              <button
+                type="button"
+                onClick={handleRandomSuperpower}
+                className="text-[10px] font-mono-tech text-[#ff007a] hover:text-[#ffe500] flex items-center gap-1 font-bold underline cursor-pointer"
+              >
+                🎲 Random Superpower
+              </button>
+            </div>
+            <input
+              type="text"
+              value={superpower}
+              onChange={(e) => onSuperpowerChange(e.target.value)}
+              placeholder="e.g. Turning Coconut Water into Apps"
               className="w-full bg-[#042616] text-white border border-[#148048] focus:border-[#ffe500] rounded-lg px-3 py-2 text-sm font-mono-tech outline-none transition"
             />
           </div>

@@ -7,6 +7,9 @@ export interface GeneratorConfig {
   photo: HTMLImageElement | null;
   name: string;
   role: string;
+  builderTitle?: string;
+  superpower?: string;
+  builderMotto?: string;
   zoom: number;
   panX: number;
   panY: number;
@@ -415,53 +418,50 @@ export async function drawFormatB(
   ctx.stroke();
 
   // 3. Lower Details Section
-  const detailsY = 815;
+  const { builderTitle, superpower } = config;
+  const detailsY = 810;
 
   // Builder Name Label
   ctx.fillStyle = '#148048';
-  ctx.font = '800 16px "JetBrains Mono", monospace';
-  ctx.fillText('BUILDER NAME', 75, detailsY);
+  ctx.font = '800 15px "JetBrains Mono", monospace';
+  ctx.fillText('BUILDER NAME & TITLE', 75, detailsY);
 
   // Builder Name Input Value
   const displayName = (name || 'YOUR NAME HERE').toUpperCase();
   ctx.fillStyle = palette.accent;
-  ctx.font = '900 52px "Playfair Display", serif';
-  ctx.fillText(displayName, 75, detailsY + 55);
+  ctx.font = '900 48px "Playfair Display", serif';
+  ctx.fillText(displayName, 75, detailsY + 45);
+
+  // Builder Title Badge
+  const displayTitle = (builderTitle || '⚡ FULL-STACK HACKER').toUpperCase();
+  ctx.fillStyle = palette.highlight;
+  ctx.font = '800 16px "JetBrains Mono", monospace';
+  ctx.fillText(`✦ ${displayTitle}`, 75, detailsY + 75);
 
   // Divider Line
   ctx.strokeStyle = '#148048';
   ctx.lineWidth = 2;
   ctx.beginPath();
-  ctx.moveTo(75, detailsY + 80);
-  ctx.lineTo(width - 75, detailsY + 80);
+  ctx.moveTo(75, detailsY + 95);
+  ctx.lineTo(width - 75, detailsY + 95);
   ctx.stroke();
 
-  // Stack / Role Label
+  // Stack / Role & Superpower Label
   ctx.fillStyle = '#148048';
-  ctx.font = '800 16px "JetBrains Mono", monospace';
-  ctx.fillText('STACK / ROLE', 75, detailsY + 120);
+  ctx.font = '800 15px "JetBrains Mono", monospace';
+  ctx.fillText('STACK / ROLE & SUPERPOWER', 75, detailsY + 125);
 
   // Stack / Role Input Value
   const displayRole = (role || 'DEVELOPER / DESIGNER').toUpperCase();
   ctx.fillStyle = '#FFFFFF';
-  ctx.font = '700 30px "JetBrains Mono", monospace';
-  ctx.fillText(displayRole, 75, detailsY + 165);
+  ctx.font = '700 24px "JetBrains Mono", monospace';
+  ctx.fillText(displayRole, 75, detailsY + 155);
 
-  // Verification Badge Pill & QR Code Container
-  ctx.save();
-  ctx.fillStyle = palette.bg;
-  ctx.beginPath();
-  ctx.roundRect(75, detailsY + 205, 420, 60, 16);
-  ctx.fill();
-
-  ctx.strokeStyle = palette.accent;
-  ctx.lineWidth = 3;
-  ctx.stroke();
-
-  ctx.fillStyle = palette.accent;
-  ctx.font = '800 20px "JetBrains Mono", monospace';
-  ctx.fillText('✦ CONFIRMED BUILDER 2026', 100, detailsY + 242);
-  ctx.restore();
+  // Superpower Value
+  const displaySuperpower = superpower || '⚡ Turning Coconut Water into Full-Stack Apps';
+  ctx.fillStyle = palette.muted;
+  ctx.font = '600 17px "JetBrains Mono", monospace';
+  ctx.fillText(`🔥 ${displaySuperpower}`, 75, detailsY + 185);
 
   // Scannable Event QR Code
   try {

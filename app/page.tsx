@@ -15,6 +15,8 @@ export default function Home() {
   const [photo, setPhoto] = useState<HTMLImageElement | null>(null);
   const [name, setName] = useState('');
   const [role, setRole] = useState('');
+  const [builderTitle, setBuilderTitle] = useState('');
+  const [superpower, setSuperpower] = useState('');
   const [zoom, setZoom] = useState(1.0);
   const [panX, setPanX] = useState(0);
   const [panY, setPanY] = useState(0);
@@ -27,6 +29,8 @@ export default function Home() {
     photo,
     name,
     role,
+    builderTitle,
+    superpower,
     zoom,
     panX,
     panY,
@@ -121,12 +125,16 @@ export default function Home() {
                 format={format}
                 name={name}
                 role={role}
+                builderTitle={builderTitle}
+                superpower={superpower}
                 zoom={zoom}
                 panX={panX}
                 panY={panY}
                 stylePreset={stylePreset}
                 onNameChange={setName}
                 onRoleChange={setRole}
+                onBuilderTitleChange={setBuilderTitle}
+                onSuperpowerChange={setSuperpower}
                 onZoomChange={setZoom}
                 onPanXChange={setPanX}
                 onPanYChange={setPanY}
