@@ -156,9 +156,9 @@ function renderCanvas() {
 
   // Header Title
   ctx.fillStyle = pal.accent;
-  ctx.font = '800 22px monospace';
+  ctx.font = '800 18px monospace';
   ctx.textAlign = 'left';
-  ctx.fillText('2:47 PM STUDIO', 70, 60);
+  ctx.fillText('DEVELOPED BY CODINGKOALAS', 70, 60);
   ctx.textAlign = 'right';
   ctx.fillText('GOA, INDIA · 2026', w - 70, 60);
 

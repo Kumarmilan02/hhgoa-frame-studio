@@ -165,9 +165,9 @@ export async function drawFormatA(
   // 2. Decorative Top Branding Header
   ctx.save();
   ctx.fillStyle = palette.accent;
-  ctx.font = '800 22px "JetBrains Mono", monospace';
+  ctx.font = '800 20px "JetBrains Mono", monospace';
   ctx.textAlign = 'left';
-  ctx.fillText('2:47 PM STUDIO', 70, 60);
+  ctx.fillText('DEVELOPED BY CODINGKOALAS', 70, 60);
 
   ctx.textAlign = 'right';
   ctx.fillText('GOA, INDIA · 2026', width - 70, 60);

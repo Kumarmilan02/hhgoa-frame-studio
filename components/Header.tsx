@@ -7,11 +7,11 @@ export default function Header() {
         {/* Brand Left */}
         <div className="flex items-center gap-2">
           <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-[#ffe500] text-[#042616] font-mono-tech font-black text-xs sm:text-sm flex items-center justify-center border border-[#042616] flex-shrink-0">
-            2:47
+            CK
           </div>
           <div>
-            <div className="font-mono-tech text-[9px] sm:text-[10px] text-[#e5c200] tracking-widest uppercase">
-              2:47 PM STUDIO
+            <div className="font-mono-tech text-[9px] sm:text-[10px] text-[#e5c200] tracking-widest uppercase font-bold">
+              DEVELOPED BY CODINGKOALAS
             </div>
             <div className="font-display font-black text-sm sm:text-lg text-[#ffe500] leading-none tracking-tight">
               HH GOA <span className="text-[#ff007a] font-sans text-xs sm:text-sm">गोवा</span> 2026
@@ -19,7 +19,7 @@ export default function Header() {
           </div>
         </div>
 
-        {/* Right Hashtag & Website Link (Always visible on mobile & desktop) */}
+        {/* Right Hashtag & Website Link */}
         <div className="flex items-center gap-2">
           <span className="font-mono-tech text-[10px] sm:text-xs px-2 py-0.5 sm:px-2.5 sm:py-1 bg-[#ff007a]/20 text-[#ff007a] border border-[#ff007a]/40 rounded-md font-semibold">
             #FrameInGoa

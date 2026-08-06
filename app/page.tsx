@@ -83,7 +83,7 @@ export default function Home() {
           {/* Subtitle Metadata Bar */}
           <div className="w-full flex items-center justify-between font-mono-tech text-[10px] sm:text-xs text-[#ffe500] max-w-3xl mx-auto px-2 mt-1 font-bold tracking-wider">
             <span>GOA, INDIA · 28 - 31 OCT 2026</span>
-            <span>2:47 PM STUDIO</span>
+            <span>DEVELOPED BY CODINGKOALAS</span>
           </div>
         </div>
 
@@ -150,7 +150,7 @@ export default function Home() {
           <span className="text-sm">🍹</span>
         </div>
         <p className="font-mono-tech text-[11px] text-[#e5c200]">
-          © 2026 HH-Goa · Built by 2:47 PM Studio · Oceanfront Goa · #FrameInGoa
+          © 2026 HH-Goa · Developed by CodingKoalas · Oceanfront Goa · #FrameInGoa
         </p>
       </footer>
     </div>

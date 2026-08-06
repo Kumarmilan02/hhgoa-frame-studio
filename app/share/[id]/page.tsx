@@ -76,7 +76,7 @@ export default async function SharePage({ params }: SharePageProps) {
       </div>
 
       <footer className="mt-12 text-[#e5c200] font-mono-tech text-xs">
-        2:47 PM STUDIO © 2026 HH GOA. ALL RIGHTS RESERVED.
+        DEVELOPED BY CODINGKOALAS © 2026 HH GOA. ALL RIGHTS RESERVED.
       </footer>
     </main>
   );
