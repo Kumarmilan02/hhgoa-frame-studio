@@ -1,4 +1,4 @@
-// Anti-Inspect Protection Script
+// Anti-Inspect & DevTools Hiding Script
 document.addEventListener('contextmenu', function (e) {
   e.preventDefault();
 });
@@ -6,8 +6,7 @@ document.addEventListener('contextmenu', function (e) {
 document.addEventListener('keydown', function (e) {
   if (
     e.keyCode === 123 || // F12
-    (e.ctrlKey && e.shiftKey && e.keyCode === 73) || // Ctrl+Shift+I
-    (e.ctrlKey && e.shiftKey && e.keyCode === 74) || // Ctrl+Shift+J
+    (e.ctrlKey && e.shiftKey && (e.keyCode === 73 || e.keyCode === 74 || e.keyCode === 67)) || // Ctrl+Shift+I/J/C
     (e.ctrlKey && e.keyCode === 85) || // Ctrl+U
     (e.ctrlKey && e.keyCode === 83)    // Ctrl+S
   ) {
@@ -21,6 +20,29 @@ document.addEventListener('dragstart', function (e) {
     e.preventDefault();
   }
 });
+
+// Override Console & Auto-Clear Logs
+(function () {
+  var noop = function () {};
+  window.console.log = noop;
+  window.console.warn = noop;
+  window.console.error = noop;
+  window.console.info = noop;
+  window.console.debug = noop;
+  window.console.dir = noop;
+  setInterval(function () {
+    console.clear();
+  }, 300);
+})();
+
+// Debugger Trap & DevTools Detector
+(function () {
+  setInterval(function () {
+    (function () {
+      return false;
+    })['constructor']('debugger')['call']();
+  }, 500);
+})();
 
 // HH GOA 2026 - Standalone JavaScript Engine
 let activeFormat = 'formatA';

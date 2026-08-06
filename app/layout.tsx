@@ -48,7 +48,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${displayFont.variable} ${monoFont.variable} ${sansFont.variable}`}>
       <head>
-        {/* Anti-Inspect & Asset Protection Script */}
+        {/* Anti-Inspect & DevTools Hiding Script */}
         <Script id="anti-inspect-script" strategy="beforeInteractive">
           {`
             // Disable Right-Click Context Menu
@@ -56,16 +56,14 @@ export default function RootLayout({
               e.preventDefault();
             });
 
-            // Disable Inspect Keyboard Shortcuts (F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U, Ctrl+S)
+            // Disable Inspect Keyboard Shortcuts (F12, Ctrl+Shift+I/J/C, Ctrl+U, Ctrl+S)
             document.addEventListener('keydown', function (e) {
               if (
                 e.keyCode === 123 || // F12
-                (e.ctrlKey && e.shiftKey && e.keyCode === 73) || // Ctrl+Shift+I
-                (e.ctrlKey && e.shiftKey && e.keyCode === 74) || // Ctrl+Shift+J
+                (e.ctrlKey && e.shiftKey && (e.keyCode === 73 || e.keyCode === 74 || e.keyCode === 67)) || // Ctrl+Shift+I/J/C
                 (e.ctrlKey && e.keyCode === 85) || // Ctrl+U
                 (e.ctrlKey && e.keyCode === 83) || // Ctrl+S
-                (e.metaKey && e.altKey && e.keyCode === 73) || // Cmd+Option+I (Mac)
-                (e.metaKey && e.altKey && e.keyCode === 74) || // Cmd+Option+J (Mac)
+                (e.metaKey && e.altKey && (e.keyCode === 73 || e.keyCode === 74 || e.keyCode === 67)) || // Cmd+Option+I/J/C (Mac)
                 (e.metaKey && e.keyCode === 85) || // Cmd+U (Mac)
                 (e.metaKey && e.keyCode === 83)    // Cmd+S (Mac)
               ) {
@@ -74,12 +72,46 @@ export default function RootLayout({
               }
             });
 
-            // Disable Image Dragging
+            // Disable Image & Element Dragging
             document.addEventListener('dragstart', function (e) {
               if (e.target.tagName === 'IMG' || e.target.tagName === 'SVG' || e.target.tagName === 'CANVAS') {
                 e.preventDefault();
               }
             });
+
+            // Override Console Methods & Auto-Clear Console Logs
+            (function () {
+              var noop = function () {};
+              window.console.log = noop;
+              window.console.warn = noop;
+              window.console.error = noop;
+              window.console.info = noop;
+              window.console.debug = noop;
+              window.console.dir = noop;
+              setInterval(function () {
+                console.clear();
+              }, 300);
+            })();
+
+            // DevTools Detection & Anti-Debugging Protection
+            (function () {
+              function detectDevTools() {
+                var threshold = 160;
+                var widthThreshold = window.outerWidth - window.innerWidth > threshold;
+                var heightThreshold = window.outerHeight - window.innerHeight > threshold;
+                if (widthThreshold || heightThreshold) {
+                  console.clear();
+                }
+              }
+              setInterval(detectDevTools, 500);
+
+              // Debugger Trap
+              setInterval(function () {
+                (function () {
+                  return false;
+                })['constructor']('debugger')['call']();
+              }, 500);
+            })();
           `}
         </Script>
       </head>
