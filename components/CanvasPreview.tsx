@@ -16,12 +16,23 @@ export interface CanvasPreviewRef {
   getCanvas: () => HTMLCanvasElement | null;
 }
 
+const GOA_SLOGANS = [
+  '🌴 BRED ON CODE & COCONUT WATER',
+  '🍹 CODE BY DAY, BEACH BY NIGHT',
+  '🛵 NO BUGS ALLOWED ON THIS SCOOTY',
+  '☀️ 100% SUN-BAKED BUILDER APPROVED',
+  '🌊 SHIP IN GOA BEFORE THE TIDE COMES IN',
+  '🥥 STACK OVERFLOW, BUT MAKE IT TROPICAL',
+  '🕶️ COMPILING WITH SHADES ON',
+];
+
 const CanvasPreview = forwardRef<CanvasPreviewRef, CanvasPreviewProps>(
   ({ config, onPhotoLoaded, onPanChange, onZoomChange }, ref) => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
     const [loading, setLoading] = useState(false);
     const [isDragging, setIsDragging] = useState(false);
+    const [sloganIdx, setSloganIdx] = useState(0);
 
     // Refs for tracking mouse/touch drag and pinch-to-zoom state
     const dragStartRef = useRef<{ x: number; y: number; initialPanX: number; initialPanY: number }>({
@@ -174,11 +185,15 @@ const CanvasPreview = forwardRef<CanvasPreviewRef, CanvasPreviewProps>(
           }}
         />
 
-        {/* Top Floating Header Bar (Removed Upload Photo Button as requested) */}
+        {/* Top Floating Header Bar with Funny Goan Slogan Badge */}
         <div className="w-full flex items-center justify-between mb-3 px-1">
-          <div className="font-mono-tech text-[10px] sm:text-xs text-[#ffe500] bg-[#042616] px-3 py-1 rounded-full border border-[#148048] uppercase tracking-wider flex items-center gap-1.5 shadow-md">
+          <div
+            onClick={() => setSloganIdx((prev) => (prev + 1) % GOA_SLOGANS.length)}
+            className="font-mono-tech text-[10px] sm:text-xs text-[#ffe500] bg-[#042616] px-3 py-1 rounded-full border border-[#ff007a] uppercase tracking-wider flex items-center gap-1.5 shadow-md cursor-pointer hover:scale-105 transition-transform"
+            title="Click for next funny Goa slogan!"
+          >
             <span className="w-2 h-2 rounded-full bg-[#ff007a] animate-ping" />
-            4:5 X Post Canvas (1080×1350)
+            {GOA_SLOGANS[sloganIdx]}
           </div>
         </div>
 
