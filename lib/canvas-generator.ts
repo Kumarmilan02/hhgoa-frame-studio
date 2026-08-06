@@ -258,12 +258,12 @@ export async function drawFormatA(
   // 8. Stamp Badge Seal (Top Right Inner Corner)
   drawGoaStampSeal(ctx, width - 145, cropY + 70, 48, palette);
 
-  // 9. 4:5 Aspect Ratio Tag Footer Metadata
+  // 9. Aspect Ratio Tag Footer Metadata
   ctx.save();
   ctx.fillStyle = palette.muted;
   ctx.font = '600 20px "JetBrains Mono", monospace';
   ctx.textAlign = 'center';
-  ctx.fillText('28 – 31 OCT 2026 · #FrameInGoa · 4:5 X POST FORMAT', width / 2, height - 28);
+  ctx.fillText('28 – 31 OCT 2026 · #FrameInGoa', width / 2, height - 28);
   ctx.restore();
 }
 
@@ -501,7 +501,7 @@ export async function drawFormatB(
   ctx.fillStyle = palette.darkBg;
   ctx.font = '800 16px "JetBrains Mono", monospace';
   ctx.textAlign = 'center';
-  ctx.fillText('#FrameInGoa · OFFICIAL HACKER HOUSE GOA 2026 BADGE · 4:5 X FORMAT', width / 2, height - 52);
+  ctx.fillText('#FrameInGoa · OFFICIAL HACKER HOUSE GOA 2026 BADGE', width / 2, height - 52);
 }
 
 /**
