@@ -65,7 +65,7 @@ export default function ExportBar({ getCanvas, format }: ExportBarProps) {
 
       // Construct prefilled tweet with #FrameInGoa hashtag
       const tweetText = encodeURIComponent(
-        `Excited for Hacker House Goa 2026! 🌴 Oceanfront residency, 500 elite builders, and high-speed fiber.\n\nHere is my official builder graphic! 👇\n\n#FrameInGoa @247pmstudio @Devfolio`
+        `Excited for Hacker House Goa 2026! 🌴 500 elite builders, high-speed fiber, and non-stop shipping.\n\nHere is my official builder graphic! 👇\n\n#FrameInGoa @247pmstudio @Devfolio`
       );
 
       const intentUrl = `https://x.com/intent/post?text=${tweetText}&url=${encodeURIComponent(

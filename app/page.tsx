@@ -150,7 +150,7 @@ export default function Home() {
           <span className="text-sm">🍹</span>
         </div>
         <p className="font-mono-tech text-[11px] text-[#e5c200]">
-          © 2026 HH-Goa · Developed by CodingKoalas · Oceanfront Goa · #FrameInGoa
+          © 2026 HH-Goa · Developed by CodingKoalas · Goa, India · #FrameInGoa
         </p>
       </footer>
     </div>

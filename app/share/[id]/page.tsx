@@ -15,7 +15,7 @@ export async function generateMetadata({ params }: SharePageProps): Promise<Meta
     description: 'Check out my official HH Goa 2026 graphic! Build, ship, and lock in for October 28-31 in Goa.',
     openGraph: {
       title: 'HH GOA 2026 | Builder Graphic',
-      description: 'Hacker House Goa 2026 — 500 Elite Builders. Oceanfront Goa. #FrameInGoa',
+      description: 'Hacker House Goa 2026 — 500 Elite Builders. Goa, India. #FrameInGoa',
       images: [
         {
           url: imageUrl,
