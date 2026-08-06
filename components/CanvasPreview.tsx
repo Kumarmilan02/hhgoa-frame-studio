@@ -209,6 +209,42 @@ const CanvasPreview = forwardRef<CanvasPreviewRef, CanvasPreviewProps>(
 
         {/* Interactive 4:5 Canvas Container */}
         <div className="relative w-full flex items-center justify-center">
+          {/* Left Coconut Palm Tree (Flanking Canvas Box) */}
+          <div className="absolute -left-10 sm:-left-16 bottom-0 pointer-events-none select-none z-15 hidden md:block animate-palm-sway">
+            <svg width="90" height="240" viewBox="0 0 120 320" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M 40 310 C 60 200 80 120 70 60" stroke="#FFFFFF" strokeWidth="9" strokeLinecap="round" />
+              <path d="M 30 310 C 45 230 35 170 25 150" stroke="#FFFFFF" strokeWidth="6" strokeLinecap="round" />
+              <path d="M 70 60 C 20 20 10 70 10 100" fill="#0A5C36" stroke="#000000" strokeWidth="2.5" />
+              <path d="M 70 60 C 20 20 10 70 10 100" stroke="#FFE500" strokeWidth="2" fill="none" />
+              <path d="M 70 60 C 110 20 120 70 115 105" fill="#0A5C36" stroke="#000000" strokeWidth="2.5" />
+              <path d="M 70 60 C 110 20 120 70 115 105" stroke="#FFE500" strokeWidth="2" fill="none" />
+              <path d="M 70 60 C 50 -10 90 -10 80 60" fill="#0A5C36" stroke="#000000" strokeWidth="2.5" />
+              <path d="M 25 150 C -5 130 0 170 5 185" fill="#0A5C36" stroke="#000000" strokeWidth="2" />
+              <path d="M 25 150 C 55 130 60 170 55 185" fill="#0A5C36" stroke="#000000" strokeWidth="2" />
+              <circle cx="30" cy="305" r="8" fill="#FF007A" />
+              <circle cx="45" cy="308" r="7" fill="#FFE500" />
+              <circle cx="60" cy="305" r="8" fill="#FF007A" />
+            </svg>
+          </div>
+
+          {/* Right Coconut Palm Tree (Flanking Canvas Box) */}
+          <div className="absolute -right-10 sm:-right-16 bottom-0 pointer-events-none select-none z-15 hidden md:block animate-palm-sway" style={{ transform: 'scaleX(-1)' }}>
+            <svg width="90" height="240" viewBox="0 0 120 320" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M 40 310 C 60 200 80 120 70 60" stroke="#FFFFFF" strokeWidth="9" strokeLinecap="round" />
+              <path d="M 30 310 C 45 230 35 170 25 150" stroke="#FFFFFF" strokeWidth="6" strokeLinecap="round" />
+              <path d="M 70 60 C 20 20 10 70 10 100" fill="#0A5C36" stroke="#000000" strokeWidth="2.5" />
+              <path d="M 70 60 C 20 20 10 70 10 100" stroke="#FFE500" strokeWidth="2" fill="none" />
+              <path d="M 70 60 C 110 20 120 70 115 105" fill="#0A5C36" stroke="#000000" strokeWidth="2.5" />
+              <path d="M 70 60 C 110 20 120 70 115 105" stroke="#FFE500" strokeWidth="2" fill="none" />
+              <path d="M 70 60 C 50 -10 90 -10 80 60" fill="#0A5C36" stroke="#000000" strokeWidth="2.5" />
+              <path d="M 25 150 C -5 130 0 170 5 185" fill="#0A5C36" stroke="#000000" strokeWidth="2" />
+              <path d="M 25 150 C 55 130 60 170 55 185" fill="#0A5C36" stroke="#000000" strokeWidth="2" />
+              <circle cx="30" cy="305" r="8" fill="#FF007A" />
+              <circle cx="45" cy="308" r="7" fill="#FFE500" />
+              <circle cx="60" cy="305" r="8" fill="#FF007A" />
+            </svg>
+          </div>
+
           {!config.photo && (
             <div
               onClick={() => fileInputRef.current?.click()}
@@ -219,9 +255,6 @@ const CanvasPreview = forwardRef<CanvasPreviewRef, CanvasPreviewProps>(
               </div>
               <p className="font-mono-tech text-sm sm:text-base text-[#ffe500] font-extrabold uppercase drop-shadow-md">
                 Tap Here to Upload Photo Directly
-              </p>
-              <p className="font-mono-tech text-[11px] text-[#ffffff] font-semibold mt-1 max-w-xs drop-shadow-md">
-                Supports selfies, group photos, landscape, square &amp; 6000x4000 phone camera shots
               </p>
             </div>
           )}
