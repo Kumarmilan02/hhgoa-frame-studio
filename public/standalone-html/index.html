@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HH GOA 2026 | Standalone HTML5 Canvas Generator</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@700;800&family=Playfair+Display:wght@900&family=Plus+Jakarta+Sans:wght@400;700&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <!-- Header Bar -->
+  <header class="hh-header">
+    <a href="#" class="hh-brand">
+      <span>🌴 HH GOA</span>
+      <span class="hh-badge-pink">2026</span>
+    </a>
+    <span style="font-family: monospace; font-size: 0.8rem; color: #ffe500;">STANDALONE HTML/CSS BUNDLE</span>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hh-hero">
+    <div class="hh-title">
+      <span>HACKER</span>
+      <img src="/images/goa_hindi.svg" alt="गोवा" class="hh-goa-badge" />
+      <span>HOUSE</span>
+    </div>
+    <div class="hh-meta">
+      <span>GOA, INDIA · 28 - 31 OCT 2026</span>
+      <span>2:47 PM STUDIO</span>
+    </div>
+  </section>
+
+  <!-- Format Selector Tabs -->
+  <div class="hh-tabs">
+    <button id="tabA" class="hh-tab-btn active" onclick="setFormat('formatA')">👤 PFP Overlay</button>
+    <button id="tabB" class="hh-tab-btn" onclick="setFormat('formatB')">💳 Builder ID Badge</button>
+  </div>
+
+  <!-- Main Workspace Grid -->
+  <main class="hh-workspace">
+    <!-- Left Controls Card -->
+    <div class="hh-controls-card">
+      <label class="hh-label">🎨 Upload Photo</label>
+      <input type="file" id="photoUpload" accept="image/*" class="hh-input" />
+
+      <label class="hh-label">👤 Builder Name</label>
+      <input type="text" id="nameInput" placeholder="Enter your name" class="hh-input" oninput="renderCanvas()" />
+
+      <label class="hh-label">💻 Stack / Role</label>
+      <input type="text" id="roleInput" placeholder="Developer / Designer" class="hh-input" oninput="renderCanvas()" />
+
+      <button class="hh-btn-yellow" onclick="downloadPNG()">📥 Download PNG (High-Res 4:5)</button>
+    </div>
+
+    <!-- Right Canvas Box -->
+    <div class="hh-canvas-box">
+      <canvas id="previewCanvas" width="1080" height="1350"></canvas>
+    </div>
+  </main>
+
+  <!-- Scooter Track -->
+  <div class="hh-scooter-track">
+    <div class="hh-road-line"></div>
+    <div class="hh-scooter-mover">
+      <iframe src="https://lottie.host/embed/e4bcd9f2-08fc-4cce-8f7e-6d4fab708a52/yk8GoPog39.lottie" style="width: 100px; height: 100px; border: 0;" title="Scooter"></iframe>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    © 2026 HH-Goa · Oceanfront Goa · #FrameInGoa · Standalone HTML/CSS/JS Bundle
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,263 @@
+/* HH GOA 2026 - Standalone CSS Design System */
+:root {
+  --hh-bg-emerald: #0a5c36;
+  --hh-bg-emerald-dark: #042616;
+  --hh-bg-emerald-light: #0b6638;
+  --hh-yellow-electric: #ffe500;
+  --hh-yellow-golden: #e5c200;
+  --hh-pink-magenta: #ff007a;
+  --hh-palm-green: #148048;
+  --hh-white: #ffffff;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: var(--hh-bg-emerald);
+  color: var(--hh-white);
+  font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow-x: hidden;
+}
+
+/* Header Navbar */
+.hh-header {
+  background-color: var(--hh-bg-emerald-dark);
+  border-bottom: 2px solid var(--hh-palm-green);
+  padding: 0.75rem 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.hh-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 800;
+  color: var(--hh-yellow-electric);
+  text-decoration: none;
+}
+
+.hh-badge-pink {
+  background-color: var(--hh-pink-magenta);
+  color: #fff;
+  font-size: 0.7rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  font-weight: 700;
+}
+
+/* Hero Section */
+.hh-hero {
+  text-align: center;
+  margin: 1.5rem 0;
+}
+
+.hh-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 4rem;
+  font-weight: 900;
+  color: var(--hh-yellow-electric);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  text-transform: uppercase;
+}
+
+.hh-goa-badge {
+  height: 4rem;
+  animation: goaFloat 3s ease-in-out infinite;
+}
+
+@keyframes goaFloat {
+  0%, 100% { transform: translateY(-4px) rotate(-4deg); }
+  50% { transform: translateY(4px) rotate(4deg); }
+}
+
+.hh-meta {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.8rem;
+  color: var(--hh-yellow-electric);
+  display: flex;
+  justify-content: space-between;
+  max-w: 700px;
+  margin: 0.5rem auto 0;
+  font-weight: 700;
+}
+
+/* Format Selector Tabs */
+.hh-tabs {
+  display: flex;
+  gap: 0.5rem;
+  max-width: 500px;
+  margin: 1rem auto;
+  background: var(--hh-bg-emerald-dark);
+  padding: 0.35rem;
+  border-radius: 12px;
+  border: 1px solid var(--hh-palm-green);
+}
+
+.hh-tab-btn {
+  flex: 1;
+  padding: 0.75rem;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: white;
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.hh-tab-btn.active {
+  background: var(--hh-yellow-electric);
+  color: var(--hh-bg-emerald-dark);
+  box-shadow: 0 0 15px rgba(255, 229, 0, 0.4);
+}
+
+/* Main Workspace */
+.hh-workspace {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 1rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  align-items: start;
+}
+
+@media (max-width: 900px) {
+  .hh-workspace {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Canvas Preview Frame */
+.hh-canvas-box {
+  background: var(--hh-bg-emerald-dark);
+  border: 2px solid var(--hh-palm-green);
+  border-radius: 16px;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
+
+canvas {
+  width: 100%;
+  max-width: 420px;
+  height: auto;
+  border-radius: 12px;
+  border: 2px solid var(--hh-yellow-electric);
+  cursor: pointer;
+}
+
+/* Controls Panel */
+.hh-controls-card {
+  background: var(--hh-bg-emerald-dark);
+  border: 1px solid var(--hh-palm-green);
+  border-radius: 16px;
+  padding: 1.5rem;
+}
+
+.hh-[#ffe500] {
+  color: var(--hh-yellow-electric);
+}
+
+.hh-label {
+  display: block;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem;
+  color: var(--hh-yellow-electric);
+  margin-bottom: 0.5rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.hh-input {
+  width: 100%;
+  padding: 0.75rem;
+  background: rgba(10, 92, 54, 0.5);
+  border: 1px solid var(--hh-palm-green);
+  border-radius: 8px;
+  color: white;
+  font-family: 'JetBrains Mono', monospace;
+  margin-bottom: 1rem;
+}
+
+.hh-input:focus {
+  outline: none;
+  border-color: var(--hh-yellow-electric);
+}
+
+.hh-btn-yellow {
+  background-color: var(--hh-yellow-electric);
+  color: var(--hh-bg-emerald-dark);
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 800;
+  border: 2px dashed var(--hh-bg-emerald-dark);
+  padding: 0.85rem 1.5rem;
+  border-radius: 8px;
+  cursor: pointer;
+  width: 100%;
+  transition: all 0.2s ease;
+  text-transform: uppercase;
+}
+
+.hh-btn-yellow:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 20px rgba(255, 229, 0, 0.6);
+}
+
+/* Scooter Track */
+.hh-scooter-track {
+  width: 100%;
+  height: 100px;
+  background: var(--hh-bg-emerald-dark);
+  border-top: 1px solid var(--hh-palm-green);
+  border-bottom: 1px solid var(--hh-palm-green);
+  position: relative;
+  overflow: hidden;
+  margin: 1rem 0;
+}
+
+.hh-road-line {
+  position: absolute;
+  bottom: 12px;
+  width: 100%;
+  border-top: 2px dashed rgba(255, 229, 0, 0.6);
+}
+
+.hh-scooter-mover {
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  animation: rideAlong 14s linear infinite;
+}
+
+@keyframes rideAlong {
+  0% { transform: translateX(-120px); }
+  100% { transform: translateX(100vw); }
+}
+
+/* Footer */
+footer {
+  background: var(--hh-bg-emerald-dark);
+  padding: 1rem;
+  text-align: center;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem;
+  color: var(--hh-yellow-golden);
+}

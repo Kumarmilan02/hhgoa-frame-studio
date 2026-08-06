@@ -1,0 +1,278 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --hh-bg-emerald: #0a5c36;
+    --hh-bg-emerald-dark: #042616;
+    --hh-bg-emerald-light: #0b6638;
+    --hh-yellow-electric: #ffe500;
+    --hh-yellow-golden: #e5c200;
+    --hh-pink-magenta: #ff007a;
+    --hh-palm-green: #148048;
+    --hh-white: #ffffff;
+    --hh-cream: #f5f5f0;
+  }
+}
+
+body {
+  background-color: var(--hh-bg-emerald);
+  color: var(--hh-white);
+  font-family: var(--font-sans), system-ui, sans-serif;
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #042616;
+}
+::-webkit-scrollbar-thumb {
+  background: #148048;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #ffe500;
+}
+
+/* Font Classes */
+.font-display {
+  font-family: var(--font-display), 'Playfair Display', serif;
+}
+
+.font-mono-tech {
+  font-family: var(--font-mono), 'JetBrains Mono', monospace;
+}
+
+/* Glow Utilities */
+.glow-yellow {
+  box-shadow: 0 0 20px rgba(255, 229, 0, 0.4);
+}
+
+.glow-pink {
+  box-shadow: 0 0 15px rgba(255, 0, 122, 0.5);
+}
+
+/* ========================================
+   GOA VIBES & DYNAMIC MOTION ANIMATIONS
+   ======================================== */
+
+/* Scrolling Asphalt Road Markings Effect */
+@keyframes roadScroll {
+  0% {
+    background-position-x: 0px;
+  }
+  100% {
+    background-position-x: -60px;
+  }
+}
+
+.animate-road-scroll {
+  animation: roadScroll 0.8s linear infinite;
+  will-change: background-position-x;
+}
+
+/* Scooty Riding Animation (Left to Right) */
+@keyframes scootyRide {
+  0% {
+    transform: translateX(-120px);
+  }
+  100% {
+    transform: translateX(calc(100vw + 60px));
+  }
+}
+
+.animate-scooty-ride {
+  animation: scootyRide 12s linear infinite;
+  will-change: transform;
+}
+
+/* Scooty suspension micro-bounce */
+@keyframes scootyBounce {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-2.5px);
+  }
+}
+
+.animate-scooty-bounce {
+  animation: scootyBounce 0.35s ease-in-out infinite;
+  will-change: transform;
+}
+
+/* Motion animation for middle Devanagari Goa Badge */
+@keyframes goaBadgeMotion {
+  0%, 100% {
+    transform: translateY(-4px) rotate(-4deg) scale(1.04);
+    filter: drop-shadow(0 0 16px rgba(255, 0, 122, 0.85));
+  }
+  50% {
+    transform: translateY(4px) rotate(4deg) scale(0.96);
+    filter: drop-shadow(0 0 28px rgba(255, 229, 0, 0.95));
+  }
+}
+
+.animate-goa-badge-motion {
+  animation: goaBadgeMotion 3s ease-in-out infinite;
+  will-change: transform, filter;
+}
+
+/* Floating Goa emoji elements */
+@keyframes goaFloat {
+  0% {
+    transform: translateY(0px) translateX(0px) rotate(0deg) scale(1);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.7;
+  }
+  50% {
+    transform: translateY(-130px) translateX(var(--drift, 35px)) rotate(18deg) scale(1.15);
+    opacity: 0.5;
+  }
+  90% {
+    opacity: 0.2;
+  }
+  100% {
+    transform: translateY(-260px) translateX(calc(var(--drift, 35px) * -0.6)) rotate(-12deg) scale(0.85);
+    opacity: 0;
+  }
+}
+
+.animate-goa-float {
+  animation: goaFloat ease-in-out infinite;
+  will-change: transform, opacity;
+}
+
+/* Animated Shimmer Border */
+@keyframes shimmerBorder {
+  0% {
+    border-color: rgba(20, 128, 72, 0.6);
+    box-shadow: 0 0 15px rgba(20, 128, 72, 0.3);
+  }
+  50% {
+    border-color: rgba(255, 229, 0, 0.8);
+    box-shadow: 0 0 25px rgba(255, 229, 0, 0.4);
+  }
+  100% {
+    border-color: rgba(20, 128, 72, 0.6);
+    box-shadow: 0 0 15px rgba(20, 128, 72, 0.3);
+  }
+}
+
+.border-shimmer {
+  animation: shimmerBorder 4s ease-in-out infinite;
+}
+
+/* Animated ocean wave divider */
+@keyframes waveScroll {
+  0% {
+    background-position-x: 0px;
+  }
+  100% {
+    background-position-x: 200px;
+  }
+}
+
+.wave-divider {
+  height: 4px;
+  background: repeating-linear-gradient(
+    90deg,
+    #148048 0px,
+    #ffe500 25px,
+    #148048 50px,
+    #ff007a 75px,
+    #148048 100px
+  );
+  background-size: 200px 4px;
+  animation: waveScroll 4s linear infinite;
+  border-radius: 2px;
+}
+
+/* Pulsing glow for interactive buttons */
+@keyframes pulseGlow {
+  0%, 100% {
+    box-shadow: 0 0 12px rgba(255, 229, 0, 0.35);
+  }
+  50% {
+    box-shadow: 0 0 28px rgba(255, 229, 0, 0.7);
+  }
+}
+
+.animate-pulse-glow {
+  animation: pulseGlow 2.5s ease-in-out infinite;
+}
+
+/* Slide Entrance Animations */
+@keyframes slideUp {
+  0% {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0px);
+  }
+}
+
+.animate-slide-up {
+  animation: slideUp 0.7s ease-out forwards;
+}
+
+.animate-slide-up-delay {
+  animation: slideUp 0.7s ease-out 0.15s forwards;
+  opacity: 0;
+}
+
+.animate-slide-up-delay-2 {
+  animation: slideUp 0.7s ease-out 0.3s forwards;
+  opacity: 0;
+}
+
+/* Gentle palm tree sway */
+@keyframes palmSway {
+  0%, 100% {
+    transform: rotate(-4deg);
+  }
+  50% {
+    transform: rotate(4deg);
+  }
+}
+
+.animate-palm-sway {
+  animation: palmSway 4s ease-in-out infinite;
+  transform-origin: bottom center;
+}
+
+/* Dotted pixel border button style */
+.btn-hh-yellow {
+  background-color: #ffe500;
+  color: #042616;
+  font-family: var(--font-mono-tech), monospace;
+  font-weight: 800;
+  border: 2px dashed #042616;
+  transition: all 0.2s ease-in-out;
+}
+
+.btn-hh-yellow:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 25px rgba(255, 229, 0, 0.6);
+  background-color: #fff066;
+}
+
+.card-hh-emerald {
+  background: rgba(4, 38, 22, 0.88);
+  backdrop-filter: blur(14px);
+  border: 1px solid rgba(20, 128, 72, 0.5);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card-hh-emerald:hover {
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+}

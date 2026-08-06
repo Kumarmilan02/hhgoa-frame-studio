@@ -1,0 +1,255 @@
+'use client';
+
+import React, { useEffect, useRef, useImperativeHandle, forwardRef, useState } from 'react';
+import { drawFormatA, drawFormatB, GeneratorConfig } from '@/lib/canvas-generator';
+import { compressAndProcessImage } from '@/lib/image-compressor';
+import { Upload, Move, ZoomIn, Loader2, Sparkles } from 'lucide-react';
+
+interface CanvasPreviewProps {
+  config: GeneratorConfig;
+  onPhotoLoaded: (img: HTMLImageElement) => void;
+  onPanChange: (newPanX: number, newPanY: number) => void;
+  onZoomChange: (newZoom: number) => void;
+}
+
+export interface CanvasPreviewRef {
+  getCanvas: () => HTMLCanvasElement | null;
+}
+
+const CanvasPreview = forwardRef<CanvasPreviewRef, CanvasPreviewProps>(
+  ({ config, onPhotoLoaded, onPanChange, onZoomChange }, ref) => {
+    const canvasRef = useRef<HTMLCanvasElement>(null);
+    const fileInputRef = useRef<HTMLInputElement>(null);
+    const [loading, setLoading] = useState(false);
+    const [isDragging, setIsDragging] = useState(false);
+
+    // Refs for tracking mouse/touch drag and pinch-to-zoom state
+    const dragStartRef = useRef<{ x: number; y: number; initialPanX: number; initialPanY: number }>({
+      x: 0,
+      y: 0,
+      initialPanX: 0,
+      initialPanY: 0,
+    });
+    const pinchStartDistRef = useRef<number | null>(null);
+    const initialZoomRef = useRef<number>(1.0);
+
+    useImperativeHandle(ref, () => ({
+      getCanvas: () => canvasRef.current,
+    }));
+
+    // Process file upload with fast client-side image compression
+    const processFile = async (file: File) => {
+      if (!file) return;
+      setLoading(true);
+
+      try {
+        const compressedImg = await compressAndProcessImage(file);
+        onPhotoLoaded(compressedImg);
+        onPanChange(0, 0);
+        onZoomChange(1.0);
+      } catch (err) {
+        console.error('Canvas image upload error:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    // Draw 4:5 ratio canvas (1080x1350) whenever config changes
+    useEffect(() => {
+      const canvas = canvasRef.current;
+      if (!canvas) return;
+
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return;
+
+      const width = 1080;
+      const height = 1350;
+
+      canvas.width = width;
+      canvas.height = height;
+
+      if (config.format === 'formatA') {
+        drawFormatA(ctx, width, height, config);
+      } else {
+        drawFormatB(ctx, width, height, config);
+      }
+    }, [config]);
+
+    // Handle Click on Canvas
+    const handleCanvasClick = () => {
+      if (!config.photo) {
+        fileInputRef.current?.click();
+      }
+    };
+
+    // Handle File Drop on Canvas
+    const handleDrop = (e: React.DragEvent) => {
+      e.preventDefault();
+      if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+        processFile(e.dataTransfer.files[0]);
+      }
+    };
+
+    // Touch & Mouse Drag Panning
+    const handleStart = (clientX: number, clientY: number) => {
+      if (!config.photo) return;
+      setIsDragging(true);
+      dragStartRef.current = {
+        x: clientX,
+        y: clientY,
+        initialPanX: config.panX,
+        initialPanY: config.panY,
+      };
+    };
+
+    const handleMove = (clientX: number, clientY: number) => {
+      if (!isDragging) return;
+      const deltaX = clientX - dragStartRef.current.x;
+      const deltaY = clientY - dragStartRef.current.y;
+
+      const newPanX = Math.min(Math.max(dragStartRef.current.initialPanX + deltaX, -250), 250);
+      const newPanY = Math.min(Math.max(dragStartRef.current.initialPanY + deltaY, -250), 250);
+
+      onPanChange(newPanX, newPanY);
+    };
+
+    const handleEnd = () => {
+      setIsDragging(false);
+      pinchStartDistRef.current = null;
+    };
+
+    // Touch Pinch-To-Zoom Handler
+    const handleTouchStart = (e: React.TouchEvent) => {
+      if (e.touches.length === 1 && e.touches[0]) {
+        handleStart(e.touches[0].clientX, e.touches[0].clientY);
+      } else if (e.touches.length === 2 && e.touches[0] && e.touches[1]) {
+        setIsDragging(false);
+        const dist = Math.hypot(
+          e.touches[0].clientX - e.touches[1].clientX,
+          e.touches[0].clientY - e.touches[1].clientY
+        );
+        pinchStartDistRef.current = dist;
+        initialZoomRef.current = config.zoom;
+      }
+    };
+
+    const handleTouchMove = (e: React.TouchEvent) => {
+      if (e.touches.length === 1 && e.touches[0] && isDragging) {
+        handleMove(e.touches[0].clientX, e.touches[0].clientY);
+      } else if (e.touches.length === 2 && e.touches[0] && e.touches[1] && pinchStartDistRef.current) {
+        const currentDist = Math.hypot(
+          e.touches[0].clientX - e.touches[1].clientX,
+          e.touches[0].clientY - e.touches[1].clientY
+        );
+        const factor = currentDist / pinchStartDistRef.current;
+        const newZoom = Math.min(Math.max(initialZoomRef.current * factor, 0.5), 2.5);
+        onZoomChange(parseFloat(newZoom.toFixed(2)));
+      }
+    };
+
+    // Mouse Wheel Scroll Zooming
+    const handleWheel = (e: React.WheelEvent) => {
+      if (!config.photo) return;
+      const delta = e.deltaY > 0 ? -0.05 : 0.05;
+      const newZoom = Math.min(Math.max(config.zoom + delta, 0.5), 2.5);
+      onZoomChange(parseFloat(newZoom.toFixed(2)));
+    };
+
+    return (
+      <div
+        onDragOver={(e) => e.preventDefault()}
+        onDrop={handleDrop}
+        className="w-full card-hh-emerald p-3 sm:p-4 rounded-2xl border border-[#148048] flex flex-col items-center justify-center relative overflow-hidden shadow-2xl group border-shimmer"
+      >
+        {/* Hidden File Input */}
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept="image/png, image/jpeg, image/webp, image/heic"
+          className="hidden"
+          onChange={(e) => {
+            if (e.target.files && e.target.files[0]) {
+              processFile(e.target.files[0]);
+            }
+          }}
+        />
+
+        {/* Top Floating Header Bar (Removed Upload Photo Button as requested) */}
+        <div className="w-full flex items-center justify-between mb-3 px-1">
+          <div className="font-mono-tech text-[10px] sm:text-xs text-[#ffe500] bg-[#042616] px-3 py-1 rounded-full border border-[#148048] uppercase tracking-wider flex items-center gap-1.5 shadow-md">
+            <span className="w-2 h-2 rounded-full bg-[#ff007a] animate-ping" />
+            4:5 X Post Canvas (1080×1350)
+          </div>
+        </div>
+
+        {/* Fast Downscaling / Loading Overlay */}
+        {loading && (
+          <div className="absolute inset-0 bg-[#042616]/92 backdrop-blur-md z-20 flex flex-col items-center justify-center">
+            <Loader2 className="w-10 h-10 text-[#ffe500] animate-spin mb-3" />
+            <p className="font-mono-tech text-xs text-[#ffe500] uppercase font-bold tracking-wider">
+              Compressing &amp; Rendering (under 1s)...
+            </p>
+          </div>
+        )}
+
+        {/* Interactive 4:5 Canvas Container */}
+        <div className="relative w-full flex items-center justify-center">
+          {!config.photo && (
+            <div
+              onClick={() => fileInputRef.current?.click()}
+              className="absolute inset-0 bg-[#042616]/40 backdrop-blur-xs rounded-xl flex flex-col items-center justify-center cursor-pointer border-2 border-dashed border-[#ffe500]/70 hover:border-[#ffe500] transition group-hover:scale-[0.99] z-10 p-4 text-center"
+            >
+              <div className="w-14 h-14 rounded-full bg-[#ffe500] text-[#042616] flex items-center justify-center mb-3 shadow-lg group-hover:scale-110 transition animate-bounce">
+                <Upload className="w-7 h-7" />
+              </div>
+              <p className="font-mono-tech text-sm sm:text-base text-[#ffe500] font-extrabold uppercase drop-shadow-md">
+                Tap Here to Upload Photo Directly
+              </p>
+              <p className="font-mono-tech text-[11px] text-[#ffffff] font-semibold mt-1 max-w-xs drop-shadow-md">
+                Supports selfies, group photos, landscape, square &amp; 6000x4000 phone camera shots
+              </p>
+            </div>
+          )}
+
+          {/* 4:5 Canvas Element */}
+          <canvas
+            ref={canvasRef}
+            onClick={handleCanvasClick}
+            onMouseDown={(e) => handleStart(e.clientX, e.clientY)}
+            onMouseMove={(e) => handleMove(e.clientX, e.clientY)}
+            onMouseUp={handleEnd}
+            onMouseLeave={handleEnd}
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleEnd}
+            onWheel={handleWheel}
+            className={`w-full h-auto max-w-full sm:max-w-md rounded-xl shadow-2xl border border-[#ffe500]/30 object-contain bg-[#042616] transition-transform duration-150 ${
+              isDragging
+                ? 'cursor-grabbing scale-[0.995]'
+                : config.photo
+                ? 'cursor-grab'
+                : 'cursor-pointer'
+            }`}
+          />
+        </div>
+
+        {/* Touch & Zoom Instructions */}
+        <div className="mt-3 flex flex-wrap items-center justify-center gap-3 text-[10px] sm:text-[11px] font-mono-tech text-[#e5c200]">
+          <span className="flex items-center gap-1">
+            <Move className="w-3 h-3 text-[#ff007a]" /> Drag to Pan
+          </span>
+          <span className="flex items-center gap-1">
+            <ZoomIn className="w-3 h-3 text-[#ffe500]" /> Pinch / Scroll to Zoom
+          </span>
+          <span className="flex items-center gap-1 text-[#ff007a]">
+            <Sparkles className="w-3 h-3" /> Auto-Fits Any Photo Ratio
+          </span>
+        </div>
+      </div>
+    );
+  }
+);
+
+CanvasPreview.displayName = 'CanvasPreview';
+
+export default CanvasPreview;
