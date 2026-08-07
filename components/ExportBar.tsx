@@ -99,7 +99,8 @@ export default function ExportBar({ getCanvas, format, hasPhoto = false, onTrigg
     setErrorMsg(null);
 
     try {
-      const rawText = `🌴 Hacker mode: ON.\n\nJust claimed my official Hacker House Goa 2026 Builder Badge! 🚀\n\ngit checkout goa-2026\ngit commit -m "Ready to build."\ngit push origin hacker-house 🚀\n\nNow it's time to build fast, break less, ship more, and maybe survive on coffee & Feni. 😄\n\nCan't wait to build with amazing hackers and builders from around the world. See you in Goa, Oct 28–31!\n\n#FrameInGoa #HHGOA2026`;
+      // rawText = `🌴 Hacker mode: ON.\n\nJust claimed my official Hacker House Goa 2026 Builder Badge! 🚀\n\ngit checkout goa-2026\ngit commit -m "Ready to build."\ngit push origin hacker-house 🚀\n\nNow it's time to build fast, break less, ship more, and maybe survive on coffee & Feni. 😄\n\nCan't wait to build with amazing hackers and builders from around the world. See you in Goa, Oct 28–31!\n\n#FrameInGoa #HHGOA2026`;
+      const rawText = `🌴 Hacker mode: ON!\n\nCoffee ☕ + Code 💻 + Goa 🌴\n\nJust created my HH Goa 2026 Builder Badge 🚀\n\nCreate yours 👇\nhttps://hhgoa-frame-studio.vercel.app/\n\n#FrameInGoa #HHGOA2026`;
 
       // 1. Try Web Share API (native share on mobile/supported desktop)
       const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, 'image/png'));
@@ -151,8 +152,8 @@ export default function ExportBar({ getCanvas, format, hasPhoto = false, onTrigg
     setErrorMsg(null);
 
     try {
-      const rawText = `🌴 Hacker mode: ON.\n\nJust claimed my official Hacker House Goa 2026 Builder Badge! 🚀\n\ngit checkout goa-2026\ngit commit -m "Ready to build."\ngit push origin hacker-house 🚀\n\nNow it's time to build fast, break less, ship more, and maybe survive on coffee & Feni. 😄\n\nCan't wait to build with amazing hackers and builders from around the world. See you in Goa, Oct 28–31!\n\n#FrameInGoa #HHGOA2026`;
-
+      //const rawText = `🌴 Hacker mode: ON.\n\nJust claimed my official Hacker House Goa 2026 Builder Badge! 🚀\n\ngit checkout goa-2026\ngit commit -m "Ready to build."\ngit push origin hacker-house 🚀\n\nNow it's time to build fast, break less, ship more, and maybe survive on coffee & Feni. 😄\n\nCan't wait to build with amazing hackers and builders from around the world. See you in Goa, Oct 28–31!\n\n#FrameInGoa #HHGOA2026`;
+      const rawText = `🌴 Hacker mode: ON!\n\nCoffee ☕ + Code 💻 + Goa 🌴\n\nJust created my HH Goa 2026 Builder Badge 🚀\n\nCreate yours 👇\nhttps://hhgoa-frame-studio.vercel.app/\n\n#FrameInGoa #HHGOA2026`;
       // 1. Try Web Share API (native share on mobile/supported desktop)
       const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, 'image/png'));
       if (blob) {
@@ -278,8 +279,8 @@ export default function ExportBar({ getCanvas, format, hasPhoto = false, onTrigg
           {sharingLinkedIn
             ? 'Preparing LinkedIn...'
             : sharedPlatform === 'linkedin'
-            ? 'Opened LinkedIn!'
-            : 'Share LinkedIn'}
+              ? 'Opened LinkedIn!'
+              : 'Share LinkedIn'}
         </button>
       </div>
     </div>
