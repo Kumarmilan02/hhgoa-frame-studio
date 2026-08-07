@@ -107,12 +107,12 @@ const CanvasPreview = forwardRef<CanvasPreviewRef, CanvasPreviewProps>(
         if (!ctx) return;
 
         const targetW = config.format === 'formatA' ? 1080 : 1200;
-        const targetH = config.format === 'formatA' ? 1080 : 675;
+        const targetH = config.format === 'formatA' ? 1920 : 675;
         if (canvas.width !== targetW) canvas.width = targetW;
         if (canvas.height !== targetH) canvas.height = targetH;
 
         const liveConfig = { ...config, liveVideoElement: videoRef.current };
-        if (config.format === 'formatA') drawFormatA(ctx, 1080, 1080, liveConfig);
+        if (config.format === 'formatA') drawFormatA(ctx, 1080, 1920, liveConfig);
         else drawFormatB(ctx, 1200, 675, liveConfig);
         animId = requestAnimationFrame(render);
       };
@@ -128,10 +128,10 @@ const CanvasPreview = forwardRef<CanvasPreviewRef, CanvasPreviewProps>(
         const ctx = canvas.getContext('2d');
         if (!ctx) return;
         const targetW = config.format === 'formatA' ? 1080 : 1200;
-        const targetH = config.format === 'formatA' ? 1080 : 675;
+        const targetH = config.format === 'formatA' ? 1920 : 675;
         canvas.width = targetW;
         canvas.height = targetH;
-        if (config.format === 'formatA') drawFormatA(ctx, 1080, 1080, config);
+        if (config.format === 'formatA') drawFormatA(ctx, 1080, 1920, config);
         else drawFormatB(ctx, 1200, 675, config);
         setTimeout(() => {
           const dataUrl = canvas.toDataURL('image/png', 1.0);

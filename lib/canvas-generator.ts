@@ -82,125 +82,153 @@ const STYLE_PALETTES: Record<StylePreset, { bg: string; bg2: string; accent: str
   },
 };
 
-/**
- * Main Format A (PFP Overlay Frame) Renderer
- */
 export async function drawFormatA(
   ctx: CanvasRenderingContext2D,
   width: number,
   height: number,
   config: GeneratorConfig
 ) {
-  const { photo, zoom, panX, panY, stylePreset = 'emerald' } = config;
+  const { photo, name, role, builderTitle, superpower, zoom, panX, panY, stylePreset = 'emerald' } = config;
   const palette = STYLE_PALETTES[stylePreset] || STYLE_PALETTES.emerald;
 
   // Background
-  ctx.fillStyle = palette.bg;
+  const bgGradient = ctx.createLinearGradient(0, 0, width, height);
+  bgGradient.addColorStop(0, palette.bg2);
+  bgGradient.addColorStop(1, palette.bg);
+  ctx.fillStyle = bgGradient;
   ctx.fillRect(0, 0, width, height);
 
-  // Photo
+  // Outer Border
+  ctx.strokeStyle = palette.accent;
+  ctx.lineWidth = 12;
+  ctx.strokeRect(24, 24, width - 48, height - 48);
+
+  // Header Banner
+  ctx.fillStyle = palette.accent;
+  ctx.fillRect(24, 24, width - 48, 80);
+
+  ctx.fillStyle = palette.bg;
+  ctx.font = '900 40px "Space Mono", monospace';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText('HACKER HOUSE GOA', width / 2, 64);
+
+  // Photo Box (Square, top half)
+  const photoSize = 800;
+  const photoX = (width - photoSize) / 2;
+  const photoY = 160;
+
+  ctx.save();
+  ctx.beginPath();
+  ctx.rect(photoX, photoY, photoSize, photoSize);
+  ctx.clip();
+
   if (photo) {
     const imgAspect = photo.width / photo.height;
-    const cropAspect = width / height;
-
-    let drawW: number;
-    let drawH: number;
-
-    if (imgAspect > cropAspect) {
-      drawH = height * zoom;
-      drawW = height * imgAspect * zoom;
+    let drawW, drawH;
+    if (imgAspect > 1) {
+      drawH = photoSize * zoom;
+      drawW = photoSize * imgAspect * zoom;
     } else {
-      drawW = width * zoom;
-      drawH = (width / imgAspect) * zoom;
+      drawW = photoSize * zoom;
+      drawH = (photoSize / imgAspect) * zoom;
     }
-
-    const imgX = (width - drawW) / 2 + panX;
-    const imgY = (height - drawH) / 2 + panY;
-
+    const imgX = photoX + (photoSize - drawW) / 2 + panX;
+    const imgY = photoY + (photoSize - drawH) / 2 + panY;
     ctx.drawImage(photo, imgX, imgY, drawW, drawH);
   } else if (config.liveVideoElement && config.liveVideoElement.readyState >= 2) {
     const video = config.liveVideoElement;
     const sourceW = video.videoWidth || 1280;
     const sourceH = video.videoHeight || 720;
     const imgAspect = sourceW / sourceH;
-    const cropAspect = width / height;
-
-    let drawW: number;
-    let drawH: number;
-
-    if (imgAspect > cropAspect) {
-      drawH = height * zoom;
-      drawW = height * imgAspect * zoom;
+    let drawW, drawH;
+    if (imgAspect > 1) {
+      drawH = photoSize * zoom;
+      drawW = photoSize * imgAspect * zoom;
     } else {
-      drawW = width * zoom;
-      drawH = (width / imgAspect) * zoom;
+      drawW = photoSize * zoom;
+      drawH = (photoSize / imgAspect) * zoom;
     }
-
-    const imgX = (width - drawW) / 2 + panX;
-    const imgY = (height - drawH) / 2 + panY;
-
-    ctx.save();
+    const imgX = photoX + (photoSize - drawW) / 2 + panX;
+    const imgY = photoY + (photoSize - drawH) / 2 + panY;
     ctx.translate(imgX + drawW, imgY);
     ctx.scale(-1, 1);
     ctx.drawImage(video, 0, 0, drawW, drawH);
-    ctx.restore();
-  } else if (goaSunsetImg) {
-    const bgAspect = goaSunsetImg.width / goaSunsetImg.height;
-    const cropAspect = width / height;
-    let bgW, bgH;
-    if (bgAspect > cropAspect) {
-      bgH = height; bgW = height * bgAspect;
-    } else {
-      bgW = width; bgH = width / bgAspect;
-    }
-    ctx.drawImage(goaSunsetImg, (width - bgW) / 2, (height - bgH) / 2, bgW, bgH);
   }
+  ctx.restore();
 
-  // Overlay Vignette
-  const grad = ctx.createRadialGradient(width/2, height/2, width*0.3, width/2, height/2, width*0.7);
-  grad.addColorStop(0, 'rgba(0,0,0,0)');
-  grad.addColorStop(1, 'rgba(0,0,0,0.6)');
-  ctx.fillStyle = grad;
-  ctx.fillRect(0, 0, width, height);
-
-  // Border (Neon Minimalist)
-  const borderWidth = 24;
+  // Photo border
   ctx.strokeStyle = palette.accent;
-  ctx.lineWidth = borderWidth;
-  ctx.strokeRect(borderWidth/2, borderWidth/2, width - borderWidth, height - borderWidth);
+  ctx.lineWidth = 6;
+  ctx.strokeRect(photoX, photoY, photoSize, photoSize);
 
-  // Small inner border
-  ctx.strokeStyle = palette.white;
-  ctx.lineWidth = 2;
-  ctx.strokeRect(borderWidth + 8, borderWidth + 8, width - (borderWidth*2 + 16), height - (borderWidth*2 + 16));
+  // Content Area
+  let currY = photoY + photoSize + 60;
 
-  // Bottom HH Goa Badge
-  const badgeW = 400;
-  const badgeH = 80;
-  const badgeX = (width - badgeW) / 2;
-  const badgeY = height - borderWidth - badgeH - 20;
-
-  ctx.fillStyle = palette.bg;
-  ctx.beginPath();
-  ctx.roundRect(badgeX, badgeY, badgeW, badgeH, 40);
-  ctx.fill();
-
-  ctx.strokeStyle = palette.accent;
-  ctx.lineWidth = 4;
-  ctx.stroke();
+  // Name
+  const displayName = name ? name.toUpperCase() : 'HACKER';
+  ctx.fillStyle = palette.white;
+  ctx.font = '900 90px "Teko", sans-serif';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'top';
+  ctx.fillText(displayName, width / 2, currY);
 
   ctx.fillStyle = palette.accent;
-  ctx.font = '700 28px "Space Mono", monospace';
-  ctx.textAlign = 'center';
-  ctx.textBaseline = 'middle';
-  ctx.fillText('🌴 HH GOA 2026', width/2, badgeY + badgeH/2 + 2);
+  ctx.fillRect(width / 2 - 150, currY + 110, 300, 8);
+  currY += 150;
+
+  // Role
+  ctx.fillStyle = palette.secondary;
+  ctx.font = '700 24px "Space Mono", monospace';
+  ctx.fillText('WEAPON OF CHOICE', width / 2, currY);
+  
+  ctx.fillStyle = palette.white;
+  ctx.font = '600 45px "Barlow Condensed", sans-serif';
+  ctx.fillText((role || 'UNDEFINED').toUpperCase(), width / 2, currY + 40);
+  currY += 110;
+
+  // Title
+  ctx.fillStyle = palette.secondary;
+  ctx.font = '700 24px "Space Mono", monospace';
+  ctx.fillText('TITLE', width / 2, currY);
+  
+  ctx.fillStyle = palette.accent;
+  ctx.font = '600 45px "Barlow Condensed", sans-serif';
+  ctx.fillText((builderTitle || 'MYSTERY DEV').toUpperCase(), width / 2, currY + 40);
+  currY += 110;
+
+  // Superpower
+  ctx.fillStyle = palette.secondary;
+  ctx.font = '700 24px "Space Mono", monospace';
+  ctx.fillText('SUPERPOWER', width / 2, currY);
+  
+  ctx.textAlign = 'left';
+  ctx.fillStyle = palette.white;
+  ctx.font = '600 32px "Barlow Condensed", sans-serif';
+  const superX = 100;
+  drawWrappedSuperpowerText(ctx, superpower || 'Unknown.', superX, currY + 40, width - 200, palette);
+
+  // QR Code
+  try {
+    const targetQrUrl = config.qrLink || 'https://hhgoa.com';
+    const qrCanvas = await getEventQRCodeCanvas(targetQrUrl);
+    const qrSize = 200;
+    const qrX = width / 2 - qrSize / 2;
+    const qrY = height - 80 - qrSize;
+
+    ctx.fillStyle = palette.white;
+    ctx.fillRect(qrX - 16, qrY - 16, qrSize + 32, qrSize + 32);
+    ctx.drawImage(qrCanvas, qrX, qrY, qrSize, qrSize);
+  } catch (e) {
+    console.error('QR error', e);
+  }
 
   // Draw Stickers
   if (config.stickers && config.stickers.length > 0 && config.stickerPositions) {
     config.stickers.forEach((st) => {
       const pos = config.stickerPositions?.[st] || { x: width / 2, y: height / 2 };
       ctx.save();
-      ctx.font = '85px system-ui';
+      ctx.font = '100px system-ui';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
       ctx.shadowColor = 'rgba(0, 0, 0, 0.6)';
