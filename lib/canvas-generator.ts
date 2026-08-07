@@ -172,28 +172,6 @@ export async function drawFormatA(
   ctx.roundRect(cropX, cropY, cropSizeW, cropSizeH, 32);
   ctx.stroke();
 
-  // Tropical Sticker Overlays (Format A)
-  if (config.stickers && config.stickers.length > 0) {
-    ctx.save();
-    ctx.font = '52px sans-serif';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    config.stickers.forEach((st, idx) => {
-      const customPos = config.stickerPositions?.[st];
-      const sx = customPos ? customPos.x : cropX + 130 + (idx % 3) * 120;
-      const sy = customPos ? customPos.y : cropY + 120 + Math.floor(idx / 3) * 120;
-      ctx.fillStyle = 'rgba(4, 38, 22, 0.85)';
-      ctx.beginPath();
-      ctx.arc(sx, sy, 36, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.strokeStyle = palette.accent;
-      ctx.lineWidth = 2.5;
-      ctx.stroke();
-      ctx.fillText(st, sx, sy + 3);
-    });
-    ctx.restore();
-  }
-
   // 2. Decorative Top Branding Header (Removed DEVELOPED BY CODINGKOALAS!)
   ctx.save();
   ctx.fillStyle = palette.accent;
@@ -486,28 +464,6 @@ export async function drawFormatB(
 
   // Circular GOA 2026 VERIFIED BUILDER Stamp Logo
   drawExactGoaVerifiedSeal(ctx, photoX + 95, photoY + photoH - 70, 85, palette);
-
-  // Tropical Sticker Overlays (Format B)
-  if (config.stickers && config.stickers.length > 0) {
-    ctx.save();
-    ctx.font = '42px sans-serif';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    config.stickers.forEach((st, idx) => {
-      const customPos = config.stickerPositions?.[st];
-      const sx = customPos ? customPos.x : photoX + 75 + (idx % 3) * 95;
-      const sy = customPos ? customPos.y : photoY + 75 + Math.floor(idx / 3) * 95;
-      ctx.fillStyle = 'rgba(4, 38, 22, 0.85)';
-      ctx.beginPath();
-      ctx.arc(sx, sy, 30, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.strokeStyle = palette.accent;
-      ctx.lineWidth = 2;
-      ctx.stroke();
-      ctx.fillText(st, sx, sy + 2);
-    });
-    ctx.restore();
-  }
 
   // -------------------------------------------------------------
   // 3. RIGHT COLUMN — BUILDER INFO STACKED (Balanced 475px Width!)

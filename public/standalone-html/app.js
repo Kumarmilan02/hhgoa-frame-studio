@@ -56,7 +56,6 @@ let panXVal = 0;
 let panYVal = 0;
 let activePreset = 'emerald';
 let qrLinkVal = '';
-let activeStickers = [];
 
 const canvas = document.getElementById('previewCanvas');
 const ctx = canvas.getContext('2d');
@@ -103,16 +102,6 @@ fileInput.addEventListener('change', (e) => {
 canvas.addEventListener('click', () => {
   fileInput.click();
 });
-
-// Toggle Tropical Stickers
-function toggleSticker(st) {
-  if (activeStickers.includes(st)) {
-    activeStickers = activeStickers.filter(s => s !== st);
-  } else {
-    activeStickers.push(st);
-  }
-  renderCanvas();
-}
 
 // Render Function
 function renderCanvas() {
@@ -184,27 +173,6 @@ function renderCanvas() {
     ctx.beginPath();
     ctx.roundRect(cropX, cropY, cropW, cropH, 32);
     ctx.stroke();
-
-    // Tropical Sticker Overlays (Format A)
-    if (activeStickers.length > 0) {
-      ctx.save();
-      ctx.font = '52px sans-serif';
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      activeStickers.forEach((st, idx) => {
-        const sx = cropX + 130 + (idx % 3) * 120;
-        const sy = cropY + 120 + Math.floor(idx / 3) * 120;
-        ctx.fillStyle = 'rgba(4, 38, 22, 0.85)';
-        ctx.beginPath();
-        ctx.arc(sx, sy, 36, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.strokeStyle = pal.accent;
-        ctx.lineWidth = 2.5;
-        ctx.stroke();
-        ctx.fillText(st, sx, sy + 3);
-      });
-      ctx.restore();
-    }
 
     // Dark gradient backdrop for hero title banner
     ctx.save();
@@ -362,27 +330,6 @@ function renderCanvas() {
 
     // Stamp Badge (Bottom-Left)
     drawStampSeal(ctx, photoX + 95, photoY + photoH - 70, 85, pal);
-
-    // Tropical Sticker Overlays (Format B)
-    if (activeStickers.length > 0) {
-      ctx.save();
-      ctx.font = '42px sans-serif';
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      activeStickers.forEach((st, idx) => {
-        const sx = photoX + 75 + (idx % 3) * 95;
-        const sy = photoY + 75 + Math.floor(idx / 3) * 95;
-        ctx.fillStyle = 'rgba(4, 38, 22, 0.85)';
-        ctx.beginPath();
-        ctx.arc(sx, sy, 30, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.strokeStyle = pal.accent;
-        ctx.lineWidth = 2;
-        ctx.stroke();
-        ctx.fillText(st, sx, sy + 2);
-      });
-      ctx.restore();
-    }
 
     // Right Column Info Stacked (475px width!)
     const rightX = 560;
