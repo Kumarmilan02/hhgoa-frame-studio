@@ -99,10 +99,9 @@ export default function ExportBar({ getCanvas, format, hasPhoto = false, onTrigg
       }
 
       // 4. Launch X (Twitter) Intent DIRECTLY - No intermediate share options!
-      const tweetText = encodeURIComponent(
-        `Excited for Hacker House Goa 2026! 🌴 Here is my official builder graphic! 👇\n\n#FrameInGoa #HHGOA2026`
-      );
+      const rawText = `🌴 Hacker mode: ON.\n\nJust claimed my official Hacker House Goa 2026 Builder Badge! 🚀\n\nBuilder Badge ✅\nLaptop ✅\nCoffee ✅\nGoa... Loading 🌴\n\ngit checkout goa-2026\ngit commit -m "Ready to build."\ngit push origin hacker-house 🚀\n\nNow it's time to build fast, break less, ship more, and maybe survive on coffee & Feni. 😄\n\nCan't wait to build with amazing hackers and builders from around the world. See you in Goa, Oct 28–31!\n\n#FrameInGoa #HHGOA2026`;
 
+      const tweetText = encodeURIComponent(rawText);
       const intentUrl = `https://x.com/intent/post?text=${tweetText}&url=${encodeURIComponent(shareUrl)}`;
       window.open(intentUrl, '_blank', 'noopener,noreferrer');
 
@@ -124,12 +123,14 @@ export default function ExportBar({ getCanvas, format, hasPhoto = false, onTrigg
     const canvas = getCanvas();
     if (!canvas) return;
 
+    const rawText = `🌴 Hacker mode: ON.\n\nJust claimed my official Hacker House Goa 2026 Builder Badge! 🚀\n\nBuilder Badge ✅\nLaptop ✅\nCoffee ✅\nGoa... Loading 🌴\n\ngit checkout goa-2026\ngit commit -m "Ready to build."\ngit push origin hacker-house 🚀\n\nNow it's time to build fast, break less, ship more, and maybe survive on coffee & Feni. 😄\n\nCan't wait to build with amazing hackers and builders from around the world. See you in Goa, Oct 28–31!\n\n#FrameInGoa #HHGOA2026`;
+
     try {
       const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, 'image/png'));
       if (blob && navigator.canShare && navigator.canShare({ files: [new File([blob], 'badge.png', { type: 'image/png' })] })) {
         await navigator.share({
           title: 'Hacker House Goa 2026 Builder Graphic',
-          text: 'Excited for Hacker House Goa 2026! 🌴 #FrameInGoa #HHGOA2026',
+          text: rawText,
           files: [new File([blob], 'badge.png', { type: 'image/png' })],
         });
         return;
@@ -140,7 +141,7 @@ export default function ExportBar({ getCanvas, format, hasPhoto = false, onTrigg
 
     // Fallback: Trigger download & open LinkedIn Share
     handleDownload();
-    const text = encodeURIComponent('Excited for Hacker House Goa 2026! 🌴 #FrameInGoa #HHGOA2026');
+    const text = encodeURIComponent(rawText);
     const shareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent('https://hhgoa.com')}&text=${text}`;
     window.open(shareUrl, '_blank', 'noopener,noreferrer');
   };
