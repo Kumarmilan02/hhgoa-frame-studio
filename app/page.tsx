@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useMemo } from 'react';
 import Header from '@/components/Header';
 import FormatTabs from '@/components/FormatTabs';
 import CanvasPreview, { CanvasPreviewRef } from '@/components/CanvasPreview';
@@ -51,7 +51,7 @@ export default function Home() {
     }));
   };
 
-  const generatorConfig: GeneratorConfig = {
+  const generatorConfig = useMemo<GeneratorConfig>(() => ({
     format,
     photo,
     name,
@@ -66,7 +66,7 @@ export default function Home() {
     qrLink,
     stickers,
     stickerPositions,
-  };
+  }), [format, photo, name, role, builderTitle, superpower, codingMood, zoom, panX, panY, stylePreset, qrLink, stickers, stickerPositions]);
 
   const handlePhotoLoaded = (img: HTMLImageElement) => {
     setPhoto(img);
