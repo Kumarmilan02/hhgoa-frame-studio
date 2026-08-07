@@ -26,7 +26,7 @@ function Band({ badgeTextureUrl, format, maxSpeed = 50, minSpeed = 10 }: { badge
 
   const badgeTexture = useTexture(badgeTextureUrl || 'https://assets.vercel.com/image/upload/contentful/image/e5382hct74si/SOT1hmCesOHxEYxL7vkoZ/c57b29c85912047c414311723320c16b/band.jpg')
   const { nodes, materials } = useGLTF('https://assets.vercel.com/image/upload/contentful/image/e5382hct74si/5huRVDzcoDwnbgrKUo1Lzs/53b6dd7d6b4ffcdbd338fa60265949e1/tag.glb') as any
-  const texture = useTexture('https://assets.vercel.com/image/upload/contentful/image/e5382hct74si/SOT1hmCesOHxEYxL7vkoZ/c57b29c85912047c414311723320c16b/band.jpg')
+  const texture = useTexture('images/Hacker-house.png')
   const { width, height } = useThree((state) => state.size)
   const [curve] = useState(() => new THREE.CatmullRomCurve3([new THREE.Vector3(), new THREE.Vector3(), new THREE.Vector3(), new THREE.Vector3()]))
   const [dragged, drag] = useState<any>(false)
@@ -36,19 +36,20 @@ function Band({ badgeTextureUrl, format, maxSpeed = 50, minSpeed = 10 }: { badge
   useEffect(() => {
     badgeTexture.colorSpace = THREE.SRGBColorSpace
     badgeTexture.matrixAutoUpdate = false
+    badgeTexture.flipY = false
 
     if (format === 'formatA') {
-      // Portrait format: map upright
+      // Portrait format: map upright exactly
       badgeTexture.matrix.set(
-        0, -1, 1,
-        1 / 0.7572, 0, 0,
+        0, -1 / 0.7572, 1,
+        -1, 0, 1,
         0, 0, 1
       )
     } else {
-      // Landscape format: map sideways (90 deg rotated)
+      // Landscape format: map sideways exactly
       badgeTexture.matrix.set(
-        1 / 0.7572, 0, 0,
-        0, -1, 1,
+        1, 0, 0,
+        0, 1 / 0.7572, 0,
         0, 0, 1
       )
     }
