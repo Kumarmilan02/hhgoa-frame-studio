@@ -121,27 +121,56 @@ export default function ExportBar({ getCanvas, format, hasPhoto = false, onTrigg
     const canvas = getCanvas();
     if (!canvas) return;
 
-    const rawText = `🌴 Hacker mode: ON.\n\nJust claimed my official Hacker House Goa 2026 Builder Badge! 🚀\n\ngit checkout goa-2026\ngit commit -m "Ready to build."\ngit push origin hacker-house 🚀\n\nNow it's time to build fast, break less, ship more, and maybe survive on coffee & Feni. 😄\n\nCan't wait to build with amazing hackers and builders from around the world. See you in Goa, Oct 28–31!\n\n#FrameInGoa #HHGOA2026`;
-
+    setSharing(true);
     try {
-      const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, 'image/png'));
-      if (blob && navigator.canShare && navigator.canShare({ files: [new File([blob], 'badge.png', { type: 'image/png' })] })) {
-        await navigator.share({
-          title: 'Hacker House Goa 2026 Builder Graphic',
-          text: rawText,
-          files: [new File([blob], 'badge.png', { type: 'image/png' })],
-        });
-        return;
-      }
-    } catch (e) {
-      console.warn('LinkedIn Web Share fallback', e);
-    }
+      const rawText = `🌴 Hacker mode: ON.\n\nJust claimed my official Hacker House Goa 2026 Builder Badge! 🚀\n\ngit checkout goa-2026\ngit commit -m "Ready to build."\ngit push origin hacker-house 🚀\n\nNow it's time to build fast, break less, ship more, and maybe survive on coffee & Feni. 😄\n\nCan't wait to build with amazing hackers and builders from around the world. See you in Goa, Oct 28–31!\n\n#FrameInGoa #HHGOA2026`;
 
-    // Fallback: Trigger download & open LinkedIn Share
-    handleDownload();
-    const text = encodeURIComponent(rawText);
-    const shareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent('https://hhgoa.com')}&text=${text}`;
-    window.open(shareUrl, '_blank', 'noopener,noreferrer');
+      // 1. Copy Image & Text to Clipboard & Trigger Download Backup
+      const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, 'image/png'));
+      if (blob) {
+        try {
+          await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
+        } catch (e) {
+          try {
+            await navigator.clipboard.writeText(rawText);
+          } catch (clipErr) {
+            console.warn('Clipboard write error', clipErr);
+          }
+        }
+        handleDownload();
+      }
+
+      // 2. Post to /api/share to get Open Graph preview URL for LinkedIn
+      const dataUrl = canvas.toDataURL('image/png', 0.95);
+      let shareUrl = window.location.origin;
+      try {
+        const res = await fetch('/api/share', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ image: dataUrl }),
+        });
+
+        if (res.ok) {
+          const data = await res.json();
+          if (data.shareId) {
+            shareUrl = `${window.location.origin}/share/${data.shareId}`;
+          }
+        }
+      } catch (e) {
+        console.warn('Share API error:', e);
+      }
+
+      // 3. Launch LinkedIn Share DIRECTLY
+      const linkedInUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}`;
+      window.open(linkedInUrl, '_blank', 'noopener,noreferrer');
+
+      setShared(true);
+      setTimeout(() => setShared(false), 4500);
+    } catch (err) {
+      console.error('LinkedIn share error:', err);
+    } finally {
+      setSharing(false);
+    }
   };
 
   return (
