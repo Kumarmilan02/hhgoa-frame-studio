@@ -2,7 +2,7 @@
 
 import React from 'react';
 
-export default function MovingGoaScooty() {
+function MovingGoaScooty() {
   return (
     <div className="w-full relative h-20 sm:h-24 bg-[#181c20] border-t-2 border-b-2 border-white/90 overflow-hidden select-none z-10 my-3 shadow-lg">
       {/* Top Road Curb (Red & White Coastal Curb) */}
@@ -49,3 +49,5 @@ export default function MovingGoaScooty() {
     </div>
   );
 }
+
+export default React.memo(MovingGoaScooty);

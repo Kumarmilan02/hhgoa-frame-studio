@@ -15,7 +15,7 @@ interface GoaElement {
 
 const GOA_EMOJIS = ['🥥', '🌴', '🕶️', '🍹', '🌊', '🐚', '🏄', '☀️', '🍺', '🎸', '🪸', '🦀', '🌺', '🍍'];
 
-export default function FloatingGoaVibes() {
+function FloatingGoaVibes() {
   const [elements, setElements] = useState<GoaElement[]>([]);
 
   useEffect(() => {
@@ -59,3 +59,5 @@ export default function FloatingGoaVibes() {
     </div>
   );
 }
+
+export default React.memo(FloatingGoaVibes);
