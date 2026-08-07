@@ -17,7 +17,7 @@ declare module '@react-three/fiber' {
 }
 
 useGLTF.preload('https://assets.vercel.com/image/upload/contentful/image/e5382hct74si/5huRVDzcoDwnbgrKUo1Lzs/53b6dd7d6b4ffcdbd338fa60265949e1/tag.glb')
-useTexture.preload('/images/Hacker-house.png')
+useTexture.preload('/images/hh-green.png')
 
 function Band({ badgeTextureUrl, format, maxSpeed = 50, minSpeed = 10 }: { badgeTextureUrl: string; format: 'formatA' | 'formatB'; maxSpeed?: number; minSpeed?: number }) {
   const band = useRef<any>(null), fixed = useRef<any>(null), j1 = useRef<any>(null), j2 = useRef<any>(null), j3 = useRef<any>(null), card = useRef<any>(null) // prettier-ignore
@@ -26,7 +26,7 @@ function Band({ badgeTextureUrl, format, maxSpeed = 50, minSpeed = 10 }: { badge
 
   const badgeTexture = useTexture(badgeTextureUrl || 'https://assets.vercel.com/image/upload/contentful/image/e5382hct74si/SOT1hmCesOHxEYxL7vkoZ/c57b29c85912047c414311723320c16b/band.jpg')
   const { nodes, materials } = useGLTF('https://assets.vercel.com/image/upload/contentful/image/e5382hct74si/5huRVDzcoDwnbgrKUo1Lzs/53b6dd7d6b4ffcdbd338fa60265949e1/tag.glb') as any
-  const texture = useTexture('/images/Hacker-house.png')
+  const texture = useTexture('/images/hh-green.png')
   const frontTexture = useMemo(() => badgeTexture.clone(), [badgeTexture])
   const backTexture = useMemo(() => badgeTexture.clone(), [badgeTexture])
   const { width, height } = useThree((state) => state.size)
@@ -200,15 +200,26 @@ export default function Badge3D({
   onClose: () => void;
 }) {
   return (
-    <div className="absolute inset-0 z-40 w-full h-full bg-[#080808] touch-none">
+    <div className="absolute inset-0 z-40 w-full h-full bg-[#080808] touch-none overflow-hidden">
+      {/* Blurred Beach Bokeh Background */}
+      <div
+        className="absolute inset-0 bg-cover bg-center pointer-events-none opacity-100 scale-105"
+        style={{
+          backgroundImage: "url('/images/beach.jpg')",
+          filter: "blur(8px) brightness(1.05) contrast(1.02) saturate(1.05)"
+        }}
+      />
+      {/* Vignette Overlay */}
+      <div className="absolute inset-0 bg-gradient-to-t from-black/15 via-transparent to-black/15 pointer-events-none z-0" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(0,0,0,0)_20%,rgba(0,0,0,0.15)_100%)] pointer-events-none z-0" />
+
       <Suspense fallback={<CanvasLoader />}>
-        <Canvas camera={{ position: [0, 0, 9.4], fov: 25 }}>
+        <Canvas camera={{ position: [0, 0, 9.4], fov: 25 }} className="relative z-10">
           <ambientLight intensity={Math.PI} />
           <Physics interpolate gravity={[0, -40, 0]} timeStep={1 / 60}>
             <Band badgeTextureUrl={textureUrl} format={format} />
           </Physics>
-          <Environment background blur={0.75}>
-            <color attach="background" args={['#15151a']} />
+          <Environment blur={0.75}>
             <Lightformer intensity={2} color="white" position={[0, -1, 5]} rotation={[0, 0, Math.PI / 3]} scale={[100, 0.1, 1]} />
             <Lightformer intensity={3} color="white" position={[-1, -1, 1]} rotation={[0, 0, Math.PI / 3]} scale={[100, 0.1, 1]} />
             <Lightformer intensity={3} color="white" position={[1, 1, 1]} rotation={[0, 0, Math.PI / 3]} scale={[100, 0.1, 1]} />
