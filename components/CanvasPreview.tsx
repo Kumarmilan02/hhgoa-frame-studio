@@ -18,13 +18,16 @@ export interface CanvasPreviewRef {
 }
 
 const GOA_SLOGANS = [
-  '🌴 BRED ON CODE & COCONUT WATER',
-  '🍹 CODE BY DAY, BEACH BY NIGHT',
-  '🛵 NO BUGS ALLOWED ON THIS SCOOTY',
-  '☀️ 100% SUN-BAKED BUILDER APPROVED',
-  '🌊 SHIP IN GOA BEFORE THE TIDE COMES IN',
-  '🥥 STACK OVERFLOW, BUT MAKE IT TROPICAL',
-  '🕶️ COMPILING WITH SHADES ON',
+  "🌴 GOA CALLED... SO I STARTED HACKING.",
+  "🏖️ CTRL + ALT + GOA",
+  "🚀 SHIP IT BEFORE SUNSET",
+  "🦀 CRABS HAVE FEWER BUGS THAN MY CODE",
+  "🌊 PUSH TO PROD BEFORE THE HIGH TIDE",
+  "🤖 AI IS MY INTERN TODAY",
+  "🌅 SUNSETS, STARTUPS & SHIPMENTS",
+  "💻 MERGE CONFLICTS? NOT ON VACATION",
+  "🔥 EAT. SLEEP. HACK. GOA. REPEAT.",
+  "🏄 DEBUGGING WITH OCEAN VIEW",
 ];
 
 const CanvasPreview = forwardRef<CanvasPreviewRef, CanvasPreviewProps>(
@@ -35,6 +38,14 @@ const CanvasPreview = forwardRef<CanvasPreviewRef, CanvasPreviewProps>(
     const [isDragging, setIsDragging] = useState(false);
     const [sloganIdx, setSloganIdx] = useState(0);
     const [isCameraOpen, setIsCameraOpen] = useState(false);
+
+    useEffect(() => {
+      const interval = setInterval(() => {
+        setSloganIdx((prev) => (prev + 1) % GOA_SLOGANS.length);
+      }, 2000);
+
+      return () => clearInterval(interval);
+    }, []);
 
     // Refs for tracking mouse/touch drag and pinch-to-zoom state
     const dragStartRef = useRef<{ x: number; y: number; initialPanX: number; initialPanY: number }>({
@@ -285,13 +296,12 @@ const CanvasPreview = forwardRef<CanvasPreviewRef, CanvasPreviewProps>(
             onTouchMove={handleTouchMove}
             onTouchEnd={handleEnd}
             onWheel={handleWheel}
-            className={`w-full h-auto max-w-full sm:max-w-md rounded-xl shadow-2xl border border-[#ffe500]/30 object-contain bg-[#042616] transition-transform duration-150 ${
-              isDragging
+            className={`w-full h-auto max-w-full sm:max-w-md rounded-xl shadow-2xl border border-[#ffe500]/30 object-contain bg-[#042616] transition-transform duration-150 ${isDragging
                 ? 'cursor-grabbing scale-[0.995]'
                 : config.photo
-                ? 'cursor-grab'
-                : 'cursor-pointer'
-            }`}
+                  ? 'cursor-grab'
+                  : 'cursor-pointer'
+              }`}
           />
         </div>
 

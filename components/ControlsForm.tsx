@@ -37,23 +37,29 @@ const STYLES: { id: StylePreset; label: string; color: string }[] = [
 ];
 
 const RANDOM_TITLES = [
-  '⚡ Full-Stack Hacker',
-  '🤖 AI Architect',
-  '⛓️ Smart Contract Wizard',
-  '🛵 Scooter Rider & Shipper',
-  '🚀 10x Deployer',
-  '🔥 Zero-Bug Engine',
-  '🧠 Neural Prompt Engineer',
+  "🚀 Startup Sprinter",
+  "🤖 AI Trailblazer",
+  "⚡ Bug Slayer",
+  "🛠️ Feature Crafter",
+  "☁️ Cloud Commander",
+  "🎯 Deployment Hero",
+  "⚔️ Merge Warrior",
+  "🏆 Hackathon Legend",
+  "🏄 Beachside Builder",
+  "🥥 Coconut Compiler"
 ];
 
 const RANDOM_SUPERPOWERS = [
-  'Turning Coconut Water into Full-Stack Apps',
-  'Debugging Production at 3 AM from Beach',
-  '10x Shipping Speed & Zero Merge Conflicts',
-  'Prompting LLMs While Scooter Riding',
-  'Deploying Smart Contracts Before Sun Rises',
-  'Converting Coffee & Feni into Zero-Bug Code',
-  'Refactoring Legacy Code in Flip-Flops',
+  "☕ Converts Coffee into Production Code",
+  "🌴 Deploys Features Before the Beach Trip",
+  "🐞 Finds Bugs That Don't Exist",
+  "🤖 Makes AI Say 'You're Absolutely Right!'",
+  "🚀 Ships Features Faster Than Wi-Fi",
+  "🍕 Survives Entire Hackathons on Pizza",
+  "💻 Fixes Production with One Console Log",
+  "📦 Deploys on Friday... Fearlessly",
+  "⚡ Writes Code That Compiles on the First Try",
+  "🧠 Reads Error Messages Without Crying"
 ];
 
 export default function ControlsForm({
@@ -182,20 +188,6 @@ export default function ControlsForm({
               className="w-full bg-[#042616] text-white border border-[#148048] focus:border-[#ffe500] rounded-lg px-3 py-2 text-sm font-mono-tech outline-none transition"
             />
           </div>
-
-          {/* Dynamic QR Profile Handle Input */}
-          <div>
-            <label className="block font-mono-tech text-xs text-[#ffe500] uppercase mb-1 flex items-center gap-1.5 font-bold">
-              <QrCode className="w-3.5 h-3.5 text-[#ff007a]" /> Social Handle / QR Link
-            </label>
-            <input
-              type="text"
-              value={qrLink || ''}
-              onChange={(e) => onQrLinkChange?.(e.target.value)}
-              placeholder="e.g. @satoshi or https://t.me/satoshi"
-              className="w-full bg-[#042616] text-white border border-[#148048] focus:border-[#ffe500] rounded-lg px-3 py-2 text-sm font-mono-tech outline-none transition"
-            />
-          </div>
         </div>
       )}
 
@@ -230,8 +222,8 @@ export default function ControlsForm({
               type="button"
               onClick={() => onStyleChange(s.id)}
               className={`flex-1 py-1 rounded text-[10px] font-mono-tech uppercase font-bold border transition cursor-pointer ${stylePreset === s.id
-                  ? 'bg-[#ffe500] text-[#042616] border-[#ffe500]'
-                  : 'bg-[#042616] text-[#e5c200] border-[#148048] hover:text-white'
+                ? 'bg-[#ffe500] text-[#042616] border-[#ffe500]'
+                : 'bg-[#042616] text-[#e5c200] border-[#148048] hover:text-white'
                 }`}
             >
               {s.label.split(' ')[0]}
