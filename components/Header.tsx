@@ -6,12 +6,12 @@ export default function Header() {
       <div className="max-w-6xl mx-auto flex items-center justify-between gap-2">
         {/* Brand Left */}
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-[#ffe500] text-[#042616] font-mono-tech font-black text-xs sm:text-sm flex items-center justify-center border border-[#042616] flex-shrink-0">
-            CK
+          <div className="w-9 h-9 rounded-full bg-[#ffe500] text-[#042616] font-mono-tech font-black text-[10px] sm:text-xs flex items-center justify-center border border-[#042616] flex-shrink-0">
+            2:47
           </div>
           <div>
             <div className="font-mono-tech text-[9px] sm:text-[10px] text-[#e5c200] tracking-widest uppercase font-bold">
-              DEVELOPED BY CODINGKOALAS
+              2:47 PM STUDIO
             </div>
             <div className="font-display font-black text-sm sm:text-lg text-[#ffe500] leading-none tracking-tight">
               HH <span className="text-[#ff007a] font-sans text-xs sm:text-sm">गोवा</span> 2026
