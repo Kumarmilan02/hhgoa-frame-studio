@@ -42,7 +42,7 @@ const CanvasPreview = forwardRef<CanvasPreviewRef, CanvasPreviewProps>(
     useEffect(() => {
       const interval = setInterval(() => {
         setSloganIdx((prev) => (prev + 1) % GOA_SLOGANS.length);
-      }, 2000);
+      }, 10000);
 
       return () => clearInterval(interval);
     }, []);
@@ -297,10 +297,10 @@ const CanvasPreview = forwardRef<CanvasPreviewRef, CanvasPreviewProps>(
             onTouchEnd={handleEnd}
             onWheel={handleWheel}
             className={`w-full h-auto max-w-full sm:max-w-md rounded-xl shadow-2xl border border-[#ffe500]/30 object-contain bg-[#042616] transition-transform duration-150 ${isDragging
-                ? 'cursor-grabbing scale-[0.995]'
-                : config.photo
-                  ? 'cursor-grab'
-                  : 'cursor-pointer'
+              ? 'cursor-grabbing scale-[0.995]'
+              : config.photo
+                ? 'cursor-grab'
+                : 'cursor-pointer'
               }`}
           />
         </div>
