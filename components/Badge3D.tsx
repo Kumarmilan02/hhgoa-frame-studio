@@ -17,7 +17,7 @@ declare module '@react-three/fiber' {
 }
 
 useGLTF.preload('https://assets.vercel.com/image/upload/contentful/image/e5382hct74si/5huRVDzcoDwnbgrKUo1Lzs/53b6dd7d6b4ffcdbd338fa60265949e1/tag.glb')
-useTexture.preload('https://assets.vercel.com/image/upload/contentful/image/e5382hct74si/SOT1hmCesOHxEYxL7vkoZ/c57b29c85912047c414311723320c16b/band.jpg')
+useTexture.preload('/images/Hacker-house.png')
 
 function Band({ badgeTextureUrl, format, maxSpeed = 50, minSpeed = 10 }: { badgeTextureUrl: string; format: 'formatA' | 'formatB'; maxSpeed?: number; minSpeed?: number }) {
   const band = useRef<any>(null), fixed = useRef<any>(null), j1 = useRef<any>(null), j2 = useRef<any>(null), j3 = useRef<any>(null), card = useRef<any>(null) // prettier-ignore
@@ -26,7 +26,7 @@ function Band({ badgeTextureUrl, format, maxSpeed = 50, minSpeed = 10 }: { badge
 
   const badgeTexture = useTexture(badgeTextureUrl || 'https://assets.vercel.com/image/upload/contentful/image/e5382hct74si/SOT1hmCesOHxEYxL7vkoZ/c57b29c85912047c414311723320c16b/band.jpg')
   const { nodes, materials } = useGLTF('https://assets.vercel.com/image/upload/contentful/image/e5382hct74si/5huRVDzcoDwnbgrKUo1Lzs/53b6dd7d6b4ffcdbd338fa60265949e1/tag.glb') as any
-  const texture = useTexture('images/Hacker-house.png')
+  const texture = useTexture('/images/Hacker-house.png')
   const { width, height } = useThree((state) => state.size)
   const [curve] = useState(() => new THREE.CatmullRomCurve3([new THREE.Vector3(), new THREE.Vector3(), new THREE.Vector3(), new THREE.Vector3()]))
   const [dragged, drag] = useState<any>(false)
