@@ -65,12 +65,31 @@ export default function ExportBar({ getCanvas, format, hasPhoto = false, onTrigg
 
     setSharing(true);
     try {
-      // 1. Convert Canvas to PNG Data URL & Blob
-      const dataUrl = canvas.toDataURL('image/png', 0.95);
-      const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, 'image/png'));
+      const rawText = `🌴 Hacker mode: ON.\n\nJust claimed my official Hacker House Goa 2026 Builder Badge! 🚀\n\ngit checkout goa-2026\ngit commit -m "Ready to build."\ngit push origin hacker-house 🚀\n\nNow it's time to build fast, break less, ship more, and maybe survive on coffee & Feni. 😄\n\nCan't wait to build with amazing hackers and builders from around the world. See you in Goa, Oct 28–31!\n\n#FrameInGoa #HHGOA2026`;
 
-      // 2. Copy Image to Clipboard & Auto-Download for instant backup
+      // 1. Convert Canvas to PNG Blob & File
+      const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, 'image/png'));
       if (blob) {
+        const pngFile = new File([blob], `hh-goa-2026-${format}.png`, { type: 'image/png' });
+
+        // On mobile devices (iOS / Android), try native Web Share API with attached image file!
+        if (navigator.canShare && navigator.canShare({ files: [pngFile] })) {
+          try {
+            await navigator.share({
+              title: 'Hacker House Goa 2026 Builder Graphic',
+              text: rawText,
+              files: [pngFile],
+            });
+            setShared(true);
+            setTimeout(() => setShared(false), 4000);
+            setSharing(false);
+            return;
+          } catch (shareErr) {
+            console.warn('Native share cancelled or failed, using web intent fallback:', shareErr);
+          }
+        }
+
+        // Copy Image to Clipboard & Auto-Download for desktop fallback
         try {
           await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
         } catch (clipErr) {
@@ -79,7 +98,8 @@ export default function ExportBar({ getCanvas, format, hasPhoto = false, onTrigg
         handleDownload();
       }
 
-      // 3. Post to /api/share to get Open Graph Twitter Card URL
+      // 2. Post to /api/share to get Open Graph Twitter Card URL
+      const dataUrl = canvas.toDataURL('image/png', 0.95);
       let shareUrl = window.location.origin;
       try {
         const res = await fetch('/api/share', {
@@ -98,9 +118,7 @@ export default function ExportBar({ getCanvas, format, hasPhoto = false, onTrigg
         console.warn('Share API error:', e);
       }
 
-      // 4. Launch X (Twitter) Intent DIRECTLY - No intermediate share options!
-      const rawText = `🌴 Hacker mode: ON.\n\nJust claimed my official Hacker House Goa 2026 Builder Badge! 🚀\n\ngit checkout goa-2026\ngit commit -m "Ready to build."\ngit push origin hacker-house 🚀\n\nNow it's time to build fast, break less, ship more, and maybe survive on coffee & Feni. 😄\n\nCan't wait to build with amazing hackers and builders from around the world. See you in Goa, Oct 28–31!\n\n#FrameInGoa #HHGOA2026`;
-
+      // 3. Launch X (Twitter) Intent DIRECTLY
       const tweetText = encodeURIComponent(rawText);
       const intentUrl = `https://x.com/intent/post?text=${tweetText}&url=${encodeURIComponent(shareUrl)}`;
       window.open(intentUrl, '_blank', 'noopener,noreferrer');
