@@ -46,9 +46,37 @@ export default function ExportBar({ getCanvas, format }: ExportBarProps) {
 
     setSharing(true);
     try {
-      const dataUrl = canvas.toDataURL('image/png', 0.9);
+      // 1. Convert Canvas to Blob & File
+      const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, 'image/png'));
+      if (!blob) throw new Error('Canvas blob generation failed');
 
-      // Call share API to generate dynamic Open Graph URL
+      const pngFile = new File([blob], `hh-goa-2026-${format}.png`, { type: 'image/png' });
+
+      // 2. Web Share API with attached image file (Mobile Browsers / Modern Desktops)
+      if (navigator.canShare && navigator.canShare({ files: [pngFile] })) {
+        await navigator.share({
+          title: 'Hacker House Goa 2026 Builder Graphic',
+          text: 'Excited for Hacker House Goa 2026! 🌴 500 elite builders shipping in Goa. #FrameInGoa #HHGOA2026',
+          files: [pngFile],
+        });
+        setShared(true);
+        setTimeout(() => setShared(false), 4000);
+        setSharing(false);
+        return;
+      }
+
+      // 3. Fallback for desktop: Copy Image to Clipboard & Auto-Download PNG
+      try {
+        await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
+      } catch (clipErr) {
+        console.warn('Clipboard copy warning:', clipErr);
+      }
+
+      // Trigger automatic PNG download so the user has the image saved
+      handleDownload();
+
+      // Get Dynamic OG Share Link
+      const dataUrl = canvas.toDataURL('image/png', 0.9);
       const res = await fetch('/api/share', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -63,29 +91,44 @@ export default function ExportBar({ getCanvas, format }: ExportBarProps) {
         }
       }
 
-      // Construct prefilled tweet with #FrameInGoa hashtag
       const tweetText = encodeURIComponent(
-        `Excited for Hacker House Goa 2026! 🌴 500 elite builders, high-speed fiber, and non-stop shipping.\n\nHere is my official builder graphic! 👇\n\n#FrameInGoa @247pmstudio @Devfolio`
+        `Excited for Hacker House Goa 2026! 🌴 Here is my official builder graphic! 👇\n\n#FrameInGoa #HHGOA2026`
       );
 
-      const intentUrl = `https://x.com/intent/post?text=${tweetText}&url=${encodeURIComponent(
-        shareUrl
-      )}`;
-
-      // Open X tweet intent in new tab
+      const intentUrl = `https://x.com/intent/post?text=${tweetText}&url=${encodeURIComponent(shareUrl)}`;
       window.open(intentUrl, '_blank', 'noopener,noreferrer');
       setShared(true);
       setTimeout(() => setShared(false), 4000);
     } catch (err) {
       console.error('Share error:', err);
-      // Fallback intent without server share link
-      const tweetText = encodeURIComponent(
-        `Excited for Hacker House Goa 2026! 🌴 Here is my official builder graphic!\n\n#FrameInGoa @247pmstudio`
-      );
-      window.open(`https://x.com/intent/post?text=${tweetText}`, '_blank');
     } finally {
       setSharing(false);
     }
+  };
+
+  const handleShareToLinkedIn = async () => {
+    const canvas = getCanvas();
+    if (!canvas) return;
+
+    try {
+      const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, 'image/png'));
+      if (blob && navigator.canShare && navigator.canShare({ files: [new File([blob], 'badge.png', { type: 'image/png' })] })) {
+        await navigator.share({
+          title: 'Hacker House Goa 2026 Builder Graphic',
+          text: 'Excited for Hacker House Goa 2026! 🌴 #FrameInGoa #HHGOA2026',
+          files: [new File([blob], 'badge.png', { type: 'image/png' })],
+        });
+        return;
+      }
+    } catch (e) {
+      console.warn('LinkedIn Web Share fallback', e);
+    }
+
+    // Fallback: Trigger download & open LinkedIn Share
+    handleDownload();
+    const text = encodeURIComponent('Excited for Hacker House Goa 2026! 🌴 #FrameInGoa #HHGOA2026');
+    const shareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent('https://hhgoa.com')}&text=${text}`;
+    window.open(shareUrl, '_blank', 'noopener,noreferrer');
   };
 
   return (
@@ -115,16 +158,12 @@ export default function ExportBar({ getCanvas, format }: ExportBarProps) {
         ) : (
           <Share2 className="w-4 h-4" />
         )}
-        {sharing ? 'Preparing...' : shared ? 'Opened X!' : 'Share X (Twitter)'}
+        {sharing ? 'Attaching Image...' : shared ? 'Image Shared / Copied!' : 'Share X (Twitter)'}
       </button>
 
       <button
         type="button"
-        onClick={() => {
-          const text = encodeURIComponent('Excited for Hacker House Goa 2026! 🌴 #FrameInGoa #HHGOA2026');
-          const shareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent('https://hhgoa.com')}&text=${text}`;
-          window.open(shareUrl, '_blank', 'noopener,noreferrer');
-        }}
+        onClick={handleShareToLinkedIn}
         className="flex-1 py-4 px-4 rounded-xl font-mono-tech text-xs sm:text-sm font-bold uppercase tracking-wider bg-[#0a66c2] text-white hover:bg-[#084e96] transition flex items-center justify-center gap-2 cursor-pointer shadow-lg"
       >
         <Share2 className="w-4 h-4" />
