@@ -25,14 +25,19 @@ img, svg, canvas, iframe {
   pointer-events: auto;
 }
 
-body {
-  background-color: var(--hh-bg-emerald);
-  color: var(--hh-white);
-  font-family: var(--font-sans), system-ui, sans-serif;
+html, body {
   margin: 0;
   padding: 0;
-  min-height: 100vh;
+  width: 100%;
+  min-height: 100%;
+  min-height: 100dvh;
   overflow-x: hidden;
+}
+
+body {
+  background-color: #080808;
+  color: var(--hh-white);
+  font-family: var(--font-sans), system-ui, sans-serif;
   user-select: none;
   -webkit-user-select: none;
   -moz-user-select: none;
@@ -290,4 +295,42 @@ body {
 
 .card-hh-emerald:hover {
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+}
+
+/* Customized range inputs */
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  background: #042616;
+  height: 6px;
+  border-radius: 3px;
+  border: 1px solid #148048;
+  outline: none;
+}
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #ffe500;
+  cursor: pointer;
+  box-shadow: 0 0 10px rgba(255, 229, 0, 0.8);
+  transition: transform 0.1s ease-in-out;
+}
+input[type="range"]::-webkit-slider-thumb:hover {
+  transform: scale(1.2);
+}
+input[type="range"]::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #ffe500;
+  cursor: pointer;
+  border: none;
+  box-shadow: 0 0 10px rgba(255, 229, 0, 0.8);
+  transition: transform 0.1s ease-in-out;
+}
+input[type="range"]::-moz-range-thumb:hover {
+  transform: scale(1.2);
 }

@@ -87,11 +87,6 @@ export default function RootLayout({
         {/* Anti-Inspect & DevTools Hiding Script */}
         <Script id="anti-inspect-script" strategy="beforeInteractive">
           {`
-            // Disable Right-Click Context Menu
-            document.addEventListener('contextmenu', function (e) {
-              e.preventDefault();
-            });
-
             // Disable Inspect Keyboard Shortcuts (F12, Ctrl+Shift+I/J/C, Ctrl+U, Ctrl+S)
             document.addEventListener('keydown', function (e) {
               if (

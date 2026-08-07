@@ -1,14 +1,10 @@
 'use client';
 
 import React, { useState, useRef, useMemo } from 'react';
-import Header from '@/components/Header';
-import FormatTabs from '@/components/FormatTabs';
 import CanvasPreview, { CanvasPreviewRef } from '@/components/CanvasPreview';
 import ControlsForm from '@/components/ControlsForm';
-import ExportBar from '@/components/ExportBar';
-import FloatingGoaVibes from '@/components/FloatingParticles';
-import MovingGoaScooty from '@/components/MovingGoaScooty';
 import { GeneratorConfig, StylePreset } from '@/lib/canvas-generator';
+import { X } from 'lucide-react';
 
 export default function Home() {
   const [format, setFormat] = useState<'formatA' | 'formatB'>('formatA');
@@ -25,13 +21,16 @@ export default function Home() {
   const [qrLink, setQrLink] = useState('');
   const [stickers, setStickers] = useState<string[]>([]);
   const [stickerPositions, setStickerPositions] = useState<Record<string, { x: number; y: number }>>({});
+  const [isEditorOpen, setIsEditorOpen] = useState(false);
 
   const canvasPreviewRef = useRef<CanvasPreviewRef>(null);
 
   const handleToggleSticker = (st: string) => {
-    setStickers((prev) =>
-      prev.includes(st) ? prev.filter((s) => s !== st) : [...prev, st]
-    );
+    setStickers((prev) => {
+      if (prev.includes(st)) return prev.filter((s) => s !== st);
+      setStickerPositions((p) => ({ ...p, [st]: { x: 540, y: 675 } }));
+      return [...prev, st];
+    });
   };
 
   const handleStickerMove = (
@@ -39,123 +38,68 @@ export default function Home() {
     preset: 'topLeft' | 'topRight' | 'center' | 'bottomLeft' | 'bottomRight'
   ) => {
     const coordsMap: Record<string, { x: number; y: number }> = {
-      topLeft: { x: 180, y: 180 },
-      topRight: { x: 880, y: 180 },
-      center: { x: 540, y: 540 },
-      bottomLeft: { x: 180, y: 900 },
-      bottomRight: { x: 880, y: 900 },
+      topLeft: { x: 220, y: 250 },
+      topRight: { x: 860, y: 250 },
+      center: { x: 540, y: 675 },
+      bottomLeft: { x: 220, y: 1050 },
+      bottomRight: { x: 860, y: 1050 },
     };
-    setStickerPositions((prev) => ({
-      ...prev,
-      [st]: coordsMap[preset] || { x: 540, y: 540 },
-    }));
+    setStickerPositions((prev) => ({ ...prev, [st]: coordsMap[preset] || { x: 540, y: 675 } }));
   };
 
-  const generatorConfig = useMemo<GeneratorConfig>(() => ({
-    format,
-    photo,
-    name,
-    role,
-    builderTitle,
-    superpower,
-    codingMood,
-    zoom,
-    panX,
-    panY,
-    stylePreset,
-    qrLink,
-    stickers,
-    stickerPositions,
-  }), [format, photo, name, role, builderTitle, superpower, codingMood, zoom, panX, panY, stylePreset, qrLink, stickers, stickerPositions]);
+  const generatorConfig = useMemo<GeneratorConfig>(
+    () => ({ format, photo, name, role, builderTitle, superpower, codingMood, zoom, panX, panY, stylePreset, qrLink, stickers, stickerPositions }),
+    [format, photo, name, role, builderTitle, superpower, codingMood, zoom, panX, panY, stylePreset, qrLink, stickers, stickerPositions]
+  );
 
-  const handlePhotoLoaded = (img: HTMLImageElement) => {
+  const handlePhotoLoaded = (img: HTMLImageElement | null) => {
     setPhoto(img);
     setPanX(0);
     setPanY(0);
     setZoom(1.0);
+    if (img) setIsEditorOpen(true);
   };
 
   return (
-    <div className="min-h-screen bg-[#0a5c36] text-white flex flex-col justify-between relative overflow-x-hidden">
-      {/* Floating Goa Vibes Background (🥥🌴🕶️🍹🌊🐚) */}
-      <FloatingGoaVibes />
+    // Full-screen camera app shell — no header, no footer, no margins
+    <div className="fixed inset-0 bg-[#080808] text-white overflow-hidden font-mono-tech select-none flex flex-col">
+      {/* Camera viewfinder fills all remaining space */}
+      <div className="flex-1 flex flex-col relative overflow-hidden">
+        <CanvasPreview
+          ref={canvasPreviewRef}
+          config={generatorConfig}
+          onPhotoLoaded={handlePhotoLoaded}
+          onPanChange={(x, y) => { setPanX(x); setPanY(y); }}
+          onZoomChange={setZoom}
+          onStyleChange={setStylePreset}
+          onFormatChange={setFormat}
+          isEditorOpen={isEditorOpen}
+          onToggleEditor={() => setIsEditorOpen((v) => !v)}
+        />
+      </div>
 
-      {/* Brand Navigation Header */}
-      <Header />
-
-      {/* Animated Wave Divider Below Header */}
-      <div className="wave-divider w-full" />
-
-      {/* Main Container */}
-      <main className="max-w-6xl mx-auto px-3 sm:px-6 py-4 sm:py-8 w-full flex-grow flex flex-col items-center z-10">
-        {/* Page Hero Header */}
-        <div className="text-center mb-4 sm:mb-6 relative max-w-4xl w-full">
-          {/* Decorative Goa Icons Row */}
-          <div className="flex items-center justify-center gap-3 sm:gap-5 mb-2 animate-slide-up">
-            <span className="text-2xl sm:text-3xl animate-palm-sway">🌴</span>
-            <span className="text-xl sm:text-2xl">🥥</span>
-            <span className="text-2xl sm:text-3xl">☀️</span>
-            <span className="text-xl sm:text-2xl">🥥</span>
-            <span className="text-2xl sm:text-3xl animate-palm-sway" style={{ animationDelay: '0.5s' }}>🌴</span>
-          </div>
-
-          {/* Main Title Row: HACKER [गोवा SVG Motion] HOUSE */}
-          <div className="relative inline-flex flex-wrap items-center justify-center gap-1 sm:gap-3 font-display text-4xl sm:text-7xl lg:text-8xl font-black text-[#ffe500] uppercase tracking-tight leading-none drop-shadow-lg mb-2">
-            <span>HACKER</span>
-            
-            {/* Animated Motion Devanagari Goa SVG Badge */}
-            <div className="relative mx-1 sm:mx-2 inline-block animate-goa-badge-motion z-10">
-              <img
-                src="/images/goa_hindi.svg"
-                alt="गोवा"
-                className="h-12 sm:h-20 lg:h-24 w-auto drop-shadow-[0_0_20px_rgba(255,0,122,0.9)] cursor-pointer hover:scale-110 transition-transform"
-              />
+      {/* Bottom sheet editor — slides up over the viewfinder from absolute bottom */}
+      {isEditorOpen && (
+        <div className="absolute inset-x-0 bottom-0 z-40 animate-slide-up">
+          <div className="bg-[#042f1b]/98 backdrop-blur-xl border-t-2 border-[#148048]/70 rounded-t-3xl shadow-2xl max-h-[72dvh] flex flex-col">
+            {/* Sheet handle + header */}
+            <div className="flex items-center justify-between px-5 pt-4 pb-3 border-b border-[#148048]/30 shrink-0">
+              {/* Drag pill */}
+              <div className="absolute top-2 left-1/2 -translate-x-1/2 w-10 h-1 rounded-full bg-[#148048]/50" />
+              <span className="font-mono-tech text-[11px] text-[#ffe500] font-black uppercase tracking-widest">
+                ⚙ Customize Card
+              </span>
+              <button
+                type="button"
+                onClick={() => setIsEditorOpen(false)}
+                className="w-7 h-7 rounded-full bg-[#042616] hover:bg-[#0b6638] text-white flex items-center justify-center transition cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
             </div>
 
-            <span>HOUSE</span>
-          </div>
-
-          {/* Subtitle Metadata Bar */}
-          <div className="w-full flex items-center justify-between font-mono-tech text-[10px] sm:text-xs text-[#ffe500] max-w-3xl mx-auto px-2 mt-1 font-bold tracking-wider">
-            <span>GOA, INDIA · 28 - 31 OCT 2026</span>
-            <span>BY 2:47 PM STUDIO</span>
-          </div>
-        </div>
-
-        {/* Format Selector Tabs */}
-        <FormatTabs activeFormat={format} onChange={setFormat} />
-
-        {/* Main Interactive Workspace Grid */}
-        <div className="w-full flex flex-col lg:grid lg:grid-cols-12 gap-5 sm:gap-8 items-start">
-          {/* Canvas Preview Container (Mobile Order 1, Desktop Right Column) */}
-          <div className="w-full lg:col-span-7 order-1 lg:order-2 flex flex-col items-center">
-            <CanvasPreview
-              ref={canvasPreviewRef}
-              config={generatorConfig}
-              onPhotoLoaded={handlePhotoLoaded}
-              onPanChange={(newX, newY) => {
-                setPanX(newX);
-                setPanY(newY);
-              }}
-              onZoomChange={(newZoom) => setZoom(newZoom)}
-            />
-
-            {/* Desktop Export Bar (Hidden on Mobile) */}
-            <div className="hidden lg:block w-full">
-              <ExportBar
-                getCanvas={() => canvasPreviewRef.current?.getCanvas() || null}
-                format={format}
-                hasPhoto={!!photo}
-              />
-            </div>
-          </div>
-
-          {/* Personalization & Style Remix Controls (Mobile Order 2, Desktop Left Column) */}
-          <div className="w-full lg:col-span-5 order-2 lg:order-1 space-y-4 sm:space-y-5">
-            <div>
-              <label className="block font-mono-tech text-xs text-[#ffe500] uppercase mb-1.5 font-bold flex items-center gap-1.5">
-                <span>🎨</span> Personalize & Style Remix
-              </label>
+            {/* Scrollable content */}
+            <div className="overflow-y-auto px-4 pb-8 pt-3 flex-1">
               <ControlsForm
                 format={format}
                 name={name}
@@ -184,34 +128,8 @@ export default function Home() {
               />
             </div>
           </div>
-
-          {/* Mobile Export Bar (Mobile Order 3, Download & Share at Bottom) */}
-          <div className="w-full order-3 lg:hidden flex justify-center">
-            <ExportBar
-              getCanvas={() => canvasPreviewRef.current?.getCanvas() || null}
-              format={format}
-              hasPhoto={!!photo}
-            />
-          </div>
         </div>
-      </main>
-
-      {/* Moving Scooty Animation (2 People Riding Left to Right) */}
-      <MovingGoaScooty />
-
-      {/* Footer with Goa Vibes */}
-      <footer className="w-full bg-[#042616] py-4 px-4 text-center z-10">
-        <div className="flex items-center justify-center gap-2 mb-2">
-          <span className="text-sm">🌴</span>
-          <span className="text-sm">🌊</span>
-          <span className="text-sm">🥥</span>
-          <span className="text-sm">🕶️</span>
-          <span className="text-sm">🍹</span>
-        </div>
-        <p className="font-mono-tech text-[11px] text-[#e5c200]">
-          © 2026 HH-Goa · DEVELOPED BY CODINGKOALAS · Goa, India · #FrameInGoa
-        </p>
-      </footer>
+      )}
     </div>
   );
 }
