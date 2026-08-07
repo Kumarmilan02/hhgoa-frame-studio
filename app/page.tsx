@@ -22,8 +22,34 @@ export default function Home() {
   const [panX, setPanX] = useState(0);
   const [panY, setPanY] = useState(0);
   const [stylePreset, setStylePreset] = useState<StylePreset>('emerald');
+  const [qrLink, setQrLink] = useState('');
+  const [stickers, setStickers] = useState<string[]>([]);
+  const [stickerPositions, setStickerPositions] = useState<Record<string, { x: number; y: number }>>({});
 
   const canvasPreviewRef = useRef<CanvasPreviewRef>(null);
+
+  const handleToggleSticker = (st: string) => {
+    setStickers((prev) =>
+      prev.includes(st) ? prev.filter((s) => s !== st) : [...prev, st]
+    );
+  };
+
+  const handleStickerMove = (
+    st: string,
+    preset: 'topLeft' | 'topRight' | 'center' | 'bottomLeft' | 'bottomRight'
+  ) => {
+    const coordsMap: Record<string, { x: number; y: number }> = {
+      topLeft: { x: 180, y: 180 },
+      topRight: { x: 880, y: 180 },
+      center: { x: 540, y: 540 },
+      bottomLeft: { x: 180, y: 900 },
+      bottomRight: { x: 880, y: 900 },
+    };
+    setStickerPositions((prev) => ({
+      ...prev,
+      [st]: coordsMap[preset] || { x: 540, y: 540 },
+    }));
+  };
 
   const generatorConfig: GeneratorConfig = {
     format,
@@ -37,6 +63,9 @@ export default function Home() {
     panX,
     panY,
     stylePreset,
+    qrLink,
+    stickers,
+    stickerPositions,
   };
 
   const handlePhotoLoaded = (img: HTMLImageElement) => {
@@ -97,9 +126,9 @@ export default function Home() {
         <FormatTabs activeFormat={format} onChange={setFormat} />
 
         {/* Main Interactive Workspace Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-8 w-full items-start">
-          {/* Direct Interactive 4:5 Canvas & Export (7 cols) */}
-          <div className="order-1 lg:order-2 lg:col-span-7 flex flex-col items-center w-full">
+        <div className="w-full flex flex-col lg:grid lg:grid-cols-12 gap-5 sm:gap-8 items-start">
+          {/* Canvas Preview Container (Mobile Order 1, Desktop Right Column) */}
+          <div className="w-full lg:col-span-7 order-1 lg:order-2 flex flex-col items-center">
             <CanvasPreview
               ref={canvasPreviewRef}
               config={generatorConfig}
@@ -111,14 +140,17 @@ export default function Home() {
               onZoomChange={(newZoom) => setZoom(newZoom)}
             />
 
-            <ExportBar
-              getCanvas={() => canvasPreviewRef.current?.getCanvas() || null}
-              format={format}
-            />
+            {/* Desktop Export Bar (Hidden on Mobile) */}
+            <div className="hidden lg:block w-full">
+              <ExportBar
+                getCanvas={() => canvasPreviewRef.current?.getCanvas() || null}
+                format={format}
+              />
+            </div>
           </div>
 
-          {/* Left Column: Personalization & Style Remix Controls (5 cols) */}
-          <div className="order-2 lg:order-1 lg:col-span-5 space-y-4 sm:space-y-5 w-full">
+          {/* Personalization & Style Remix Controls (Mobile Order 2, Desktop Left Column) */}
+          <div className="w-full lg:col-span-5 order-2 lg:order-1 space-y-4 sm:space-y-5">
             <div>
               <label className="block font-mono-tech text-xs text-[#ffe500] uppercase mb-1.5 font-bold flex items-center gap-1.5">
                 <span>🎨</span> Personalize & Style Remix
@@ -134,6 +166,8 @@ export default function Home() {
                 panX={panX}
                 panY={panY}
                 stylePreset={stylePreset}
+                qrLink={qrLink}
+                stickers={stickers}
                 onNameChange={setName}
                 onRoleChange={setRole}
                 onBuilderTitleChange={setBuilderTitle}
@@ -143,8 +177,19 @@ export default function Home() {
                 onPanXChange={setPanX}
                 onPanYChange={setPanY}
                 onStyleChange={setStylePreset}
+                onQrLinkChange={setQrLink}
+                onToggleSticker={handleToggleSticker}
+                onStickerMove={handleStickerMove}
               />
             </div>
+          </div>
+
+          {/* Mobile Export Bar (Mobile Order 3, Download & Share at Bottom) */}
+          <div className="w-full order-3 lg:hidden flex justify-center">
+            <ExportBar
+              getCanvas={() => canvasPreviewRef.current?.getCanvas() || null}
+              format={format}
+            />
           </div>
         </div>
       </main>

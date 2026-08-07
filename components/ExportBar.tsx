@@ -106,16 +106,29 @@ export default function ExportBar({ getCanvas, format }: ExportBarProps) {
       <button
         onClick={handleShareToX}
         disabled={sharing}
-        className="flex-1 py-4 px-6 rounded-xl font-mono-tech text-sm font-bold uppercase tracking-wider bg-[#ff007a] text-white hover:bg-[#e0006b] transition flex items-center justify-center gap-2 cursor-pointer shadow-lg glow-pink"
+        className="flex-1 py-4 px-4 rounded-xl font-mono-tech text-xs sm:text-sm font-bold uppercase tracking-wider bg-[#ff007a] text-white hover:bg-[#e0006b] transition flex items-center justify-center gap-2 cursor-pointer shadow-lg glow-pink"
       >
         {sharing ? (
-          <Loader2 className="w-5 h-5 animate-spin text-white" />
+          <Loader2 className="w-4 h-4 animate-spin text-white" />
         ) : shared ? (
-          <Check className="w-5 h-5 text-white" />
+          <Check className="w-4 h-4 text-white" />
         ) : (
-          <Share2 className="w-5 h-5" />
+          <Share2 className="w-4 h-4" />
         )}
-        {sharing ? 'Preparing Share...' : shared ? 'Opened X Tweet!' : 'Share to X (#FrameInGoa)'}
+        {sharing ? 'Preparing...' : shared ? 'Opened X!' : 'Share X (Twitter)'}
+      </button>
+
+      <button
+        type="button"
+        onClick={() => {
+          const text = encodeURIComponent('Excited for Hacker House Goa 2026! 🌴 #FrameInGoa #HHGOA2026');
+          const shareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent('https://hhgoa.com')}&text=${text}`;
+          window.open(shareUrl, '_blank', 'noopener,noreferrer');
+        }}
+        className="flex-1 py-4 px-4 rounded-xl font-mono-tech text-xs sm:text-sm font-bold uppercase tracking-wider bg-[#0a66c2] text-white hover:bg-[#084e96] transition flex items-center justify-center gap-2 cursor-pointer shadow-lg"
+      >
+        <Share2 className="w-4 h-4" />
+        Share LinkedIn
       </button>
     </div>
   );

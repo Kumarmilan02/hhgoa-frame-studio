@@ -1,5 +1,5 @@
 import React from 'react';
-import { ZoomIn, Move, User, Code, RotateCcw, Sparkles, Palette, Zap, Flame } from 'lucide-react';
+import { ZoomIn, Move, User, Code, RotateCcw, Sparkles, Palette, Zap, Flame, QrCode, Smile } from 'lucide-react';
 import { StylePreset } from '@/lib/canvas-generator';
 
 interface ControlsFormProps {
@@ -13,6 +13,8 @@ interface ControlsFormProps {
   panX: number;
   panY: number;
   stylePreset: StylePreset;
+  qrLink?: string;
+  stickers?: string[];
   onNameChange: (val: string) => void;
   onRoleChange: (val: string) => void;
   onBuilderTitleChange: (val: string) => void;
@@ -22,6 +24,9 @@ interface ControlsFormProps {
   onPanXChange: (val: number) => void;
   onPanYChange: (val: number) => void;
   onStyleChange: (preset: StylePreset) => void;
+  onQrLinkChange?: (val: string) => void;
+  onToggleSticker?: (sticker: string) => void;
+  onStickerMove?: (sticker: string, preset: 'topLeft' | 'topRight' | 'center' | 'bottomLeft' | 'bottomRight') => void;
 }
 
 const STYLES: { id: StylePreset; label: string; color: string }[] = [
@@ -62,6 +67,8 @@ export default function ControlsForm({
   panX,
   panY,
   stylePreset,
+  qrLink,
+  stickers,
   onNameChange,
   onRoleChange,
   onBuilderTitleChange,
@@ -71,6 +78,9 @@ export default function ControlsForm({
   onPanXChange,
   onPanYChange,
   onStyleChange,
+  onQrLinkChange,
+  onToggleSticker,
+  onStickerMove,
 }: ControlsFormProps) {
   const handleReset = (e?: React.MouseEvent) => {
     e?.preventDefault();
@@ -111,7 +121,7 @@ export default function ControlsForm({
               type="text"
               value={name}
               onChange={(e) => onNameChange(e.target.value)}
-              placeholder="e.g. Satoshi Nakamoto"
+              placeholder="e.g. JON ALBERTO"
               className="w-full bg-[#042616] text-white border border-[#148048] focus:border-[#ffe500] rounded-lg px-3 py-2 text-sm font-mono-tech outline-none transition"
             />
           </div>
@@ -172,8 +182,90 @@ export default function ControlsForm({
               className="w-full bg-[#042616] text-white border border-[#148048] focus:border-[#ffe500] rounded-lg px-3 py-2 text-sm font-mono-tech outline-none transition"
             />
           </div>
+
+          {/* Dynamic QR Profile Handle Input */}
+          <div>
+            <label className="block font-mono-tech text-xs text-[#ffe500] uppercase mb-1 flex items-center gap-1.5 font-bold">
+              <QrCode className="w-3.5 h-3.5 text-[#ff007a]" /> Social Handle / QR Link
+            </label>
+            <input
+              type="text"
+              value={qrLink || ''}
+              onChange={(e) => onQrLinkChange?.(e.target.value)}
+              placeholder="e.g. @satoshi or https://t.me/satoshi"
+              className="w-full bg-[#042616] text-white border border-[#148048] focus:border-[#ffe500] rounded-lg px-3 py-2 text-sm font-mono-tech outline-none transition"
+            />
+          </div>
         </div>
       )}
+
+      {/* Tropical Sticker Overlay Palette */}
+      <div className="space-y-2.5 pb-3 border-b border-[#148048]/40">
+        <div className="flex items-center justify-between">
+          <span className="font-mono-tech text-xs text-[#ffe500] uppercase font-bold flex items-center gap-1">
+            <Smile className="w-3.5 h-3.5 text-[#ff007a]" /> Tropical Sticker Palette
+          </span>
+          <span className="text-[10px] font-mono-tech text-[#e5c200]">Tap to toggle & arrange</span>
+        </div>
+
+        <div className="flex flex-wrap gap-2 pt-1">
+          {[
+            { id: '🥥', label: 'Coconut' },
+            { id: '🛵', label: 'Scooty' },
+            { id: '🏖️', label: 'Anjuna' },
+            { id: '🦀', label: 'Bug Hunter' },
+            { id: '🌴', label: 'Palm' },
+            { id: '🏄', label: 'Wave' },
+            { id: '🍹', label: 'Feni Fuel' },
+          ].map((st) => {
+            const isSelected = stickers?.includes(st.id);
+            return (
+              <button
+                key={st.id}
+                type="button"
+                onClick={() => onToggleSticker?.(st.id)}
+                className={`py-1 px-2.5 rounded-lg text-xs font-mono-tech flex items-center gap-1.5 border transition cursor-pointer ${
+                  isSelected
+                    ? 'bg-[#ff007a] text-white border-[#ffe500] shadow-md scale-105'
+                    : 'bg-[#042616] text-[#e5c200] border-[#148048] hover:border-[#ffe500]'
+                }`}
+              >
+                <span>{st.id}</span>
+                <span className="text-[10px] font-bold">{st.label}</span>
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Sticker Arrangement Position Presets */}
+        {stickers && stickers.length > 0 && (
+          <div className="pt-2 mt-2 border-t border-[#148048]/30 space-y-2 animate-fade-in">
+            <span className="font-mono-tech text-[10px] text-[#ffe500] uppercase font-bold block">
+              📍 Arrange Active Sticker Positions:
+            </span>
+            <div className="flex flex-wrap gap-1.5">
+              {stickers.map((st) => (
+                <div key={st} className="flex items-center gap-1 bg-[#042616] border border-[#148048] p-1.5 rounded-lg text-[10px] font-mono-tech">
+                  <span className="text-base">{st}</span>
+                  <div className="flex gap-1">
+                    {(['topLeft', 'topRight', 'center', 'bottomLeft', 'bottomRight'] as const).map((posKey) => (
+                      <button
+                        key={posKey}
+                        type="button"
+                        onClick={() => onStickerMove?.(st, posKey)}
+                        className="px-1.5 py-0.5 bg-[#0b6638] hover:bg-[#ffe500] hover:text-[#042616] text-[#ffe500] rounded text-[9px] font-bold uppercase transition cursor-pointer"
+                        title={`Move ${st} to ${posKey}`}
+                      >
+                        {posKey === 'topLeft' ? '↖' : posKey === 'topRight' ? '↗' : posKey === 'center' ? '•' : posKey === 'bottomLeft' ? '↙' : '↘'}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
 
       {/* Style Remix Section */}
       <div className="space-y-2.5">
@@ -205,11 +297,10 @@ export default function ControlsForm({
               key={s.id}
               type="button"
               onClick={() => onStyleChange(s.id)}
-              className={`flex-1 py-1 rounded text-[10px] font-mono-tech uppercase font-bold border transition cursor-pointer ${
-                stylePreset === s.id
+              className={`flex-1 py-1 rounded text-[10px] font-mono-tech uppercase font-bold border transition cursor-pointer ${stylePreset === s.id
                   ? 'bg-[#ffe500] text-[#042616] border-[#ffe500]'
                   : 'bg-[#042616] text-[#e5c200] border-[#148048] hover:text-white'
-              }`}
+                }`}
             >
               {s.label.split(' ')[0]}
             </button>

@@ -3,7 +3,8 @@
 import React, { useEffect, useRef, useImperativeHandle, forwardRef, useState } from 'react';
 import { drawFormatA, drawFormatB, GeneratorConfig } from '@/lib/canvas-generator';
 import { compressAndProcessImage } from '@/lib/image-compressor';
-import { Upload, Move, ZoomIn, Loader2, Sparkles } from 'lucide-react';
+import CameraModal from './CameraModal';
+import { Upload, Move, ZoomIn, Loader2, Sparkles, Camera } from 'lucide-react';
 
 interface CanvasPreviewProps {
   config: GeneratorConfig;
@@ -33,6 +34,7 @@ const CanvasPreview = forwardRef<CanvasPreviewRef, CanvasPreviewProps>(
     const [loading, setLoading] = useState(false);
     const [isDragging, setIsDragging] = useState(false);
     const [sloganIdx, setSloganIdx] = useState(0);
+    const [isCameraOpen, setIsCameraOpen] = useState(false);
 
     // Refs for tracking mouse/touch drag and pinch-to-zoom state
     const dragStartRef = useRef<{ x: number; y: number; initialPanX: number; initialPanY: number }>({
@@ -246,15 +248,27 @@ const CanvasPreview = forwardRef<CanvasPreviewRef, CanvasPreviewProps>(
           </div>
 
           {!config.photo && (
-            <div
-              onClick={() => fileInputRef.current?.click()}
-              className="absolute inset-0 bg-[#042616]/40 backdrop-blur-xs rounded-xl flex flex-col items-center justify-center cursor-pointer border-2 border-dashed border-[#ffe500]/70 hover:border-[#ffe500] transition group-hover:scale-[0.99] z-10 p-4 text-center"
-            >
-              <div className="w-14 h-14 rounded-full bg-[#ffe500] text-[#042616] flex items-center justify-center mb-3 shadow-lg group-hover:scale-110 transition animate-bounce">
-                <Upload className="w-7 h-7" />
+            <div className="absolute inset-0 bg-[#042616]/40 backdrop-blur-xs rounded-xl flex flex-col items-center justify-center border-2 border-dashed border-[#ffe500]/70 hover:border-[#ffe500] transition z-10 p-4 text-center">
+              <div className="flex gap-3 mb-3">
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  className="w-12 h-12 rounded-full bg-[#ffe500] text-[#042616] flex items-center justify-center shadow-lg hover:scale-110 transition cursor-pointer"
+                  title="Upload Photo"
+                >
+                  <Upload className="w-6 h-6" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setIsCameraOpen(true)}
+                  className="w-12 h-12 rounded-full bg-[#ff007a] text-white flex items-center justify-center shadow-lg hover:scale-110 transition cursor-pointer glow-pink"
+                  title="Snap Live Selfie"
+                >
+                  <Camera className="w-6 h-6" />
+                </button>
               </div>
-              <p className="font-mono-tech text-sm sm:text-base text-[#ffe500] font-extrabold uppercase drop-shadow-md">
-                Tap Here to Upload Photo Directly
+              <p className="font-mono-tech text-xs sm:text-sm text-[#ffe500] font-extrabold uppercase drop-shadow-md">
+                Upload Photo OR Snap Live Selfie
               </p>
             </div>
           )}
@@ -283,16 +297,31 @@ const CanvasPreview = forwardRef<CanvasPreviewRef, CanvasPreviewProps>(
 
         {/* Touch & Zoom Instructions */}
         <div className="mt-3 flex flex-wrap items-center justify-center gap-3 text-[10px] sm:text-[11px] font-mono-tech text-[#e5c200]">
+          <button
+            type="button"
+            onClick={() => setIsCameraOpen(true)}
+            className="flex items-center gap-1 text-[#ff007a] hover:text-[#ffe500] font-bold cursor-pointer underline"
+          >
+            <Camera className="w-3.5 h-3.5" /> 📷 Snap Live Selfie
+          </button>
           <span className="flex items-center gap-1">
             <Move className="w-3 h-3 text-[#ff007a]" /> Drag to Pan
           </span>
           <span className="flex items-center gap-1">
             <ZoomIn className="w-3 h-3 text-[#ffe500]" /> Pinch / Scroll to Zoom
           </span>
-          <span className="flex items-center gap-1 text-[#ff007a]">
-            <Sparkles className="w-3 h-3" /> Auto-Fits Any Photo Ratio
-          </span>
         </div>
+
+        {/* Camera Modal */}
+        <CameraModal
+          isOpen={isCameraOpen}
+          onClose={() => setIsCameraOpen(false)}
+          onCapture={(img) => {
+            onPhotoLoaded(img);
+            onPanChange(0, 0);
+            onZoomChange(1.0);
+          }}
+        />
       </div>
     );
   }
