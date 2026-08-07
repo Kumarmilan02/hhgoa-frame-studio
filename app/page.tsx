@@ -17,6 +17,7 @@ export default function Home() {
   const [role, setRole] = useState('');
   const [builderTitle, setBuilderTitle] = useState('');
   const [superpower, setSuperpower] = useState('');
+  const [codingMood, setCodingMood] = useState('SHIP MODE');
   const [zoom, setZoom] = useState(1.0);
   const [panX, setPanX] = useState(0);
   const [panY, setPanY] = useState(0);
@@ -31,6 +32,7 @@ export default function Home() {
     role,
     builderTitle,
     superpower,
+    codingMood,
     zoom,
     panX,
     panY,
@@ -127,6 +129,7 @@ export default function Home() {
                 role={role}
                 builderTitle={builderTitle}
                 superpower={superpower}
+                codingMood={codingMood}
                 zoom={zoom}
                 panX={panX}
                 panY={panY}
@@ -135,6 +138,7 @@ export default function Home() {
                 onRoleChange={setRole}
                 onBuilderTitleChange={setBuilderTitle}
                 onSuperpowerChange={setSuperpower}
+                onCodingMoodChange={setCodingMood}
                 onZoomChange={setZoom}
                 onPanXChange={setPanX}
                 onPanYChange={setPanY}

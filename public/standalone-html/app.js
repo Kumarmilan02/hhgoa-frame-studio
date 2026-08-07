@@ -49,6 +49,8 @@ let activeFormat = 'formatA';
 let userPhoto = null;
 let nameVal = '';
 let roleVal = '';
+let builderTitleVal = 'SMART CONTRACT WIZARD';
+let superpowerVal = 'Converting Coffee & Feni into Zero-Bug Code';
 let zoomVal = 1.0;
 let panXVal = 0;
 let panYVal = 0;
@@ -109,64 +111,204 @@ function renderCanvas() {
   ctx.fillStyle = pal.bg;
   ctx.fillRect(0, 0, w, h);
 
-  // Photo Crop Box
-  const framePadding = 65;
-  const cropW = w - framePadding * 2;
-  const cropH = h - framePadding * 2 - 120;
-  const cropX = framePadding;
-  const cropY = framePadding + 65;
-
-  ctx.save();
-  ctx.beginPath();
-  ctx.roundRect(cropX, cropY, cropW, cropH, 32);
-  ctx.clip();
-
-  ctx.fillStyle = pal.darkBg;
-  ctx.fillRect(cropX, cropY, cropW, cropH);
-
-  if (userPhoto) {
-    const imgAspect = userPhoto.width / userPhoto.height;
-    const cropAspect = cropW / cropH;
-    let drawW, drawH;
-    if (imgAspect > cropAspect) {
-      drawH = cropH * zoomVal;
-      drawW = cropH * imgAspect * zoomVal;
-    } else {
-      drawW = cropW * zoomVal;
-      drawH = (cropW / imgAspect) * zoomVal;
-    }
-    const imgX = cropX + (cropW - drawW) / 2 + panXVal;
-    const imgY = cropY + (cropH - drawH) / 2 + panYVal;
-    ctx.drawImage(userPhoto, imgX, imgY, drawW, drawH);
-  } else {
-    // Placeholder Text
-    ctx.fillStyle = pal.accent;
-    ctx.font = '700 24px monospace';
-    ctx.textAlign = 'center';
-    ctx.fillText('📷 TAP TO UPLOAD YOUR PHOTO DIRECTLY', cropX + cropW/2, cropY + cropH/2);
-  }
-  ctx.restore();
-
-  // Photo Border
+  // Outer Border
   ctx.strokeStyle = pal.accent;
-  ctx.lineWidth = 4;
+  ctx.lineWidth = 6;
   ctx.beginPath();
-  ctx.roundRect(cropX, cropY, cropW, cropH, 32);
+  ctx.roundRect(16, 16, w - 32, h - 32, 24);
   ctx.stroke();
 
-  // Header Title
-  ctx.fillStyle = pal.accent;
-  ctx.font = '800 18px monospace';
-  ctx.textAlign = 'left';
-  ctx.fillText('DEVELOPED BY CODINGKOALAS', 70, 60);
-  ctx.textAlign = 'right';
-  ctx.fillText('GOA, INDIA · 2026', w - 70, 60);
+  if (activeFormat === 'formatA') {
+    // Format A PFP Render
+    const framePadding = 65;
+    const cropW = w - framePadding * 2;
+    const cropH = h - framePadding * 2 - 120;
+    const cropX = framePadding;
+    const cropY = framePadding + 65;
 
-  // Bottom Title
-  ctx.fillStyle = pal.accent;
-  ctx.font = '900 70px serif';
-  ctx.textAlign = 'center';
-  ctx.fillText('HACKER HOUSE', w / 2, h - 145);
+    ctx.save();
+    ctx.beginPath();
+    ctx.roundRect(cropX, cropY, cropW, cropH, 32);
+    ctx.clip();
+
+    ctx.fillStyle = pal.darkBg;
+    ctx.fillRect(cropX, cropY, cropW, cropH);
+
+    if (userPhoto) {
+      const imgAspect = userPhoto.width / userPhoto.height;
+      const cropAspect = cropW / cropH;
+      let drawW, drawH;
+      if (imgAspect > cropAspect) {
+        drawH = cropH * zoomVal;
+        drawW = cropH * imgAspect * zoomVal;
+      } else {
+        drawW = cropW * zoomVal;
+        drawH = (cropW / imgAspect) * zoomVal;
+      }
+      const imgX = cropX + (cropW - drawW) / 2 + panXVal;
+      const imgY = cropY + (cropH - drawH) / 2 + panYVal;
+      ctx.drawImage(userPhoto, imgX, imgY, drawW, drawH);
+    } else {
+      ctx.fillStyle = pal.accent;
+      ctx.font = '700 24px monospace';
+      ctx.textAlign = 'center';
+      ctx.fillText('📷 TAP TO UPLOAD YOUR PHOTO DIRECTLY', cropX + cropW/2, cropY + cropH/2);
+    }
+    ctx.restore();
+
+    ctx.strokeStyle = pal.accent;
+    ctx.lineWidth = 4;
+    ctx.beginPath();
+    ctx.roundRect(cropX, cropY, cropW, cropH, 32);
+    ctx.stroke();
+
+    ctx.fillStyle = pal.accent;
+    ctx.font = '800 20px monospace';
+    ctx.textAlign = 'left';
+    ctx.fillText('DEVELOPED BY CODINGKOALAS', 70, 60);
+    ctx.textAlign = 'right';
+    ctx.fillText('GOA, INDIA · 2026', w - 70, 60);
+
+    ctx.fillStyle = pal.accent;
+    ctx.font = '900 70px serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('HACKER HOUSE', w / 2, h - 145);
+  } else {
+    // Format B Redesigned 2-Column Render
+    const headerY = 40;
+    ctx.fillStyle = pal.accent;
+    ctx.font = '900 44px serif';
+    ctx.textAlign = 'left';
+    ctx.fillText('HACKER', 45, headerY + 45);
+    ctx.fillText('HOUSE', 45, headerY + 92);
+
+    ctx.fillStyle = pal.highlight;
+    ctx.font = '800 48px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('गोवा', 480, headerY + 75);
+
+    ctx.fillStyle = pal.accent;
+    ctx.font = '800 20px monospace';
+    ctx.textAlign = 'right';
+    ctx.fillText('2026 BUILDER BADGE', w - 45, headerY + 50);
+    ctx.font = '600 15px monospace';
+    ctx.fillText('GOA, INDIA · 28-31 OCT', w - 45, headerY + 80);
+
+    ctx.strokeStyle = pal.accent;
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(45, 152);
+    ctx.lineTo(w - 45, 152);
+    ctx.stroke();
+
+    // Left Column Photo
+    const photoX = 45;
+    const photoY = 175;
+    const photoW = 460;
+    const photoH = 630;
+
+    ctx.save();
+    ctx.beginPath();
+    ctx.roundRect(photoX, photoY, photoW, photoH, 24);
+    ctx.clip();
+    ctx.fillStyle = pal.darkBg;
+    ctx.fillRect(photoX, photoY, photoW, photoH);
+
+    if (userPhoto) {
+      const imgAspect = userPhoto.width / userPhoto.height;
+      const cropAspect = photoW / photoH;
+      let drawW, drawH;
+      if (imgAspect > cropAspect) {
+        drawH = photoH * zoomVal;
+        drawW = photoH * imgAspect * zoomVal;
+      } else {
+        drawW = photoW * zoomVal;
+        drawH = (photoW / imgAspect) * zoomVal;
+      }
+      const imgX = photoX + (photoW - drawW) / 2 + panXVal;
+      const imgY = photoY + (photoH - drawH) / 2 + panYVal;
+      ctx.drawImage(userPhoto, imgX, imgY, drawW, drawH);
+    }
+    ctx.restore();
+
+    ctx.strokeStyle = pal.accent;
+    ctx.lineWidth = 5;
+    ctx.beginPath();
+    ctx.roundRect(photoX, photoY, photoW, photoH, 24);
+    ctx.stroke();
+
+    // Right Column Info Stacked
+    const rightX = 540;
+    let currentY = 190;
+
+    ctx.fillStyle = '#22C55E';
+    ctx.font = '800 15px monospace';
+    ctx.textAlign = 'left';
+    ctx.fillText('BUILDER NAME', rightX, currentY);
+
+    ctx.fillStyle = '#FFFFFF';
+    ctx.font = '900 64px serif';
+    ctx.fillText((nameVal || 'MILAN').toUpperCase(), rightX, currentY + 60);
+
+    ctx.strokeStyle = pal.accent;
+    ctx.lineWidth = 6;
+    ctx.beginPath();
+    ctx.moveTo(rightX, currentY + 80);
+    ctx.lineTo(rightX + 440, currentY + 80);
+    ctx.stroke();
+
+    currentY += 130;
+    ctx.fillStyle = '#22C55E';
+    ctx.font = '800 15px monospace';
+    ctx.fillText('BUILDER TITLE', rightX, currentY);
+
+    ctx.fillStyle = pal.accent;
+    ctx.font = '800 24px monospace';
+    ctx.fillText(builderTitleVal.toUpperCase(), rightX, currentY + 35);
+
+    currentY += 105;
+    ctx.fillStyle = '#22C55E';
+    ctx.font = '800 15px monospace';
+    ctx.fillText('AI SUPERPOWER', rightX, currentY);
+
+    ctx.fillStyle = '#FFFFFF';
+    ctx.font = '600 17px monospace';
+    ctx.fillText(superpowerVal, rightX, currentY + 35);
+
+    // Bottom Section
+    const bottomY = 825;
+    const bottomH = 370;
+
+    ctx.fillStyle = pal.darkBg;
+    ctx.beginPath();
+    ctx.roundRect(45, bottomY, w - 90, bottomH, 24);
+    ctx.fill();
+    ctx.strokeStyle = pal.accent;
+    ctx.lineWidth = 3;
+    ctx.stroke();
+
+    ctx.fillStyle = '#22C55E';
+    ctx.font = '800 18px monospace';
+    ctx.fillText('🏆 ACHIEVEMENT UNLOCKED', 75, bottomY + 46);
+
+    ctx.fillStyle = '#FFFFFF';
+    ctx.font = '600 20px monospace';
+    ctx.fillText('Debugged life.', 75, bottomY + 100);
+    ctx.fillText('Building dreams.', 75, bottomY + 145);
+
+    ctx.fillStyle = pal.accent;
+    ctx.fillText('Goa is the compiler.', 75, bottomY + 190);
+
+    // Yellow Footer Bar
+    const footerY = h - 85;
+    ctx.fillStyle = pal.accent;
+    ctx.fillRect(45, footerY, w - 90, 50);
+
+    ctx.fillStyle = pal.darkBg;
+    ctx.font = '800 18px monospace';
+    ctx.textAlign = 'center';
+    ctx.fillText('🌴 — #FrameInGoa · 28-31 OCT 2026 · OFFICIAL HACKER HOUSE GOA BADGE — 🌴', w / 2, footerY + 32);
+  }
 }
 
 // Download Action

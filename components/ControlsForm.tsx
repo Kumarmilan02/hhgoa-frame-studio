@@ -8,6 +8,7 @@ interface ControlsFormProps {
   role: string;
   builderTitle: string;
   superpower: string;
+  codingMood: string;
   zoom: number;
   panX: number;
   panY: number;
@@ -16,6 +17,7 @@ interface ControlsFormProps {
   onRoleChange: (val: string) => void;
   onBuilderTitleChange: (val: string) => void;
   onSuperpowerChange: (val: string) => void;
+  onCodingMoodChange: (val: string) => void;
   onZoomChange: (val: number) => void;
   onPanXChange: (val: number) => void;
   onPanYChange: (val: number) => void;
@@ -55,6 +57,7 @@ export default function ControlsForm({
   role,
   builderTitle,
   superpower,
+  codingMood,
   zoom,
   panX,
   panY,
@@ -63,6 +66,7 @@ export default function ControlsForm({
   onRoleChange,
   onBuilderTitleChange,
   onSuperpowerChange,
+  onCodingMoodChange,
   onZoomChange,
   onPanXChange,
   onPanYChange,
@@ -163,6 +167,19 @@ export default function ControlsForm({
               value={superpower}
               onChange={(e) => onSuperpowerChange(e.target.value)}
               placeholder="e.g. Turning Coconut Water into Apps"
+              className="w-full bg-[#042616] text-white border border-[#148048] focus:border-[#ffe500] rounded-lg px-3 py-2 text-sm font-mono-tech outline-none transition"
+            />
+          </div>
+
+          <div>
+            <label className="block font-mono-tech text-xs text-[#ffe500] uppercase mb-1 flex items-center gap-1.5 font-bold">
+              <span>🕶️</span> Coding Mood
+            </label>
+            <input
+              type="text"
+              value={codingMood}
+              onChange={(e) => onCodingMoodChange(e.target.value)}
+              placeholder="e.g. SHIP MODE"
               className="w-full bg-[#042616] text-white border border-[#148048] focus:border-[#ffe500] rounded-lg px-3 py-2 text-sm font-mono-tech outline-none transition"
             />
           </div>
