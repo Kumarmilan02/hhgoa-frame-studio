@@ -46,57 +46,47 @@ export default function ExportBar({ getCanvas, format }: ExportBarProps) {
 
     setSharing(true);
     try {
-      // 1. Convert Canvas to Blob & File
+      // 1. Convert Canvas to PNG Data URL & Blob
+      const dataUrl = canvas.toDataURL('image/png', 0.95);
       const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, 'image/png'));
-      if (!blob) throw new Error('Canvas blob generation failed');
 
-      const pngFile = new File([blob], `hh-goa-2026-${format}.png`, { type: 'image/png' });
-
-      // 2. Web Share API with attached image file (Mobile Browsers / Modern Desktops)
-      if (navigator.canShare && navigator.canShare({ files: [pngFile] })) {
-        await navigator.share({
-          title: 'Hacker House Goa 2026 Builder Graphic',
-          text: 'Excited for Hacker House Goa 2026! 🌴 500 elite builders shipping in Goa. #FrameInGoa #HHGOA2026',
-          files: [pngFile],
-        });
-        setShared(true);
-        setTimeout(() => setShared(false), 4000);
-        setSharing(false);
-        return;
-      }
-
-      // 3. Fallback for desktop: Copy Image to Clipboard & Auto-Download PNG
-      try {
-        await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
-      } catch (clipErr) {
-        console.warn('Clipboard copy warning:', clipErr);
-      }
-
-      // Trigger automatic PNG download so the user has the image saved
-      handleDownload();
-
-      // Get Dynamic OG Share Link
-      const dataUrl = canvas.toDataURL('image/png', 0.9);
-      const res = await fetch('/api/share', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ image: dataUrl }),
-      });
-
-      let shareUrl = window.location.origin;
-      if (res.ok) {
-        const data = await res.json();
-        if (data.shareId) {
-          shareUrl = `${window.location.origin}/share/${data.shareId}`;
+      // 2. Copy Image to Clipboard & Auto-Download for instant backup
+      if (blob) {
+        try {
+          await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
+        } catch (clipErr) {
+          console.warn('Clipboard copy warning:', clipErr);
         }
+        handleDownload();
       }
 
+      // 3. Post to /api/share to get Open Graph Twitter Card URL
+      let shareUrl = window.location.origin;
+      try {
+        const res = await fetch('/api/share', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ image: dataUrl }),
+        });
+
+        if (res.ok) {
+          const data = await res.json();
+          if (data.shareId) {
+            shareUrl = `${window.location.origin}/share/${data.shareId}`;
+          }
+        }
+      } catch (e) {
+        console.warn('Share API error:', e);
+      }
+
+      // 4. Launch X (Twitter) Intent DIRECTLY - No intermediate share options!
       const tweetText = encodeURIComponent(
         `Excited for Hacker House Goa 2026! 🌴 Here is my official builder graphic! 👇\n\n#FrameInGoa #HHGOA2026`
       );
 
       const intentUrl = `https://x.com/intent/post?text=${tweetText}&url=${encodeURIComponent(shareUrl)}`;
       window.open(intentUrl, '_blank', 'noopener,noreferrer');
+
       setShared(true);
       setTimeout(() => setShared(false), 4000);
     } catch (err) {
