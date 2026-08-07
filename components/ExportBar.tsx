@@ -1,20 +1,34 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Download, Share2, Loader2, Check } from 'lucide-react';
+import { Download, Share2, Loader2, Check, AlertTriangle } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
 interface ExportBarProps {
   getCanvas: () => HTMLCanvasElement | null;
   format: 'formatA' | 'formatB';
+  hasPhoto?: boolean;
+  onTriggerUpload?: () => void;
 }
 
-export default function ExportBar({ getCanvas, format }: ExportBarProps) {
+export default function ExportBar({ getCanvas, format, hasPhoto = false, onTriggerUpload }: ExportBarProps) {
   const [downloading, setDownloading] = useState(false);
   const [sharing, setSharing] = useState(false);
   const [shared, setShared] = useState(false);
+  const [warningMsg, setWarningMsg] = useState<string | null>(null);
+
+  const triggerWarning = () => {
+    setWarningMsg('⚠️ Please upload your photo first to download or share your badge!');
+    if (onTriggerUpload) onTriggerUpload();
+    setTimeout(() => setWarningMsg(null), 4500);
+  };
 
   const handleDownload = () => {
+    if (!hasPhoto) {
+      triggerWarning();
+      return;
+    }
+
     const canvas = getCanvas();
     if (!canvas) return;
 
@@ -41,6 +55,11 @@ export default function ExportBar({ getCanvas, format }: ExportBarProps) {
   };
 
   const handleShareToX = async () => {
+    if (!hasPhoto) {
+      triggerWarning();
+      return;
+    }
+
     const canvas = getCanvas();
     if (!canvas) return;
 
@@ -97,6 +116,11 @@ export default function ExportBar({ getCanvas, format }: ExportBarProps) {
   };
 
   const handleShareToLinkedIn = async () => {
+    if (!hasPhoto) {
+      triggerWarning();
+      return;
+    }
+
     const canvas = getCanvas();
     if (!canvas) return;
 
@@ -122,43 +146,53 @@ export default function ExportBar({ getCanvas, format }: ExportBarProps) {
   };
 
   return (
-    <div className="w-full flex flex-col sm:flex-row gap-4 mt-6">
-      <button
-        onClick={handleDownload}
-        disabled={downloading}
-        className="btn-hh-yellow flex-1 py-4 px-6 rounded-xl text-sm font-bold uppercase tracking-wider flex items-center justify-center gap-2 cursor-pointer shadow-lg"
-      >
-        {downloading ? (
-          <Loader2 className="w-5 h-5 animate-spin" />
-        ) : (
-          <Download className="w-5 h-5" />
-        )}
-        Download PNG (High-Res)
-      </button>
+    <div className="w-full flex flex-col items-center mt-6 space-y-3">
+      {/* Photo Required Warning Banner */}
+      {warningMsg && (
+        <div className="w-full bg-[#ff007a] text-white text-xs font-mono-tech py-2.5 px-4 rounded-xl font-bold flex items-center justify-center gap-2 border border-[#ffe500] shadow-lg animate-bounce">
+          <AlertTriangle className="w-4 h-4 text-[#ffe500]" />
+          <span>{warningMsg}</span>
+        </div>
+      )}
 
-      <button
-        onClick={handleShareToX}
-        disabled={sharing}
-        className="flex-1 py-4 px-4 rounded-xl font-mono-tech text-xs sm:text-sm font-bold uppercase tracking-wider bg-[#ff007a] text-white hover:bg-[#e0006b] transition flex items-center justify-center gap-2 cursor-pointer shadow-lg glow-pink"
-      >
-        {sharing ? (
-          <Loader2 className="w-4 h-4 animate-spin text-white" />
-        ) : shared ? (
-          <Check className="w-4 h-4 text-white" />
-        ) : (
+      <div className="w-full flex flex-col sm:flex-row gap-4">
+        <button
+          onClick={handleDownload}
+          disabled={downloading}
+          className="btn-hh-yellow flex-1 py-4 px-6 rounded-xl text-sm font-bold uppercase tracking-wider flex items-center justify-center gap-2 cursor-pointer shadow-lg"
+        >
+          {downloading ? (
+            <Loader2 className="w-5 h-5 animate-spin" />
+          ) : (
+            <Download className="w-5 h-5" />
+          )}
+          Download PNG (High-Res)
+        </button>
+
+        <button
+          onClick={handleShareToX}
+          disabled={sharing}
+          className="flex-1 py-4 px-4 rounded-xl font-mono-tech text-xs sm:text-sm font-bold uppercase tracking-wider bg-[#ff007a] text-white hover:bg-[#e0006b] transition flex items-center justify-center gap-2 cursor-pointer shadow-lg glow-pink"
+        >
+          {sharing ? (
+            <Loader2 className="w-4 h-4 animate-spin text-white" />
+          ) : shared ? (
+            <Check className="w-4 h-4 text-white" />
+          ) : (
+            <Share2 className="w-4 h-4" />
+          )}
+          {sharing ? 'Attaching Image...' : shared ? 'Image Shared / Copied!' : 'Share X (Twitter)'}
+        </button>
+
+        <button
+          type="button"
+          onClick={handleShareToLinkedIn}
+          className="flex-1 py-4 px-4 rounded-xl font-mono-tech text-xs sm:text-sm font-bold uppercase tracking-wider bg-[#0a66c2] text-white hover:bg-[#084e96] transition flex items-center justify-center gap-2 cursor-pointer shadow-lg"
+        >
           <Share2 className="w-4 h-4" />
-        )}
-        {sharing ? 'Attaching Image...' : shared ? 'Image Shared / Copied!' : 'Share X (Twitter)'}
-      </button>
-
-      <button
-        type="button"
-        onClick={handleShareToLinkedIn}
-        className="flex-1 py-4 px-4 rounded-xl font-mono-tech text-xs sm:text-sm font-bold uppercase tracking-wider bg-[#0a66c2] text-white hover:bg-[#084e96] transition flex items-center justify-center gap-2 cursor-pointer shadow-lg"
-      >
-        <Share2 className="w-4 h-4" />
-        Share LinkedIn
-      </button>
+          Share LinkedIn
+        </button>
+      </div>
     </div>
   );
 }

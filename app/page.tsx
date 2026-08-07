@@ -145,6 +145,7 @@ export default function Home() {
               <ExportBar
                 getCanvas={() => canvasPreviewRef.current?.getCanvas() || null}
                 format={format}
+                hasPhoto={!!photo}
               />
             </div>
           </div>
@@ -189,6 +190,7 @@ export default function Home() {
             <ExportBar
               getCanvas={() => canvasPreviewRef.current?.getCanvas() || null}
               format={format}
+              hasPhoto={!!photo}
             />
           </div>
         </div>
