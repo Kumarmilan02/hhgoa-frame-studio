@@ -51,9 +51,12 @@ export async function GET(request: Request) {
   const buffer = Buffer.from(base64Data, 'base64');
 
   return new NextResponse(buffer, {
+    status: 200,
     headers: {
       'Content-Type': 'image/png',
-      'Cache-Control': 'public, max-age=86400, immutable',
+      'Content-Length': buffer.length.toString(),
+      'Cache-Control': 'public, max-age=31536000, immutable',
+      'Access-Control-Allow-Origin': '*',
     },
   });
 }

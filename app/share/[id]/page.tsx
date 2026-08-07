@@ -1,4 +1,5 @@
 import { Metadata } from 'next';
+import { headers } from 'next/headers';
 import Link from 'next/link';
 
 interface SharePageProps {
@@ -7,28 +8,38 @@ interface SharePageProps {
 
 export async function generateMetadata({ params }: SharePageProps): Promise<Metadata> {
   const { id } = await params;
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://hhgoa.com';
-  const imageUrl = `${baseUrl}/api/share?id=${id}`;
+  const headerList = await headers();
+  const host = headerList.get('host') || 'hhgoa.com';
+  const protocol = host.includes('localhost') ? 'http' : 'https';
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || `${protocol}://${host}`;
+  const imageUrl = `${baseUrl}/api/share?id=${id}&file=hhgoa-badge.png`;
 
   return {
     title: 'HH GOA 2026 | Builder Graphic #FrameInGoa',
-    description: 'Check out my official HH Goa 2026 graphic! Build, ship, and lock in for October 28-31 in Goa.',
+    description: 'Check out my official HH Goa 2026 graphic! Build, ship, and lock in for October 28-31 in Goa. #FrameInGoa',
+    metadataBase: new URL(baseUrl),
     openGraph: {
       title: 'HH GOA 2026 | Builder Graphic',
       description: 'Hacker House Goa 2026 — 500 Elite Builders. Goa, India. #FrameInGoa',
+      url: `${baseUrl}/share/${id}`,
+      siteName: 'Hacker House Goa 2026',
       images: [
         {
           url: imageUrl,
-          width: 1200,
-          height: 630,
+          width: 1080,
+          height: 1350,
+          type: 'image/png',
           alt: 'HH Goa 2026 Graphic',
         },
       ],
+      type: 'website',
     },
     twitter: {
       card: 'summary_large_image',
-      title: 'HH GOA 2026 | Builder Graphic',
-      description: 'Hacker House Goa 2026 #FrameInGoa',
+      title: 'HH GOA 2026 | Builder Graphic #FrameInGoa',
+      description: 'Hacker House Goa 2026 — 500 Elite Builders. Goa, India. #FrameInGoa',
+      site: '@247pmstudio',
+      creator: '@247pmstudio',
       images: [imageUrl],
     },
   };
