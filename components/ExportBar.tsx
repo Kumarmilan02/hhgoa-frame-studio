@@ -156,6 +156,14 @@ export default function ExportBar({ getCanvas, format, hasPhoto = false, onTrigg
         </div>
       )}
 
+      {/* Success Info Toast for Direct Share */}
+      {shared && (
+        <div className="w-full bg-[#042616] text-[#ffe500] text-xs font-mono-tech py-2.5 px-4 rounded-xl font-bold flex items-center justify-center gap-2 border border-[#148048] shadow-lg">
+          <Check className="w-4 h-4 text-[#22c55e]" />
+          <span>📸 Badge image copied to clipboard & saved! Press Ctrl+V (Paste) in Twitter to attach.</span>
+        </div>
+      )}
+
       <div className="w-full flex flex-col sm:flex-row gap-4">
         <button
           onClick={handleDownload}

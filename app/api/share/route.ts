@@ -1,7 +1,13 @@
 import { NextResponse } from 'next/server';
 
-// In-memory cache for temporary share images (keyed by short id)
-const shareCache = new Map<string, { image: string; createdAt: number }>();
+// Global cache for temporary share images (preserved across warm serverless functions)
+const globalForCache = globalThis as unknown as {
+  shareCache: Map<string, { image: string; createdAt: number }>;
+};
+
+const shareCache =
+  globalForCache.shareCache || new Map<string, { image: string; createdAt: number }>();
+globalForCache.shareCache = shareCache;
 
 // Cleanup images older than 24 hours
 function cleanupCache() {
