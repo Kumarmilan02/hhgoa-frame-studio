@@ -756,3 +756,224 @@ function drawPalmFrond(
 
   ctx.restore();
 }
+
+// Draw a realistic barcode for event tickets
+function drawBarcode(ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: number, color: string) {
+  ctx.save();
+  ctx.fillStyle = color;
+  let curX = x;
+  const endX = x + w;
+  while (curX < endX) {
+    const barW = Math.random() > 0.4 ? (Math.random() > 0.5 ? 4 : 2) : 8;
+    const gapW = Math.random() > 0.3 ? (Math.random() > 0.5 ? 4 : 2) : 6;
+    if (curX + barW + gapW > endX) break;
+    ctx.fillRect(curX, y, barW, h);
+    curX += barW + gapW;
+  }
+  ctx.restore();
+}
+
+// Draw custom back for Format A (Portrait)
+export async function drawFormatABack(
+  ctx: CanvasRenderingContext2D,
+  width: number,
+  height: number,
+  config: GeneratorConfig
+) {
+  const { stylePreset = 'emerald' } = config;
+  const palette = STYLE_PALETTES[stylePreset] || STYLE_PALETTES.emerald;
+
+  // Background
+  const bgGradient = ctx.createLinearGradient(0, 0, width, height);
+  bgGradient.addColorStop(0, palette.bg2);
+  bgGradient.addColorStop(1, palette.bg);
+  ctx.fillStyle = bgGradient;
+  ctx.fillRect(0, 0, width, height);
+
+  // Outer Border
+  ctx.strokeStyle = palette.accent;
+  ctx.lineWidth = 12;
+  ctx.strokeRect(24, 24, width - 48, height - 48);
+
+  // Background tropical watermark (low opacity)
+  if (goaSunsetImg) {
+    ctx.save();
+    ctx.globalAlpha = 0.08;
+    ctx.drawImage(goaSunsetImg, 0, 0, width, height);
+    ctx.restore();
+  }
+
+  // Header Banner
+  ctx.fillStyle = palette.accent;
+  ctx.fillRect(24, 24, width - 48, 80);
+
+  ctx.fillStyle = palette.bg;
+  ctx.font = '900 40px "Space Mono", monospace';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText('HACKER HOUSE GOA 2026', width / 2, 64);
+
+  // Center logo watermark
+  if (goaHindiSvgImg) {
+    ctx.save();
+    ctx.globalAlpha = 0.45;
+    const logoW = 500;
+    const logoH = 500;
+    ctx.drawImage(
+      goaHindiSvgImg,
+      (width - logoW) / 2,
+      (height - logoH) / 2 - 100,
+      logoW,
+      logoH
+    );
+    ctx.restore();
+  }
+
+  // Decorative text pattern
+  ctx.save();
+  ctx.fillStyle = palette.highlight;
+  ctx.font = '900 120px "Teko", sans-serif';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText('BUILDER BADGE', width / 2, height / 2 + 180);
+  ctx.restore();
+
+  // Tech decals
+  ctx.fillStyle = palette.accent;
+  ctx.font = '700 24px "Space Mono", monospace';
+  ctx.textAlign = 'center';
+  ctx.fillText('MORJIM • GOA • INDIA', width / 2, height - 320);
+
+  ctx.fillStyle = palette.white;
+  ctx.font = '400 18px "Space Mono", monospace';
+  ctx.fillText('SECURE NODE ID // HH-2026-GOA', width / 2, height - 280);
+
+  // Divider line
+  ctx.strokeStyle = palette.divider;
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(100, height - 230);
+  ctx.lineTo(width - 100, height - 230);
+  ctx.stroke();
+
+  // Barcode
+  const barW = 600;
+  const barH = 100;
+  drawBarcode(ctx, (width - barW) / 2, height - 200, barW, barH, palette.accent);
+  
+  ctx.fillStyle = palette.muted;
+  ctx.font = '700 14px "Space Mono", monospace';
+  ctx.fillText('*HH-GOA-2026-BUILDER*', width / 2, height - 80);
+}
+
+// Draw custom back for Format B (Landscape)
+export async function drawFormatBBack(
+  ctx: CanvasRenderingContext2D,
+  width: number,
+  height: number,
+  config: GeneratorConfig
+) {
+  const { stylePreset = 'emerald' } = config;
+  const palette = STYLE_PALETTES[stylePreset] || STYLE_PALETTES.emerald;
+
+  // Background
+  const bgGradient = ctx.createLinearGradient(0, 0, width, height);
+  bgGradient.addColorStop(0, palette.bg2);
+  bgGradient.addColorStop(1, palette.bg);
+  ctx.fillStyle = bgGradient;
+  ctx.fillRect(0, 0, width, height);
+
+  // Outer Border
+  ctx.strokeStyle = palette.accent;
+  ctx.lineWidth = 6;
+  ctx.strokeRect(16, 16, width - 32, height - 32);
+
+  // Background tropical watermark (low opacity)
+  if (goaSunsetImg) {
+    ctx.save();
+    ctx.globalAlpha = 0.08;
+    ctx.drawImage(goaSunsetImg, 0, 0, width, height);
+    ctx.restore();
+  }
+
+  // Header Banner
+  ctx.fillStyle = palette.accent;
+  ctx.fillRect(16, 16, width - 32, 60);
+
+  ctx.fillStyle = palette.bg;
+  ctx.font = '900 24px "Space Mono", monospace';
+  ctx.textAlign = 'left';
+  ctx.textBaseline = 'middle';
+  ctx.fillText('HACKER HOUSE GOA 2026', 40, 46);
+
+  ctx.textAlign = 'right';
+  ctx.fillText('MORJIM, INDIA', width - 40, 46);
+
+  // Center logo watermark
+  if (goaHindiSvgImg) {
+    ctx.save();
+    ctx.globalAlpha = 0.45;
+    const logoW = 280;
+    const logoH = 280;
+    ctx.drawImage(
+      goaHindiSvgImg,
+      width / 2 - logoW / 2,
+      height / 2 - logoH / 2 + 10,
+      logoW,
+      logoH
+    );
+    ctx.restore();
+  }
+
+  // Split content layout: Left and Right Columns
+  const leftColX = 80;
+  const rightColX = width / 2 + 80;
+
+  // Left column: BIG Title & Tech Decals
+  ctx.save();
+  ctx.fillStyle = palette.highlight;
+  ctx.font = '900 80px "Teko", sans-serif';
+  ctx.textAlign = 'left';
+  ctx.textBaseline = 'top';
+  ctx.fillText('BUILDER BADGE', leftColX, 110);
+  ctx.restore();
+
+  ctx.fillStyle = palette.white;
+  ctx.font = '400 16px "Space Mono", monospace';
+  ctx.textAlign = 'left';
+  ctx.fillText('SECURE NODE ID // HH-2026-GOA', leftColX, 220);
+  ctx.fillText('ACCESS LEVEL   // LEVEL-01', leftColX, 250);
+
+  // Barcode
+  const barW = 400;
+  const barH = 70;
+  drawBarcode(ctx, leftColX, height - 120, barW, barH, palette.accent);
+  
+  ctx.fillStyle = palette.muted;
+  ctx.font = '700 12px "Space Mono", monospace';
+  ctx.fillText('*HH-GOA-2026-BUILDER*', leftColX + barW / 2, height - 35);
+
+  // Right column: Details
+  ctx.textAlign = 'left';
+  ctx.fillStyle = palette.accent;
+  ctx.font = '700 20px "Space Mono", monospace';
+  ctx.fillText('MORJIM BEACH, GOA, INDIA', rightColX, 120);
+
+  ctx.fillStyle = palette.white;
+  ctx.font = '400 16px "Space Mono", monospace';
+  ctx.fillText('DATE: FEBRUARY 20-22, 2026', rightColX, 170);
+  ctx.fillText('NODE: SECURE DEV NETWORK', rightColX, 200);
+
+  // Decorative grid lines or shapes on the right
+  ctx.strokeStyle = palette.divider;
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(rightColX, 240);
+  ctx.lineTo(width - 80, 240);
+  ctx.stroke();
+
+  ctx.fillStyle = palette.muted;
+  ctx.font = '400 12px "Space Mono", monospace';
+  ctx.fillText('SYS_AUTH: APPROVED // DEV_NODE_CONNECTED', rightColX, 270);
+}
+

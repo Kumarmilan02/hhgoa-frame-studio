@@ -1,7 +1,7 @@
 'use client';
 
 import * as THREE from 'three'
-import React, { Suspense, useEffect, useRef, useState } from 'react'
+import React, { Suspense, useEffect, useRef, useState, useMemo } from 'react'
 import { Canvas, extend, useThree, useFrame } from '@react-three/fiber'
 import { useGLTF, useTexture, Environment, Lightformer } from '@react-three/drei'
 import { BallCollider, CuboidCollider, Physics, RigidBody, useRopeJoint, useSphericalJoint } from '@react-three/rapier'
@@ -27,36 +27,59 @@ function Band({ badgeTextureUrl, format, maxSpeed = 50, minSpeed = 10 }: { badge
   const badgeTexture = useTexture(badgeTextureUrl || 'https://assets.vercel.com/image/upload/contentful/image/e5382hct74si/SOT1hmCesOHxEYxL7vkoZ/c57b29c85912047c414311723320c16b/band.jpg')
   const { nodes, materials } = useGLTF('https://assets.vercel.com/image/upload/contentful/image/e5382hct74si/5huRVDzcoDwnbgrKUo1Lzs/53b6dd7d6b4ffcdbd338fa60265949e1/tag.glb') as any
   const texture = useTexture('/images/Hacker-house.png')
+  const frontTexture = useMemo(() => badgeTexture.clone(), [badgeTexture])
+  const backTexture = useMemo(() => badgeTexture.clone(), [badgeTexture])
   const { width, height } = useThree((state) => state.size)
   const [curve] = useState(() => new THREE.CatmullRomCurve3([new THREE.Vector3(), new THREE.Vector3(), new THREE.Vector3(), new THREE.Vector3()]))
   const [dragged, drag] = useState<any>(false)
   const [hovered, hover] = useState(false)
 
-  // Fix the UV cropping and aspect ratio mapping based on the chosen format
+  // Fix the UV cropping and aspect ratio mapping for both front and back faces
   useEffect(() => {
-    badgeTexture.colorSpace = THREE.SRGBColorSpace
-    badgeTexture.matrixAutoUpdate = false
-    badgeTexture.flipY = false
+    frontTexture.colorSpace = THREE.SRGBColorSpace
+    frontTexture.matrixAutoUpdate = false
+    frontTexture.flipY = false
+
+    backTexture.colorSpace = THREE.SRGBColorSpace
+    backTexture.matrixAutoUpdate = false
+    backTexture.flipY = false
 
     if (format === 'formatA') {
       // Portrait format: map upright exactly
-      badgeTexture.matrix.set(
-        0, -1 / 0.7572, 1,
-        -1, 0, 1,
-        0, 0, 1
-      )
-    } else {
-      // Landscape format: map sideways exactly
-      badgeTexture.matrix.set(
+      // Front maps left half (U=0..0.5) of texture
+      frontTexture.matrix.set(
         1, 0, 0,
         0, 1 / 0.7572, 0,
         0, 0, 1
       )
+      // Back maps right half (U=0.5..1) of texture
+      backTexture.matrix.set(
+        -1, 0, 1.5,
+        0, 1 / 0.7572, 0,
+        0, 0, 1
+      )
+    } else {
+      // Landscape format: rotate by 90 degrees CCW to fit the vertical card without squishing
+      // Front maps left half (U=0..0.5) of texture
+      frontTexture.matrix.set(
+        0, 0.5 / 0.7572, 0,
+        -2, 0, 1,
+        0, 0, 1
+      )
+      // Back maps right half (U=0.5..1) of texture
+      backTexture.matrix.set(
+        0, 0.5 / 0.7572, 0.5,
+        2, 0, -1,
+        0, 0, 1
+      )
     }
 
-    badgeTexture.wrapS = badgeTexture.wrapT = THREE.ClampToEdgeWrapping
-    badgeTexture.needsUpdate = true
-  }, [badgeTexture, format])
+    frontTexture.wrapS = frontTexture.wrapT = THREE.ClampToEdgeWrapping
+    frontTexture.needsUpdate = true
+
+    backTexture.wrapS = backTexture.wrapT = THREE.ClampToEdgeWrapping
+    backTexture.needsUpdate = true
+  }, [frontTexture, backTexture, format])
 
   useRopeJoint(fixed, j1, [[0, 0, 0], [0, 0, 0], 4]) // prettier-ignore
   useRopeJoint(j1, j2, [[0, 0, 0], [0, 0, 0], 1]) // prettier-ignore
@@ -138,7 +161,10 @@ function Band({ badgeTextureUrl, format, maxSpeed = 50, minSpeed = 10 }: { badge
               drag(new THREE.Vector3().copy(e.point).sub(vec.copy(card.current.translation())));
             }}>
             <mesh geometry={nodes.card.geometry}>
-              <meshPhysicalMaterial map={badgeTexture} map-anisotropy={16} clearcoat={1} clearcoatRoughness={0.15} roughness={0.3} metalness={0.5} />
+              <meshPhysicalMaterial map={frontTexture} map-anisotropy={16} clearcoat={1} clearcoatRoughness={0.15} roughness={0.3} metalness={0.5} side={THREE.FrontSide} />
+            </mesh>
+            <mesh geometry={nodes.card.geometry}>
+              <meshPhysicalMaterial map={backTexture} map-anisotropy={16} clearcoat={1} clearcoatRoughness={0.15} roughness={0.3} metalness={0.5} side={THREE.BackSide} />
             </mesh>
             <mesh geometry={nodes.clip.geometry} material={materials.metal} material-roughness={0.3} />
             <mesh geometry={nodes.clamp.geometry} material={materials.metal} />

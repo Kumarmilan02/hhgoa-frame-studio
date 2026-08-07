@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useRef, useImperativeHandle, forwardRef, useState } from 'react';
-import { drawFormatA, drawFormatB, GeneratorConfig, StylePreset } from '@/lib/canvas-generator';
+import { drawFormatA, drawFormatB, drawFormatABack, drawFormatBBack, GeneratorConfig, StylePreset } from '@/lib/canvas-generator';
 import { compressAndProcessImage } from '@/lib/image-compressor';
 import { Upload, Move, ZoomIn, Loader2, Sliders, AlertCircle, RotateCcw, Palette, Box } from 'lucide-react';
 import confetti from 'canvas-confetti';
@@ -133,8 +133,29 @@ const CanvasPreview = forwardRef<CanvasPreviewRef, CanvasPreviewProps>(
         canvas.height = targetH;
         if (config.format === 'formatA') drawFormatA(ctx, 1080, 1920, config);
         else drawFormatB(ctx, 1200, 675, config);
+
+        // Generate double-width texture (front + back side-by-side)
+        const textureCanvas = document.createElement('canvas');
+        textureCanvas.width = targetW * 2;
+        textureCanvas.height = targetH;
+        const tCtx = textureCanvas.getContext('2d');
+        if (tCtx) {
+          // Draw Front on left half
+          if (config.format === 'formatA') {
+            drawFormatA(tCtx, 1080, 1920, config);
+            // Draw Back on right half
+            tCtx.translate(1080, 0);
+            drawFormatABack(tCtx, 1080, 1920, config);
+          } else {
+            drawFormatB(tCtx, 1200, 675, config);
+            // Draw Back on right half
+            tCtx.translate(1200, 0);
+            drawFormatBBack(tCtx, 1200, 675, config);
+          }
+        }
+
         setTimeout(() => {
-          const dataUrl = canvas.toDataURL('image/png', 1.0);
+          const dataUrl = textureCanvas.toDataURL('image/png', 1.0);
           setBadgeTextureUrl(dataUrl);
           setThumbnailUrl(canvas.toDataURL('image/jpeg', 0.5));
         }, 80);
