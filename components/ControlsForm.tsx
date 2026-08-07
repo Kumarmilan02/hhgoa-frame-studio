@@ -72,13 +72,15 @@ export default function ControlsForm({
   onPanYChange,
   onStyleChange,
 }: ControlsFormProps) {
-  const handleReset = () => {
+  const handleReset = (e?: React.MouseEvent) => {
+    e?.preventDefault();
     onZoomChange(1.0);
     onPanXChange(0);
     onPanYChange(0);
   };
 
-  const handleCycleStyle = () => {
+  const handleCycleStyle = (e?: React.MouseEvent) => {
+    e?.preventDefault();
     const currentIndex = STYLES.findIndex((s) => s.id === stylePreset);
     const nextIndex = (currentIndex + 1) % STYLES.length;
     if (STYLES[nextIndex]) {
@@ -98,9 +100,9 @@ export default function ControlsForm({
 
   return (
     <div className="card-hh-emerald p-4 sm:p-5 rounded-2xl border border-[#148048] space-y-4 shadow-xl">
-      {/* Format B Text Inputs */}
+      {/* Format B Custom Metadata Inputs */}
       {format === 'formatB' && (
-        <div className="space-y-3.5 border-b border-[#148048]/40 pb-4">
+        <div className="space-y-3 pb-3 border-b border-[#148048]/40">
           <div>
             <label className="block font-mono-tech text-xs text-[#ffe500] uppercase mb-1 flex items-center gap-1.5 font-bold">
               <User className="w-3.5 h-3.5 text-[#ff007a]" /> Builder Name
@@ -170,19 +172,6 @@ export default function ControlsForm({
               className="w-full bg-[#042616] text-white border border-[#148048] focus:border-[#ffe500] rounded-lg px-3 py-2 text-sm font-mono-tech outline-none transition"
             />
           </div>
-
-          <div>
-            <label className="block font-mono-tech text-xs text-[#ffe500] uppercase mb-1 flex items-center gap-1.5 font-bold">
-              <span>🕶️</span> Coding Mood
-            </label>
-            <input
-              type="text"
-              value={codingMood}
-              onChange={(e) => onCodingMoodChange(e.target.value)}
-              placeholder="e.g. SHIP MODE"
-              className="w-full bg-[#042616] text-white border border-[#148048] focus:border-[#ffe500] rounded-lg px-3 py-2 text-sm font-mono-tech outline-none transition"
-            />
-          </div>
         </div>
       )}
 
@@ -193,6 +182,7 @@ export default function ControlsForm({
             <Palette className="w-3.5 h-3.5 text-[#ff007a]" /> Style Themes
           </span>
           <button
+            type="button"
             onClick={handleReset}
             className="text-[10px] font-mono-tech text-[#e5c200] hover:text-[#ffe500] flex items-center gap-1 underline cursor-pointer"
           >
@@ -201,6 +191,7 @@ export default function ControlsForm({
         </div>
 
         <button
+          type="button"
           onClick={handleCycleStyle}
           className="w-full py-2.5 px-3 bg-[#042616] hover:bg-[#0b6638] text-[#ffe500] border border-[#ff007a]/60 rounded-lg font-mono-tech text-xs font-bold uppercase transition flex items-center justify-center gap-2 shadow-md cursor-pointer"
         >
@@ -212,6 +203,7 @@ export default function ControlsForm({
           {STYLES.map((s) => (
             <button
               key={s.id}
+              type="button"
               onClick={() => onStyleChange(s.id)}
               className={`flex-1 py-1 rounded text-[10px] font-mono-tech uppercase font-bold border transition cursor-pointer ${
                 stylePreset === s.id
@@ -235,16 +227,14 @@ export default function ControlsForm({
 
         <div className="grid grid-cols-3 gap-2">
           <button
-            onClick={() => {
-              onZoomChange(1.0);
-              onPanXChange(0);
-              onPanYChange(0);
-            }}
+            type="button"
+            onClick={handleReset}
             className="py-1.5 px-2 bg-[#042616] hover:bg-[#0b6638] text-[#ffe500] border border-[#148048] rounded-md font-mono-tech text-[11px] font-bold uppercase transition text-center cursor-pointer"
           >
             🎯 Auto-Center
           </button>
           <button
+            type="button"
             onClick={() => {
               onZoomChange(1.35);
             }}
@@ -253,6 +243,7 @@ export default function ControlsForm({
             🔍 Zoom 1.35x
           </button>
           <button
+            type="button"
             onClick={() => {
               onZoomChange(1.8);
             }}

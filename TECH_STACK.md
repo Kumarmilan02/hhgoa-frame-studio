@@ -20,6 +20,7 @@ This document outlines the complete technology stack, frameworks, libraries, des
 | Technology / Spec | Usage |
 | :--- | :--- |
 | **Tailwind CSS** | **v4.x** utility classes for rapid, responsive layout composition |
+
 | **Vanilla CSS3** | Custom CSS design tokens, HSL variables, and high-performance GPU keyframe animations |
 | **Google Fonts** | • `Playfair Display`: High-contrast display serif titles<br>• `JetBrains Mono`: Uppercase monospace technical metadata<br>• `Plus Jakarta Sans`: Body and control labels |
 | **Neo-Brutalist Palette** | • Emerald Background (`#0A5C36`)<br>• Dark Card Inset (`#042616`)<br>• Electric Yellow (`#FFE500`)<br>• Magenta Pink (`#FF007A`) |

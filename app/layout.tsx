@@ -1,7 +1,43 @@
 import type { Metadata } from "next";
-import { Playfair_Display, JetBrains_Mono, Plus_Jakarta_Sans } from "next/font/google";
+import { Anton, Teko, Space_Mono, Barlow_Condensed, IBM_Plex_Mono, Poppins, Playfair_Display, JetBrains_Mono, Plus_Jakarta_Sans } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
+
+const anton = Anton({
+  variable: "--font-anton",
+  subsets: ["latin"],
+  weight: "400",
+});
+
+const teko = Teko({
+  variable: "--font-teko",
+  subsets: ["latin"],
+  weight: "700",
+});
+
+const spaceMono = Space_Mono({
+  variable: "--font-space-mono",
+  subsets: ["latin"],
+  weight: ["400", "700"],
+});
+
+const barlowCondensed = Barlow_Condensed({
+  variable: "--font-barlow-condensed",
+  subsets: ["latin"],
+  weight: ["600", "700"],
+});
+
+const ibmPlexMono = IBM_Plex_Mono({
+  variable: "--font-ibm-plex-mono",
+  subsets: ["latin"],
+  weight: ["600", "700"],
+});
+
+const poppins = Poppins({
+  variable: "--font-poppins",
+  subsets: ["latin"],
+  weight: ["600", "700"],
+});
 
 const displayFont = Playfair_Display({
   variable: "--font-display",
@@ -46,7 +82,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${displayFont.variable} ${monoFont.variable} ${sansFont.variable}`}>
+    <html lang="en" className={`${anton.variable} ${teko.variable} ${spaceMono.variable} ${barlowCondensed.variable} ${ibmPlexMono.variable} ${poppins.variable} ${displayFont.variable} ${monoFont.variable} ${sansFont.variable}`}>
       <head>
         {/* Anti-Inspect & DevTools Hiding Script */}
         <Script id="anti-inspect-script" strategy="beforeInteractive">

@@ -34,35 +34,47 @@ if (typeof window !== 'undefined') {
   };
 }
 
-// Color schemes for Style Presets
-const STYLE_PALETTES: Record<StylePreset, { bg: string; darkBg: string; accent: string; highlight: string; muted: string }> = {
+// Color schemes matching design spec tokens (--bg, --bg2, --primary, --accent, --secondary, --white, --muted, --divider)
+const STYLE_PALETTES: Record<StylePreset, { bg: string; bg2: string; accent: string; highlight: string; secondary: string; white: string; muted: string; divider: string }> = {
   emerald: {
-    bg: '#0A5C36',
-    darkBg: '#042616',
-    accent: '#FFE500',
-    highlight: '#FF007A',
-    muted: '#E5C200',
+    bg: '#042f1b',
+    bg2: '#08361f',
+    accent: '#FFD400',    // --primary
+    highlight: '#FF1F8F', // --accent
+    secondary: '#22C55E', // --secondary
+    white: '#F9FAFB',     // --white
+    muted: '#9CA3AF',     // --muted
+    divider: '#165B37',   // --divider
   },
   sunset: {
-    bg: '#C84B15',
-    darkBg: '#4A1503',
-    accent: '#FFE500',
+    bg: '#4A1503',
+    bg2: '#C84B15',
+    accent: '#FFD400',
     highlight: '#FF8800',
-    muted: '#FFC870',
+    secondary: '#FFC870',
+    white: '#F9FAFB',
+    muted: '#9CA3AF',
+    divider: '#882200',
   },
   cyber: {
-    bg: '#0B1D3A',
-    darkBg: '#040B18',
+    bg: '#040B18',
+    bg2: '#0B1D3A',
     accent: '#00FFCC',
-    highlight: '#FF007A',
-    muted: '#88E5FF',
+    highlight: '#FF1F8F',
+    secondary: '#00FF9D',
+    white: '#F9FAFB',
+    muted: '#9CA3AF',
+    divider: '#0A3B5C',
   },
   midnight: {
-    bg: '#062B2B',
-    darkBg: '#011212',
-    accent: '#00FF9D',
-    highlight: '#FFE500',
-    muted: '#80FFE8',
+    bg: '#011212',
+    bg2: '#062B2B',
+    accent: '#FFD400',
+    highlight: '#FF1F8F',
+    secondary: '#00FF9D',
+    white: '#F9FAFB',
+    muted: '#005C5C',
+    divider: '#005C5C',
   },
 };
 
@@ -78,8 +90,11 @@ export async function drawFormatA(
   const { photo, zoom, panX, panY, stylePreset = 'emerald' } = config;
   const palette = STYLE_PALETTES[stylePreset] || STYLE_PALETTES.emerald;
 
-  // 0. Base Background Layer
-  ctx.fillStyle = palette.bg;
+  // 0. Base Background Gradient
+  const bgGradient = ctx.createLinearGradient(0, 0, 0, height);
+  bgGradient.addColorStop(0, palette.bg2);
+  bgGradient.addColorStop(1, palette.bg);
+  ctx.fillStyle = bgGradient;
   ctx.fillRect(0, 0, width, height);
 
   // Outer Border Line
@@ -101,7 +116,7 @@ export async function drawFormatA(
   ctx.roundRect(cropX, cropY, cropSizeW, cropSizeH, 32);
   ctx.clip();
 
-  ctx.fillStyle = palette.darkBg;
+  ctx.fillStyle = palette.bg;
   ctx.fillRect(cropX, cropY, cropSizeW, cropSizeH);
 
   if (photo) {
@@ -123,122 +138,166 @@ export async function drawFormatA(
     const imgY = cropY + (cropSizeH - drawH) / 2 + panY;
 
     ctx.drawImage(photo, imgX, imgY, drawW, drawH);
-  } else {
-    if (goaSunsetImg) {
-      ctx.globalAlpha = 0.85;
-      const bgAspect = goaSunsetImg.width / goaSunsetImg.height;
-      const cropAspect = cropSizeW / cropSizeH;
+  } else if (goaSunsetImg) {
+    ctx.globalAlpha = 0.85;
+    const bgAspect = goaSunsetImg.width / goaSunsetImg.height;
+    const cropAspect = cropSizeW / cropSizeH;
 
-      let bgW: number;
-      let bgH: number;
+    let bgW: number;
+    let bgH: number;
 
-      if (bgAspect > cropAspect) {
-        bgH = cropSizeH;
-        bgW = cropSizeH * bgAspect;
-      } else {
-        bgW = cropSizeW;
-        bgH = cropSizeW / bgAspect;
-      }
-
-      const bgX = cropX + (cropSizeW - bgW) / 2;
-      const bgY = cropY + (cropSizeH - bgH) / 2;
-
-      ctx.drawImage(goaSunsetImg, bgX, bgY, bgW, bgH);
-      ctx.globalAlpha = 1.0;
+    if (bgAspect > cropAspect) {
+      bgH = cropSizeH;
+      bgW = cropSizeH * bgAspect;
+    } else {
+      bgW = cropSizeW;
+      bgH = cropSizeW / bgAspect;
     }
 
-    ctx.restore();
+    const bgX = cropX + (cropSizeW - bgW) / 2;
+    const bgY = cropY + (cropSizeH - bgH) / 2;
 
-    ctx.strokeStyle = palette.accent;
-    ctx.lineWidth = 4;
-    ctx.beginPath();
-    ctx.roundRect(cropX, cropY, cropSizeW, cropSizeH, 32);
-    ctx.stroke();
+    ctx.drawImage(goaSunsetImg, bgX, bgY, bgW, bgH);
+    ctx.globalAlpha = 1.0;
   }
 
-  // 2. Decorative Top Branding Header
-  ctx.save();
-  ctx.fillStyle = palette.accent;
-  ctx.font = '800 20px "JetBrains Mono", monospace';
-  ctx.textAlign = 'left';
-  ctx.fillText('DEVELOPED BY CODINGKOALAS', 70, 60);
-
-  ctx.textAlign = 'right';
-  ctx.fillText('GOA, INDIA · 2026', width - 70, 60);
   ctx.restore();
 
-  // 3. Goan Coastal Wave Shapes at Bottom
-  drawOceanWaves(ctx, width, height - 165, palette.bg, '#148048', palette.accent);
+  ctx.strokeStyle = palette.accent;
+  ctx.lineWidth = 4;
+  ctx.beginPath();
+  ctx.roundRect(cropX, cropY, cropSizeW, cropSizeH, 32);
+  ctx.stroke();
 
-  // 4. Botanical Corner Palm Silhouettes
-  drawPalmFrond(ctx, 40, height - 130, 1.05, false);
-  drawPalmFrond(ctx, width - 40, height - 130, 1.05, true);
-
-  // 5. Main Hero Title Overlays ("HACKER HOUSE")
+  // 2. Decorative Top Branding Header (Removed DEVELOPED BY CODINGKOALAS!)
   ctx.save();
   ctx.fillStyle = palette.accent;
-  ctx.font = '900 74px "Playfair Display", serif';
+  ctx.font = '700 18px "Space Mono", monospace';
+  ctx.textAlign = 'left';
+  ctx.fillText('🌴 HACKER HOUSE GOA 2026', 70, 60);
+
+  ctx.textAlign = 'right';
+  ctx.fillText('GOA, INDIA · 28-31 OCT', width - 70, 60);
+  ctx.restore();
+
+  // 3. Goan Coastal Wave Shapes & Dark Gradient Backdrop at Bottom
+  ctx.save();
+  const bannerY = height - 210;
+  const bannerH = 180;
+  const bannerGrad = ctx.createLinearGradient(0, bannerY, 0, bannerY + bannerH);
+  bannerGrad.addColorStop(0, 'rgba(4, 47, 27, 0.0)');
+  bannerGrad.addColorStop(0.25, 'rgba(4, 47, 27, 0.90)');
+  bannerGrad.addColorStop(1, 'rgba(4, 47, 27, 0.99)');
+  ctx.fillStyle = bannerGrad;
+  ctx.fillRect(0, bannerY, width, bannerH);
+  ctx.restore();
+
+  drawOceanWaves(ctx, width, height - 165, palette.bg, palette.divider, palette.accent);
+
+  // 4. Botanical Corner Palm Silhouettes
+  drawPalmFrond(ctx, 35, height - 125, 1.05, false);
+  drawPalmFrond(ctx, width - 35, height - 125, 1.05, true);
+
+  // 5. Main Hero Title Overlays ("HACKER   HOUSE" centered)
+  ctx.save();
+  ctx.fillStyle = palette.accent;
+  ctx.font = '400 78px "Anton", sans-serif';
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
 
-  ctx.shadowColor = 'rgba(0, 0, 0, 0.85)';
-  ctx.shadowBlur = 20;
-  ctx.fillText('HACKER   HOUSE', width / 2, height - 145);
+  ctx.shadowColor = 'rgba(0, 0, 0, 0.9)';
+  ctx.shadowBlur = 24;
+  ctx.fillText('HACKER   HOUSE', width / 2, height - 122);
   ctx.restore();
 
-  // 6. Middle Devanagari Goa Graphic SVG Badge
+  // 6. Middle Devanagari Goa Graphic SVG Badge (Glows in center)
   if (goaHindiSvgImg) {
     ctx.save();
-    const svgW = 140;
-    const svgH = 140;
+    const svgW = 135;
+    const svgH = 135;
     const svgX = width / 2 - svgW / 2;
-    const svgY = height - 145 - svgH / 2 - 5;
+    const svgY = height - 122 - svgH / 2 - 4;
 
-    ctx.shadowColor = 'rgba(255, 0, 122, 0.9)';
-    ctx.shadowBlur = 24;
+    ctx.shadowColor = 'rgba(255, 31, 143, 0.95)';
+    ctx.shadowBlur = 28;
     ctx.drawImage(goaHindiSvgImg, svgX, svgY, svgW, svgH);
     ctx.restore();
   }
 
-  // 7. QR Code Canvas Element
+  // 7. QR Code Canvas Element (Bottom-Left Corner Red Marked Area with Zero Overlap!)
   try {
     const qrCanvas = await getEventQRCodeCanvas('https://hhgoa.com');
-    const qrSize = 110;
-    const qrX = cropX + 24;
-    const qrY = cropY + cropSizeH - qrSize - 24;
+    const qrSize = 95;
+    const qrX = 45;
+    const qrY = height - 145;
 
     ctx.save();
-    ctx.fillStyle = palette.darkBg;
+    ctx.fillStyle = palette.bg;
     ctx.beginPath();
-    ctx.roundRect(qrX - 8, qrY - 8, qrSize + 16, qrSize + 28, 12);
+    ctx.roundRect(qrX - 6, qrY - 6, qrSize + 12, qrSize + 22, 12);
     ctx.fill();
 
     ctx.strokeStyle = palette.accent;
-    ctx.lineWidth = 2;
+    ctx.lineWidth = 2.5;
     ctx.stroke();
 
     ctx.drawImage(qrCanvas, qrX, qrY, qrSize, qrSize);
 
     ctx.fillStyle = palette.accent;
-    ctx.font = '700 9px "JetBrains Mono", monospace';
+    ctx.font = '700 11px "Space Mono", monospace';
     ctx.textAlign = 'center';
-    ctx.fillText('HHGOA.COM ↗', qrX + qrSize / 2, qrY + qrSize + 14);
+    ctx.fillText('HHGOA.COM ↗', qrX + qrSize / 2, qrY + qrSize + 12);
     ctx.restore();
   } catch (e) {
     console.error('QR draw error:', e);
   }
 
-  // 8. Aspect Ratio Tag Footer Metadata
+  // 8. Right Bottom Element / Hashtag Badge (Sleek container box - NO OVERLAP!)
+  ctx.save();
+  const tagBoxW = 220;
+  const tagBoxH = 85;
+  const tagBoxX = width - 45 - tagBoxW;
+  const tagBoxY = height - 145;
+
+  ctx.fillStyle = palette.bg;
+  ctx.beginPath();
+  ctx.roundRect(tagBoxX, tagBoxY, tagBoxW, tagBoxH, 12);
+  ctx.fill();
+
+  ctx.strokeStyle = palette.accent;
+  ctx.lineWidth = 2;
+  ctx.stroke();
+
+  ctx.fillStyle = palette.accent;
+  ctx.font = '700 18px "Space Mono", monospace';
+  ctx.textAlign = 'center';
+  ctx.fillText('#FrameInGoa', tagBoxX + tagBoxW / 2, tagBoxY + 26);
+
+  ctx.fillStyle = palette.highlight;
+  ctx.font = '600 13px "IBM Plex Mono", monospace';
+  ctx.fillText('🍹 BRED ON CODE', tagBoxX + tagBoxW / 2, tagBoxY + 48);
+
+  ctx.fillStyle = palette.secondary;
+  ctx.font = '600 13px "IBM Plex Mono", monospace';
+  ctx.fillText('28-31 OCT 2026 ✦', tagBoxX + tagBoxW / 2, tagBoxY + 68);
+  ctx.restore();
+
+  // 9. Awesome Slogan Footer Line (No DEVELOPED BY!)
   ctx.save();
   ctx.fillStyle = palette.muted;
-  ctx.font = '600 20px "JetBrains Mono", monospace';
+  ctx.font = '600 18px "IBM Plex Mono", monospace';
   ctx.textAlign = 'center';
-  ctx.fillText('28 – 31 OCT 2026 · #FrameInGoa', width / 2, height - 28);
+  ctx.fillText('🌴 BRED ON CODE & COCONUT WATER · 28-31 OCT 2026 🌴', width / 2, height - 22);
   ctx.restore();
 }
 
 /**
- * Format B (Builder ID Badge) — Full 2-Column Redesign strictly matching Reference Image!
+ * Format B (Builder ID Badge) — Exact Match of User Design Images!
+ * 1. Header matches Img 1 (Bold serif font for HACKER HOUSE, Goan fort background illustration)
+ * 2. Builder Name font increased (140px Teko bold)
+ * 3. Right column sections evenly spaced to eliminate empty red box area
+ * 4. AI Superpower text wrapped inside container bounds to fix border overflow in Img 2
+ * 5. Bottom card scanner row moved down right near the footer (15px gap)
  */
 export async function drawFormatB(
   ctx: CanvasRenderingContext2D,
@@ -246,98 +305,114 @@ export async function drawFormatB(
   height: number,
   config: GeneratorConfig
 ) {
-  const { photo, name, role, builderTitle, superpower, codingMood, zoom, panX, panY, stylePreset = 'emerald' } = config;
+  const { photo, name, role, builderTitle, superpower, zoom, panX, panY, stylePreset = 'emerald' } = config;
   const palette = STYLE_PALETTES[stylePreset] || STYLE_PALETTES.emerald;
 
-  // 0. Base Canvas & Outer Yellow Border Line
-  ctx.fillStyle = palette.bg;
+  // 0. Base Canvas & Gradient Background
+  const bgGradient = ctx.createLinearGradient(0, 0, 0, height);
+  bgGradient.addColorStop(0, palette.bg2);
+  bgGradient.addColorStop(1, palette.bg);
+  ctx.fillStyle = bgGradient;
   ctx.fillRect(0, 0, width, height);
 
+  // Outer Border Line (4px solid #FFD400)
   ctx.strokeStyle = palette.accent;
-  ctx.lineWidth = 6;
+  ctx.lineWidth = 4;
   ctx.beginPath();
   ctx.roundRect(16, 16, width - 32, height - 32, 24);
   ctx.stroke();
 
-  // Top Corner Sparkles (✦)
+  // Four Corner Yellow Sparkles (✦)
   ctx.fillStyle = palette.accent;
-  ctx.font = '24px "JetBrains Mono", monospace';
+  ctx.font = '22px "Space Mono", monospace';
   ctx.textAlign = 'center';
   ctx.fillText('✦', 34, 38);
   ctx.fillText('✦', width - 34, 38);
 
-  // Draw Goa Background Texture Line Art (Subtle)
+  // -------------------------------------------------------------
+  // 1. TOP HEADER BANNER (Full Width, Exact Match of Img 1!)
+  // -------------------------------------------------------------
+  const headerY = 38;
+
+  // Header Background Line Art (Goan fort & palm trees)
   if (goaSunsetImg) {
     ctx.save();
-    ctx.globalAlpha = 0.12;
-    ctx.drawImage(goaSunsetImg, 40, 160, width - 80, height - 280);
+    ctx.globalAlpha = 0.22;
+    ctx.drawImage(goaSunsetImg, 45, headerY, width - 90, 140);
     ctx.restore();
   }
 
-  // -------------------------------------------------------------
-  // 1. TOP HEADER BANNER (Full Width)
-  // -------------------------------------------------------------
-  const headerY = 40;
-
-  // Left: HACKER / HOUSE (Stacked in 2 lines)
+  // Left: HACKER / HOUSE (Bold serif Playfair Display / Bodoni style matching Img 1!)
   ctx.save();
   ctx.fillStyle = palette.accent;
-  ctx.font = '900 44px "Playfair Display", serif';
+  ctx.font = '900 62px "Playfair Display", serif';
   ctx.textAlign = 'left';
-  ctx.fillText('HACKER', 45, headerY + 45);
-  ctx.fillText('HOUSE', 45, headerY + 92);
+  ctx.letterSpacing = '1px';
+  ctx.fillText('HACKER', 45, headerY + 54);
+  ctx.fillText('HOUSE', 45, headerY + 118);
   ctx.restore();
 
   // Center: Glowing Devanagari Goa Badge ("गोवा")
   if (goaHindiSvgImg) {
     ctx.save();
-    ctx.shadowColor = 'rgba(255, 0, 122, 0.9)';
-    ctx.shadowBlur = 22;
-    ctx.drawImage(goaHindiSvgImg, 435, headerY + 15, 95, 95);
+    ctx.shadowColor = palette.highlight;
+    ctx.shadowBlur = 24;
+    ctx.drawImage(goaHindiSvgImg, 435, headerY + 18, 110, 110);
     ctx.restore();
   } else {
     ctx.save();
+    ctx.shadowColor = palette.highlight;
+    ctx.shadowBlur = 20;
     ctx.fillStyle = palette.highlight;
-    ctx.font = '800 48px system-ui, sans-serif';
+    ctx.font = '800 54px system-ui, sans-serif';
     ctx.textAlign = 'center';
-    ctx.fillText('गोवा', 480, headerY + 75);
+    ctx.fillText('गोवा', 490, headerY + 85);
     ctx.restore();
   }
 
-  // Right: 2026 BUILDER BADGE + GOA, INDIA · 28-31 OCT
+  // Right: 2026 BUILDER BADGE + GOA, INDIA · 28-31 OCT + Ocean Squiggles
   ctx.save();
   ctx.fillStyle = palette.accent;
-  ctx.font = '800 20px "JetBrains Mono", monospace';
+  ctx.font = '700 22px "Space Mono", monospace';
   ctx.textAlign = 'right';
-  ctx.fillText('2026 BUILDER BADGE', width - 45, headerY + 50);
+  ctx.fillText('2026 BUILDER BADGE', width - 45, headerY + 48);
 
   ctx.fillStyle = palette.muted;
-  ctx.font = '600 15px "JetBrains Mono", monospace';
+  ctx.font = '600 16px "IBM Plex Mono", monospace';
   ctx.fillText('GOA, INDIA · 28-31 OCT', width - 45, headerY + 80);
+
+  // Ocean wave squiggles (〰〰) in yellow
+  ctx.strokeStyle = palette.accent;
+  ctx.lineWidth = 2.5;
+  ctx.beginPath();
+  ctx.moveTo(width - 200, headerY + 105);
+  ctx.quadraticCurveTo(width - 160, headerY + 95, width - 120, headerY + 105);
+  ctx.quadraticCurveTo(width - 80, headerY + 115, width - 45, headerY + 105);
+  ctx.stroke();
   ctx.restore();
 
-  // Header Divider Line with chamfered notch
-  ctx.strokeStyle = palette.accent;
-  ctx.lineWidth = 3;
+  // Header Divider Line (--divider: #165B37)
+  ctx.strokeStyle = palette.divider;
+  ctx.lineWidth = 2;
   ctx.beginPath();
-  ctx.moveTo(45, 152);
-  ctx.lineTo(width - 45, 152);
+  ctx.moveTo(45, 185);
+  ctx.lineTo(width - 45, 185);
   ctx.stroke();
 
   // -------------------------------------------------------------
-  // 2. LEFT COLUMN — PORTRAIT PHOTO & CIRCULAR STAMP BADGE
+  // 2. LEFT COLUMN — PORTRAIT PHOTO & STAMP BADGE (Increased Width: 485px, Height: 720px)
   // -------------------------------------------------------------
-  const photoX = 45;
-  const photoY = 175;
-  const photoW = 460;
-  const photoH = 630;
+  const photoX = 42;
+  const photoY = 195;
+  const photoW = 485;
+  const photoH = 720;
 
   ctx.save();
   ctx.beginPath();
-  ctx.roundRect(photoX, photoY, photoW, photoH, 24);
+  ctx.roundRect(photoX, photoY, photoW, photoH, 20);
   ctx.clip();
 
-  ctx.fillStyle = palette.darkBg;
+  ctx.fillStyle = palette.bg;
   ctx.fillRect(photoX, photoY, photoW, photoH);
 
   if (photo) {
@@ -366,187 +441,162 @@ export async function drawFormatB(
   }
   ctx.restore();
 
-  // Double Yellow Chamfered Photo Frame Border
+  // Photo Frame Border (4px solid #FFD400)
   ctx.strokeStyle = palette.accent;
-  ctx.lineWidth = 5;
+  ctx.lineWidth = 4;
   ctx.beginPath();
-  ctx.roundRect(photoX, photoY, photoW, photoH, 24);
+  ctx.roundRect(photoX, photoY, photoW, photoH, 20);
   ctx.stroke();
 
-  // Inner Offset Accent Lines (matching reference design!)
+  // Inner Offset Accent Lines
   ctx.strokeStyle = palette.accent;
   ctx.lineWidth = 2;
   ctx.beginPath();
-  ctx.roundRect(photoX - 6, photoY - 6, photoW + 12, photoH + 12, 28);
+  ctx.roundRect(photoX - 6, photoY - 6, photoW + 12, photoH + 12, 24);
   ctx.stroke();
 
-  // Circular GOA 2026 VERIFIED BUILDER Stamp Badge (Bottom-Left Corner of Photo)
-  drawGoaVerifiedSeal(ctx, photoX + 85, photoY + photoH - 65, 80, palette);
+  // Circular GOA 2026 VERIFIED BUILDER Stamp Logo
+  drawExactGoaVerifiedSeal(ctx, photoX + 95, photoY + photoH - 70, 85, palette);
 
   // -------------------------------------------------------------
-  // 3. RIGHT COLUMN — BUILDER INFO STACKED (x: 540 to 1035)
+  // 3. RIGHT COLUMN — BUILDER INFO STACKED (Balanced 475px Width!)
   // -------------------------------------------------------------
-  const rightX = 540;
-  let currentY = 185;
+  const rightX = 560;
+  const rightMaxW = 475;
+  let currentY = 205;
 
-  // SECTION 1: BUILDER NAME
-  ctx.fillStyle = '#22C55E';
-  ctx.font = '800 15px "JetBrains Mono", monospace';
+  // SECTION 1: BUILDER NAME (140px Teko bold)
+  ctx.fillStyle = palette.secondary;
+  ctx.font = '700 22px "Space Mono", monospace';
   ctx.textAlign = 'left';
   ctx.fillText('BUILDER NAME', rightX, currentY);
 
-  const displayName = (name || 'MILAN').toUpperCase();
-  ctx.fillStyle = '#FFFFFF';
-  ctx.font = '900 64px "Playfair Display", serif';
-  ctx.fillText(displayName, rightX, currentY + 55);
+  if (name && name.trim() !== '') {
+    const displayName = name.trim().toUpperCase();
+    ctx.fillStyle = palette.white;
+    ctx.font = '700 140px "Teko", sans-serif';
+    ctx.fillText(displayName, rightX, currentY + 95);
 
-  // Yellow organic brush stroke line below name
-  ctx.strokeStyle = palette.accent;
-  ctx.lineWidth = 6;
-  ctx.beginPath();
-  ctx.moveTo(rightX, currentY + 72);
-  ctx.quadraticCurveTo(rightX + 200, currentY + 78, rightX + 440, currentY + 70);
-  ctx.stroke();
-
-  currentY += 92;
+    // Yellow organic brush stroke line below name
+    ctx.fillStyle = palette.accent;
+    ctx.beginPath();
+    ctx.roundRect(rightX, currentY + 112, rightMaxW, 8, 4);
+    ctx.fill();
+    currentY += 140;
+  } else {
+    currentY += 45;
+  }
 
   // Dotted Divider 1
-  drawDottedLine(ctx, rightX, currentY, width - 45, currentY, '#148048');
-  currentY += 20;
+  drawDottedLine(ctx, rightX, currentY, width - 42, currentY, palette.divider);
+  currentY += 30;
 
-  // SECTION 2: BUILDER TITLE
-  drawWizardHat(ctx, rightX + 30, currentY + 30, palette.accent);
+  // SECTION 2: BUILDER TITLE (Space Mono 22px + Barlow Condensed 34px)
+  drawWizardHatWithStars(ctx, rightX + 32, currentY + 34, palette.accent);
 
-  ctx.fillStyle = '#22C55E';
-  ctx.font = '800 15px "JetBrains Mono", monospace';
-  ctx.fillText('BUILDER TITLE', rightX + 75, currentY + 12);
+  ctx.fillStyle = palette.secondary;
+  ctx.font = '700 22px "Space Mono", monospace';
+  ctx.fillText('BUILDER TITLE', rightX + 80, currentY + 14);
 
   const displayTitle = (builderTitle || 'SMART CONTRACT WIZARD').toUpperCase();
   ctx.fillStyle = palette.accent;
-  ctx.font = '800 22px "JetBrains Mono", monospace';
-  ctx.fillText(displayTitle, rightX + 75, currentY + 44);
+  ctx.font = '700 34px "Barlow Condensed", sans-serif';
+  ctx.fillText(displayTitle, rightX + 80, currentY + 54);
 
-  currentY += 68;
+  currentY += 105;
 
   // Dotted Divider 2
-  drawDottedLine(ctx, rightX, currentY, width - 45, currentY, '#148048');
-  currentY += 20;
+  drawDottedLine(ctx, rightX, currentY, width - 42, currentY, palette.divider);
+  currentY += 30;
 
-  // SECTION 3: STACK / ROLE
-  drawCodeBracketsIcon(ctx, rightX + 30, currentY + 28, '#22C55E');
+  // SECTION 3: STACK / ROLE (Space Mono 22px + Barlow Condensed 34px)
+  drawCodeBracketsIcon(ctx, rightX + 32, currentY + 34, palette.secondary);
 
-  ctx.fillStyle = '#22C55E';
-  ctx.font = '800 15px "JetBrains Mono", monospace';
-  ctx.fillText('STACK / ROLE', rightX + 75, currentY + 12);
+  ctx.fillStyle = palette.secondary;
+  ctx.font = '700 22px "Space Mono", monospace';
+  ctx.fillText('STACK / ROLE', rightX + 80, currentY + 14);
 
   const displayRole = (role || 'DEVELOPER / DESIGNER').toUpperCase();
-  ctx.fillStyle = '#FFFFFF';
-  ctx.font = '800 22px "JetBrains Mono", monospace';
-  ctx.fillText(displayRole, rightX + 75, currentY + 44);
+  ctx.fillStyle = palette.white;
+  ctx.font = '700 34px "Barlow Condensed", sans-serif';
+  ctx.fillText(displayRole, rightX + 80, currentY + 54);
 
-  currentY += 68;
+  currentY += 105;
 
   // Dotted Divider 3
-  drawDottedLine(ctx, rightX, currentY, width - 45, currentY, '#148048');
-  currentY += 20;
+  drawDottedLine(ctx, rightX, currentY, width - 42, currentY, palette.divider);
+  currentY += 30;
 
   // SECTION 4: AI SUPERPOWER
-  drawFlameIcon(ctx, rightX + 30, currentY + 30, palette.highlight);
+  drawTwoToneFlame(ctx, rightX + 32, currentY + 34);
 
-  ctx.fillStyle = '#22C55E';
-  ctx.font = '800 15px "JetBrains Mono", monospace';
-  ctx.fillText('AI SUPERPOWER', rightX + 75, currentY + 12);
+  ctx.fillStyle = palette.secondary;
+  ctx.font = '700 22px "Space Mono", monospace';
+  ctx.fillText('AI SUPERPOWER', rightX + 80, currentY + 14);
 
   const displaySuperpower = superpower || 'Converting Coffee & Feni into Zero-Bug Code';
-  ctx.fillStyle = '#FFFFFF';
-  ctx.font = '600 16px "JetBrains Mono", monospace';
+  ctx.fillStyle = palette.white;
+  ctx.font = '700 26px "Barlow Condensed", sans-serif';
 
-  if (displaySuperpower.includes('Zero-Bug Code')) {
-    const parts = displaySuperpower.split('Zero-Bug Code');
-    ctx.fillText(parts[0], rightX + 75, currentY + 40);
-
-    const prefixW = ctx.measureText(parts[0]).width;
-    ctx.fillStyle = palette.accent;
-    ctx.font = '800 16px "JetBrains Mono", monospace';
-    ctx.fillText('Zero-Bug Code', rightX + 75 + prefixW, currentY + 40);
-  } else {
-    ctx.fillText(displaySuperpower, rightX + 75, currentY + 40);
-  }
-
-  currentY += 68;
-
-  // Dotted Divider 4
-  drawDottedLine(ctx, rightX, currentY, width - 45, currentY, '#148048');
-  currentY += 20;
-
-  // SECTION 5: CODING MOOD
-  ctx.fillStyle = '#22C55E';
-  ctx.font = '800 15px "JetBrains Mono", monospace';
-  ctx.textAlign = 'center';
-  ctx.fillText('CODING MOOD', rightX + 220, currentY + 15);
-
-  // User-driven Coding Mood Text
-  const displayMood = (codingMood || 'SHIP MODE').toUpperCase();
-  ctx.fillStyle = palette.accent;
-  ctx.font = '800 24px "JetBrains Mono", monospace';
-  ctx.fillText(`═  ${displayMood}  ═`, rightX + 220, currentY + 60);
+  drawWrappedSuperpowerText(ctx, displaySuperpower, rightX + 80, currentY + 50, rightMaxW - 80, palette);
 
   // -------------------------------------------------------------
-  // 4. BOTTOM INSET SECTION — ACHIEVEMENT, QR & VERIFIED BUILDER
+  // 4. BOTTOM INSET SECTION — SLEEK ROW (y: 960 to 1205, Generous 45px Space above!)
   // -------------------------------------------------------------
-  const bottomY = 825;
-  const bottomH = 370;
+  const bottomY = 960;
+  const bottomH = 245;
 
-  // Inset Card Container (#042616)
+  // Inset Card Container (#042f1b, border: 2.5px solid #FFD400)
   ctx.save();
-  ctx.fillStyle = palette.darkBg;
+  ctx.fillStyle = palette.bg;
   ctx.beginPath();
-  ctx.roundRect(45, bottomY, width - 90, bottomH, 24);
+  ctx.roundRect(42, bottomY, width - 84, bottomH, 20);
   ctx.fill();
 
   ctx.strokeStyle = palette.accent;
-  ctx.lineWidth = 3;
+  ctx.lineWidth = 2.5;
   ctx.stroke();
   ctx.restore();
 
-  // LEFT PART: ACHIEVEMENT UNLOCKED (x: 75 to 490)
+  // LEFT COLUMN: ACHIEVEMENT UNLOCKED (Poppins Font)
   ctx.save();
   ctx.font = '28px system-ui';
-  ctx.fillText('🏆', 75, bottomY + 50);
+  ctx.fillText('🏆', 62, bottomY + 44);
 
-  ctx.fillStyle = '#22C55E';
-  ctx.font = '800 18px "JetBrains Mono", monospace';
-  ctx.fillText('ACHIEVEMENT UNLOCKED', 115, bottomY + 46);
+  ctx.fillStyle = palette.secondary;
+  ctx.font = '700 18px "Space Mono", monospace';
+  ctx.textAlign = 'left';
+  ctx.fillText('ACHIEVEMENT UNLOCKED', 102, bottomY + 40);
 
-  ctx.fillStyle = '#FFFFFF';
-  ctx.font = '600 20px "JetBrains Mono", monospace';
-  ctx.fillText('Debugged life.', 115, bottomY + 100);
-  ctx.fillText('Building dreams.', 115, bottomY + 145);
+  ctx.fillStyle = palette.white;
+  ctx.font = '700 28px "Poppins", sans-serif';
+  ctx.fillText('Debugged life.', 102, bottomY + 90);
+  ctx.fillText('Building dreams.', 102, bottomY + 138);
 
   ctx.fillStyle = palette.accent;
-  ctx.font = '800 20px "JetBrains Mono", monospace';
-  ctx.fillText('Goa is the compiler.', 115, bottomY + 190);
+  ctx.font = '700 28px "Poppins", sans-serif';
+  ctx.fillText('Goa is the compiler.', 102, bottomY + 186);
   ctx.restore();
 
-  // Vertical Divider Line 1
-  ctx.strokeStyle = '#148048';
+  // Vertical Divider Line 1 (--divider: #165B37)
+  ctx.strokeStyle = palette.divider;
   ctx.lineWidth = 2;
   ctx.beginPath();
-  ctx.moveTo(500, bottomY + 30);
-  ctx.lineTo(500, bottomY + bottomH - 30);
+  ctx.moveTo(505, bottomY + 22);
+  ctx.lineTo(505, bottomY + bottomH - 22);
   ctx.stroke();
 
-  // CENTER PART: HIGH-CONTRAST QR CODE (x: 525 to 695)
+  // CENTER COLUMN: HIGH-CONTRAST QR CODE (150px x 150px)
   try {
     const qrCanvas = await getEventQRCodeCanvas('https://hhgoa.com');
-    const qrSize = 170;
-    const qrX = 525;
-    const qrY = bottomY + 100;
+    const qrSize = 150;
+    const qrX = 530;
+    const qrY = bottomY + 46;
 
     ctx.save();
-    ctx.fillStyle = '#FFFFFF';
+    ctx.fillStyle = palette.white;
     ctx.beginPath();
-    ctx.roundRect(qrX - 10, qrY - 10, qrSize + 20, qrSize + 20, 16);
+    ctx.roundRect(qrX - 8, qrY - 8, qrSize + 16, qrSize + 16, 12);
     ctx.fill();
 
     ctx.drawImage(qrCanvas, qrX, qrY, qrSize, qrSize);
@@ -556,50 +606,95 @@ export async function drawFormatB(
   }
 
   // Vertical Divider Line 2
-  ctx.strokeStyle = '#148048';
+  ctx.strokeStyle = palette.divider;
   ctx.lineWidth = 2;
   ctx.beginPath();
-  ctx.moveTo(725, bottomY + 30);
-  ctx.lineTo(725, bottomY + bottomH - 30);
+  ctx.moveTo(725, bottomY + 22);
+  ctx.lineTo(725, bottomY + bottomH - 22);
   ctx.stroke();
 
-  // RIGHT PART: GOA 2026 VERIFIED BUILDER (x: 750 to 1000)
+  // RIGHT COLUMN: HHGOA 26 VERIFIED BUILDER
   ctx.save();
   ctx.fillStyle = palette.accent;
-  ctx.font = '900 42px "Playfair Display", serif';
-  ctx.fillText('GOA 2026', 750, bottomY + 75);
+  ctx.font = '400 48px "Anton", sans-serif';
+  ctx.textAlign = 'left';
+  ctx.fillText('HHGOA 26', 740, bottomY + 62);
 
-  ctx.fillStyle = '#22C55E';
-  ctx.font = '800 22px "JetBrains Mono", monospace';
-  ctx.fillText('VERIFIED BUILDER', 750, bottomY + 120);
+  ctx.fillStyle = palette.secondary;
+  ctx.font = '700 20px "Space Mono", monospace';
+  ctx.fillText('VERIFIED BUILDER', 740, bottomY + 104);
 
-  // Red accent line
+  // Pink accent line (#FF1F8F)
   ctx.strokeStyle = palette.highlight;
   ctx.lineWidth = 4;
   ctx.beginPath();
-  ctx.moveTo(750, bottomY + 140);
-  ctx.lineTo(970, bottomY + 140);
+  ctx.moveTo(740, bottomY + 122);
+  ctx.lineTo(960, bottomY + 122);
   ctx.stroke();
 
   // Scan to Connect
   ctx.fillStyle = palette.accent;
-  ctx.font = '800 18px "JetBrains Mono", monospace';
-  ctx.fillText('SCAN TO CONNECT >>>', 750, bottomY + 195);
+  ctx.font = '700 16px "Space Mono", monospace';
+  ctx.fillText('SCAN TO CONNECT >>>', 740, bottomY + 168);
   ctx.restore();
 
   // -------------------------------------------------------------
-  // 5. FOOTER BAR (Solid Electric Yellow Bar)
+  // 5. FOOTER BAR (Moved down right below scanner box, 15px gap!)
   // -------------------------------------------------------------
-  const footerY = height - 85;
+  const footerY = 1230;
   const footerH = 50;
 
   ctx.fillStyle = palette.accent;
   ctx.fillRect(45, footerY, width - 90, footerH);
 
-  ctx.fillStyle = palette.darkBg;
-  ctx.font = '800 18px "JetBrains Mono", monospace';
+  ctx.fillStyle = palette.bg;
+  ctx.font = '600 22px "IBM Plex Mono", monospace';
   ctx.textAlign = 'center';
   ctx.fillText('🌴 — #FrameInGoa · 28-31 OCT 2026 · OFFICIAL HACKER HOUSE GOA BADGE — 🌴', width / 2, footerY + 32);
+}
+
+/**
+ * Draw Superpower text wrapped inside maxWidth bounds
+ */
+function drawWrappedSuperpowerText(
+  ctx: CanvasRenderingContext2D,
+  text: string,
+  x: number,
+  y: number,
+  maxWidth: number,
+  palette: { accent: string; white: string }
+) {
+  if (text.includes('Zero-Bug Code')) {
+    const parts = text.split('Zero-Bug Code');
+    ctx.fillStyle = palette.white;
+    ctx.fillText(parts[0], x, y);
+
+    const prefixW = ctx.measureText(parts[0]).width;
+    if (prefixW + 140 <= maxWidth) {
+      ctx.fillStyle = palette.accent;
+      ctx.fillText('Zero-Bug Code', x + prefixW, y);
+    } else {
+      ctx.fillStyle = palette.accent;
+      ctx.fillText('Zero-Bug Code', x, y + 30);
+    }
+  } else {
+    const words = text.split(' ');
+    let line = '';
+    let currY = y;
+    ctx.fillStyle = palette.white;
+
+    for (let i = 0; i < words.length; i++) {
+      const testLine = line + words[i] + ' ';
+      if (ctx.measureText(testLine).width > maxWidth && i > 0) {
+        ctx.fillText(line.trim(), x, currY);
+        line = words[i] + ' ';
+        currY += 30;
+      } else {
+        line = testLine;
+      }
+    }
+    ctx.fillText(line.trim(), x, currY);
+  }
 }
 
 /**
@@ -625,45 +720,108 @@ function drawDottedLine(
 }
 
 /**
- * Draw Circular GOA 2026 VERIFIED BUILDER Stamp Seal
+ * Draw Exact GOA 2026 VERIFIED BUILDER Stamp Seal matching Uploaded Logo Image!
  */
-function drawGoaVerifiedSeal(
+function drawExactGoaVerifiedSeal(
   ctx: CanvasRenderingContext2D,
   cx: number,
   cy: number,
   radius: number,
-  palette: { highlight: string; accent: string; darkBg: string }
+  palette: { highlight: string; accent: string; bg: string }
 ) {
   ctx.save();
   ctx.translate(cx, cy);
-  ctx.rotate((-12 * Math.PI) / 180);
 
-  // Outer Magenta Ring
+  // Outer Magenta Pink Ring (#FF1F8F)
   ctx.fillStyle = palette.highlight;
   ctx.beginPath();
   ctx.arc(0, 0, radius, 0, Math.PI * 2);
   ctx.fill();
 
-  // Inner Dark Center
-  ctx.fillStyle = palette.darkBg;
+  // Middle Dark Green Ring (#042f1b)
+  ctx.fillStyle = palette.bg;
   ctx.beginPath();
-  ctx.arc(0, 0, radius - 10, 0, Math.PI * 2);
+  ctx.arc(0, 0, radius - 6, 0, Math.PI * 2);
   ctx.fill();
 
+  // Inner Yellow Stroke Ring (#FFD400)
   ctx.strokeStyle = palette.accent;
-  ctx.lineWidth = 2;
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.arc(0, 0, radius - 10, 0, Math.PI * 2);
   ctx.stroke();
 
-  // Center Palm & Waves
-  ctx.fillStyle = palette.accent;
-  ctx.font = '24px system-ui';
-  ctx.textAlign = 'center';
-  ctx.fillText('🌴', 0, -5);
+  // Center Island Base with Palm Tree & Ocean Squiggles (〰〰)
+  // Ocean Squiggles (Pink)
+  ctx.strokeStyle = palette.highlight;
+  ctx.lineWidth = 2.5;
+  ctx.beginPath();
+  ctx.moveTo(-40, 0);
+  ctx.quadraticCurveTo(-30, -5, -20, 0);
+  ctx.moveTo(-40, 10);
+  ctx.quadraticCurveTo(-30, 5, -20, 10);
+  ctx.moveTo(20, -5);
+  ctx.quadraticCurveTo(30, -10, 40, -5);
+  ctx.moveTo(20, 5);
+  ctx.quadraticCurveTo(30, 0, 40, 5);
+  ctx.stroke();
 
+  // Yellow Beach Island Base
   ctx.fillStyle = palette.accent;
-  ctx.font = '800 11px "JetBrains Mono", monospace';
-  ctx.fillText('GOA 2026', 0, 18);
-  ctx.fillText('VERIFIED BUILDER', 0, 32);
+  ctx.beginPath();
+  ctx.ellipse(0, 24, 30, 7, 0, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Center Yellow & Pink Palm Tree 🌴
+  ctx.strokeStyle = palette.accent;
+  ctx.lineWidth = 4;
+  ctx.beginPath();
+  ctx.moveTo(-4, 24);
+  ctx.quadraticCurveTo(4, 0, 0, -22);
+  ctx.stroke();
+
+  // Fronds
+  ctx.fillStyle = palette.accent;
+  ctx.font = '28px system-ui';
+  ctx.textAlign = 'center';
+  ctx.fillText('🌴', 0, -20);
+
+  // Curved Top Text: GOA 2026 (#FFD400)
+  drawCurvedText(ctx, 'GOA 2026', radius - 20, -Math.PI * 0.72, -Math.PI * 0.28, palette.accent);
+
+  // Curved Bottom Text: VERIFIED BUILDER (#FF1F8F)
+  drawCurvedText(ctx, 'VERIFIED BUILDER', radius - 20, Math.PI * 0.25, Math.PI * 0.75, palette.highlight);
+
+  ctx.restore();
+}
+
+/**
+ * Draw Text along Circle Arc
+ */
+function drawCurvedText(
+  ctx: CanvasRenderingContext2D,
+  text: string,
+  radius: number,
+  startAngle: number,
+  endAngle: number,
+  color: string
+) {
+  ctx.save();
+  ctx.fillStyle = color;
+  ctx.font = '700 12px "Space Mono", monospace';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+
+  const angleStep = (endAngle - startAngle) / Math.max(1, text.length - 1);
+
+  for (let i = 0; i < text.length; i++) {
+    const angle = startAngle + i * angleStep;
+    ctx.save();
+    ctx.rotate(angle);
+    ctx.translate(0, -radius);
+    ctx.fillText(text[i], 0, 0);
+    ctx.restore();
+  }
 
   ctx.restore();
 }
@@ -675,7 +833,7 @@ function drawCodeBracketsIcon(ctx: CanvasRenderingContext2D, cx: number, cy: num
   ctx.save();
   ctx.translate(cx, cy);
   ctx.fillStyle = color;
-  ctx.font = '900 24px "JetBrains Mono", monospace';
+  ctx.font = '700 24px "Space Mono", monospace';
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
   ctx.fillText('</>', 0, 0);
@@ -683,9 +841,9 @@ function drawCodeBracketsIcon(ctx: CanvasRenderingContext2D, cx: number, cy: num
 }
 
 /**
- * Draw Vector Wizard Hat Icon
+ * Draw Vector Wizard Hat Icon with Stars
  */
-function drawWizardHat(ctx: CanvasRenderingContext2D, cx: number, cy: number, color: string) {
+function drawWizardHatWithStars(ctx: CanvasRenderingContext2D, cx: number, cy: number, color: string) {
   ctx.save();
   ctx.translate(cx, cy);
   ctx.strokeStyle = color;
@@ -695,98 +853,51 @@ function drawWizardHat(ctx: CanvasRenderingContext2D, cx: number, cy: number, co
 
   // Hat Brim
   ctx.beginPath();
-  ctx.ellipse(0, 15, 24, 8, 0, 0, Math.PI * 2);
+  ctx.ellipse(0, 12, 22, 7, 0, 0, Math.PI * 2);
   ctx.stroke();
 
   // Hat Cone
   ctx.beginPath();
-  ctx.moveTo(-16, 12);
-  ctx.quadraticCurveTo(-10, -15, 12, -22);
-  ctx.quadraticCurveTo(10, 0, 16, 12);
+  ctx.moveTo(-15, 10);
+  ctx.quadraticCurveTo(-8, -15, 10, -22);
+  ctx.quadraticCurveTo(8, 0, 15, 10);
   ctx.stroke();
 
   // Magic Sparkles
   ctx.fillStyle = color;
   ctx.font = '12px system-ui';
-  ctx.fillText('✦', -20, -15);
-  ctx.fillText('✦', 18, -10);
+  ctx.fillText('✦', -18, -12);
+  ctx.fillText('✦', 16, -8);
 
   ctx.restore();
 }
 
 /**
- * Draw Vector Flame Icon
+ * Draw Two-Tone Flame Icon
  */
-function drawFlameIcon(ctx: CanvasRenderingContext2D, cx: number, cy: number, color: string) {
+function drawTwoToneFlame(ctx: CanvasRenderingContext2D, cx: number, cy: number) {
   ctx.save();
   ctx.translate(cx, cy);
-  ctx.fillStyle = color;
-  ctx.strokeStyle = '#FFE500';
-  ctx.lineWidth = 2;
 
+  // Outer Flame (Orange #FF8800)
+  ctx.fillStyle = '#FF8800';
   ctx.beginPath();
-  ctx.moveTo(0, 20);
-  ctx.quadraticCurveTo(-20, 10, -10, -10);
-  ctx.quadraticCurveTo(-5, -25, 0, -30);
-  ctx.quadraticCurveTo(8, -15, 15, -5);
-  ctx.quadraticCurveTo(22, 10, 0, 20);
+  ctx.moveTo(0, 18);
+  ctx.quadraticCurveTo(-18, 8, -8, -10);
+  ctx.quadraticCurveTo(-4, -22, 0, -26);
+  ctx.quadraticCurveTo(7, -12, 14, -4);
+  ctx.quadraticCurveTo(20, 8, 0, 18);
   ctx.fill();
-  ctx.stroke();
 
-  ctx.restore();
-}
-
-/**
- * Draw Vector Laptop Icon with </> Screen Code
- */
-function drawLaptopIcon(ctx: CanvasRenderingContext2D, cx: number, cy: number, w: number, h: number, color: string) {
-  ctx.save();
-  ctx.translate(cx - w / 2, cy - h / 2);
-
-  // Screen Frame
-  ctx.strokeStyle = color;
-  ctx.lineWidth = 4;
-  ctx.fillStyle = '#042616';
+  // Inner Flame Core (Yellow #FFD400)
+  ctx.fillStyle = '#FFD400';
   ctx.beginPath();
-  ctx.roundRect(10, 0, w - 20, h - 20, 12);
+  ctx.moveTo(0, 14);
+  ctx.quadraticCurveTo(-10, 6, -4, -6);
+  ctx.quadraticCurveTo(-2, -14, 0, -16);
+  ctx.quadraticCurveTo(4, -8, 8, -2);
+  ctx.quadraticCurveTo(12, 6, 0, 14);
   ctx.fill();
-  ctx.stroke();
-
-  // Base Keyboard
-  ctx.beginPath();
-  ctx.roundRect(0, h - 18, w, 16, 6);
-  ctx.stroke();
-
-  // </> Code Text inside screen
-  ctx.fillStyle = color;
-  ctx.font = '900 28px "JetBrains Mono", monospace';
-  ctx.textAlign = 'center';
-  ctx.textBaseline = 'middle';
-  ctx.fillText('</>', w / 2, (h - 20) / 2);
-
-  ctx.restore();
-}
-
-/**
- * Draw Vector Small Palm Tree Icon
- */
-function drawPalmTreeSmall(ctx: CanvasRenderingContext2D, cx: number, cy: number, color: string) {
-  ctx.save();
-  ctx.translate(cx, cy);
-  ctx.strokeStyle = color;
-  ctx.lineWidth = 3;
-
-  // Trunk
-  ctx.beginPath();
-  ctx.moveTo(-5, 30);
-  ctx.quadraticCurveTo(5, 0, 0, -20);
-  ctx.stroke();
-
-  // Fronds
-  ctx.fillStyle = color;
-  ctx.font = '28px system-ui';
-  ctx.textAlign = 'center';
-  ctx.fillText('🌴', 0, -20);
 
   ctx.restore();
 }
@@ -848,7 +959,7 @@ function drawPalmFrond(
   if (flip) ctx.scale(-1, 1);
   ctx.scale(scale, scale);
 
-  ctx.strokeStyle = '#148048';
+  ctx.strokeStyle = '#165B37';
   ctx.lineWidth = 4;
   ctx.lineCap = 'round';
 
