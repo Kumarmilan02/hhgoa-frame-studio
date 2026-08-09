@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Anton, Teko, Space_Mono, Barlow_Condensed, IBM_Plex_Mono, Poppins, Playfair_Display, JetBrains_Mono, Plus_Jakarta_Sans } from "next/font/google";
 import Script from "next/script";
+import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 
 const anton = Anton({
@@ -153,6 +154,7 @@ export default function RootLayout({
       </head>
       <body className="antialiased selection:bg-[#ffe500] selection:text-[#042616]">
         {children}
+        <Analytics />
       </body>
     </html>
   );
