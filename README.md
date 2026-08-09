@@ -35,15 +35,30 @@ The application is designed with a **mobile-first**, **fast**, and **no-login** 
 - Official HH GOA 2026 branding
 - High-resolution downloadable badge
 
+#### **🧊 3D Interactive Card Render & 6s Reel Exporter**
+- Real-time 360° HD PVC Card & Woven HHGOA Lanyard render
+- Bright dual-sided front & back lighting
+- 6-second 9:16 vertical 360° spin video export (`🎬 EXPORT 3D`) ready for Reels & Stories
+
+#### **📱 Progressive Web App (PWA) & 100% Offline Support**
+- Installable on Mobile (iOS / Android) & Desktop as a native standalone app
+- Service Worker (`sw.js`) Stale-While-Revalidate caching strategy
+- Generate, customize, and export 2D & 3D badges off-grid with zero Wi-Fi connection
+- Live Offline Mode alert (`⚡ OFFLINE MODE ACTIVE`) & floating install banner
+
 ---
 
 ## 🚀 Highlights
 
+- 📱 Progressive Web App (PWA) & 100% Offline Support
+- 🧊 Real-time 360° 3D PVC Card Render
+- 🎬 6-second 9:16 vertical Reel video export
 - 📸 Upload JPG, PNG & HEIC images
 - 📱 Mobile-friendly interface
 - 🖼️ Smart image cropping
 - 🔍 Zoom & drag photo positioning
 - 🎨 Multiple event themes
+- 🏷️ Official Category Emblems (Hacker, Volunteer, Organizer, Host)
 - ⚡ Fast client-side image generation
 - 💾 High-resolution PNG download
 - 🔗 QR Code generation
