@@ -1,0 +1,25 @@
+{
+  "name": "HH GOA 2026 | ID Badge & 3D Render Generator",
+  "short_name": "HHGOA Badge",
+  "description": "Generate your official Hacker House Goa 2026 2D & 3D ID Badges offline on mobile & desktop.",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#02180e",
+  "theme_color": "#042616",
+  "categories": ["utilities", "graphics", "entertainment"],
+  "icons": [
+    {
+      "src": "/pwa-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/pwa-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Anton, Teko, Space_Mono, Barlow_Condensed, IBM_Plex_Mono, Poppins, Playfair_Display, JetBrains_Mono, Plus_Jakarta_Sans } from "next/font/google";
 import Script from "next/script";
+import PWAInstallPrompt from "@/components/PWAInstallPrompt";
 import "./globals.css";
 
 const anton = Anton({
@@ -59,8 +60,14 @@ const sansFont = Plus_Jakarta_Sans({
 
 export const metadata: Metadata = {
   title: "HH GOA 2026 | Frame & Builder ID Card Generator",
-  description: "Generate your official HH Goa 2026 PFP Frame and Builder ID Card. Download & Share to X with #FrameInGoa!",
-  keywords: ["HH GOA", "Hacker House Goa 2026", "FrameInGoa", "Builder ID", "Devfolio", "Goa Hackathon"],
+  description: "Generate your official HH Goa 2026 PFP Frame and Builder ID Card offline. Download & Share to X with #FrameInGoa!",
+  keywords: ["HH GOA", "Hacker House Goa 2026", "FrameInGoa", "Builder ID", "Devfolio", "Goa Hackathon", "PWA"],
+  manifest: "/manifest.json",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: "HHGOA Badge",
+  },
   openGraph: {
     title: "HH GOA 2026 | Frame & Builder ID Card Generator",
     description: "Generate your official HH Goa 2026 PFP Frame and Builder ID Card. Download & Share to X with #FrameInGoa!",
@@ -84,6 +91,11 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${anton.variable} ${teko.variable} ${spaceMono.variable} ${barlowCondensed.variable} ${ibmPlexMono.variable} ${poppins.variable} ${displayFont.variable} ${monoFont.variable} ${sansFont.variable}`}>
       <head>
+        <link rel="manifest" href="/manifest.json" />
+        <meta name="theme-color" content="#042616" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
         {/* Anti-Inspect & DevTools Hiding Script */}
         <Script id="anti-inspect-script" strategy="beforeInteractive">
           {`
@@ -153,6 +165,7 @@ export default function RootLayout({
       </head>
       <body className="antialiased selection:bg-[#ffe500] selection:text-[#042616]">
         {children}
+        <PWAInstallPrompt />
       </body>
     </html>
   );
