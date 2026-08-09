@@ -448,24 +448,7 @@ export default function Card3DViewer({ sourceCanvas, format = 'formatA', name = 
     targetRotationRef.current.y += Math.PI;
   };
 
-  const handleDownload3DSnapshot = () => {
-    const canvas = rendererRef.current?.domElement;
-    if (!canvas) return;
-
-    try {
-      const dataUrl = canvas.toDataURL('image/png');
-      const a = document.createElement('a');
-      a.href = dataUrl;
-      a.download = `${name ? name.trim().replace(/\s+/g, '_') : 'HHGOA'}_3D_Badge.png`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-    } catch (err) {
-      console.error('3D Snapshot error:', err);
-    }
-  };
-
-  // RECORD 9:16 VERTICAL 3D SPIN VIDEO OVER EXACTLY 5.0 SECONDS
+  // RECORD 9:16 VERTICAL 3D SPIN VIDEO OVER EXACTLY 6.0 SECONDS
   const handleDownload3DSpin = async () => {
     setIsRecording(true);
     setRecordingProgress(0);
@@ -533,7 +516,6 @@ export default function Card3DViewer({ sourceCanvas, format = 'formatA', name = 
       // 4. Setup MediaRecorder for 9:16 Stream
       const stream = (recCanvas as any).captureStream ? (recCanvas as any).captureStream(30) : null;
       if (!stream) {
-        handleDownload3DSnapshot();
         setIsRecording(false);
         return;
       }
@@ -566,16 +548,16 @@ export default function Card3DViewer({ sourceCanvas, format = 'formatA', name = 
 
       mediaRecorder.start();
 
-      // 5. 360° Smooth Spin Loop over Exactly 5.0 Seconds (5000ms)
+      // 5. 360° Smooth Spin Loop over Exactly 6.0 Seconds (6000ms)
       const startTime = performance.now();
-      const duration = 5000;
+      const duration = 6000;
 
       const recordLoop = () => {
         const elapsed = performance.now() - startTime;
         const progress = Math.min(elapsed / duration, 1.0);
         setRecordingProgress(Math.floor(progress * 100));
 
-        // Rotate Y 360° smoothly across 5 seconds
+        // Rotate Y 360° smoothly across 6 seconds
         cardGroup.rotation.y = progress * Math.PI * 2;
         cardGroup.rotation.x = Math.sin(progress * Math.PI * 2) * 0.1;
 
@@ -590,9 +572,8 @@ export default function Card3DViewer({ sourceCanvas, format = 'formatA', name = 
 
       requestAnimationFrame(recordLoop);
     } catch (err) {
-      console.error('9:16 3D Spin recording error:', err);
+      console.error('3D Spin video recording error:', err);
       setIsRecording(false);
-      handleDownload3DSnapshot();
     }
   };
 
@@ -675,70 +656,56 @@ export default function Card3DViewer({ sourceCanvas, format = 'formatA', name = 
         </div>
       </div>
 
-      {/* Pop-In Modal Bottom Controls with 3D Export Options */}
-      <div className="w-full max-w-6xl flex flex-wrap items-center justify-between gap-3 border-t border-[#ffe500]/30 pt-3">
-        <div className="flex flex-wrap items-center gap-2 sm:gap-3">
-          <button
-            type="button"
-            onClick={() => setAutoRotate((prev) => !prev)}
-            className={`px-3.5 py-2 rounded-xl font-mono-tech text-xs uppercase font-extrabold flex items-center gap-2 transition-all cursor-pointer ${
-              autoRotate
-                ? 'bg-[#ff007a] text-white glow-pink'
-                : 'bg-[#042616] text-[#e5c200] border border-[#ffe500]/30'
+      {/* Pop-In Modal Bottom Controls (All 4 buttons neatly in ONE single row!) */}
+      <div className="w-full max-w-5xl flex items-center justify-between gap-2 border-t border-[#ffe500]/30 pt-3">
+        <button
+          type="button"
+          onClick={() => setAutoRotate((prev) => !prev)}
+          className={`px-3 py-2 rounded-xl font-mono-tech text-xs uppercase font-extrabold flex items-center gap-1.5 transition-all cursor-pointer whitespace-nowrap ${autoRotate
+              ? 'bg-[#ff007a] text-white glow-pink'
+              : 'bg-[#042616] text-[#e5c200] border border-[#ffe500]/30'
             }`}
-          >
-            <RotateCw className={`w-4 h-4 ${autoRotate ? 'animate-spin' : ''}`} />
-            <span>Orbit: {autoRotate ? 'ON' : 'OFF'}</span>
-          </button>
+        >
+          <RotateCw className={`w-3.5 h-3.5 ${autoRotate ? 'animate-spin' : ''}`} />
+          <span>Orbit: {autoRotate ? 'ON' : 'OFF'}</span>
+        </button>
 
-          <button
-            type="button"
-            onClick={handleFlipCard}
-            className="px-3.5 py-2 rounded-xl bg-[#ffe500] text-[#042616] font-mono-tech text-xs uppercase font-black flex items-center gap-2 hover:bg-[#fff066] transition cursor-pointer"
-          >
-            <RefreshCw className="w-4 h-4" />
-            <span>Flip 180°</span>
-          </button>
+        <button
+          type="button"
+          onClick={handleFlipCard}
+          className="px-3 py-2 rounded-xl bg-[#ffe500] text-[#042616] font-mono-tech text-xs uppercase font-black flex items-center gap-1.5 hover:bg-[#fff066] transition cursor-pointer whitespace-nowrap"
+        >
+          <RefreshCw className="w-3.5 h-3.5" />
+          <span>Flip 180°</span>
+        </button>
 
-          {/* 9:16 Vertical 5-Second 3D Spin Video Export Button */}
-          <button
-            type="button"
-            disabled={isRecording}
-            onClick={handleDownload3DSpin}
-            className="px-4 py-2 rounded-xl bg-[#0a5c36] hover:bg-[#0f7a47] text-[#ffe500] border border-[#ffe500]/60 font-mono-tech text-xs uppercase font-black flex items-center gap-2 transition shadow-lg cursor-pointer disabled:opacity-50"
-            title="Export 5-second 9:16 vertical Reel video clip of 3D card 360° spin"
-          >
-            {isRecording ? (
-              <>
-                <Loader2 className="w-4 h-4 text-[#ff007a] animate-spin" />
-                <span>Exporting 9:16 Reel ({recordingProgress}%)...</span>
-              </>
-            ) : (
-              <>
-                <Video className="w-4 h-4 text-[#ff007a]" />
-                <span>📹 Export 9:16 3D Reel (5s Spin)</span>
-              </>
-            )}
-          </button>
-
-          {/* 3D PNG Snapshot Download Button */}
-          <button
-            type="button"
-            onClick={handleDownload3DSnapshot}
-            className="px-3.5 py-2 rounded-xl bg-[#042616] hover:bg-[#0a5c36] text-[#e5c200] border border-[#ffe500]/40 font-mono-tech text-xs uppercase font-extrabold flex items-center gap-2 transition cursor-pointer"
-            title="Download HD 3D PNG Snapshot"
-          >
-            <Camera className="w-4 h-4 text-[#ffe500]" />
-            <span>📸 3D PNG</span>
-          </button>
-        </div>
+        {/* Shortened 6-Second 3D Spin Video Export Button */}
+        <button
+          type="button"
+          disabled={isRecording}
+          onClick={handleDownload3DSpin}
+          className="px-4 py-2 rounded-xl bg-gradient-to-r from-[#0a5c36] to-[#0f7a47] hover:from-[#0d6b40] hover:to-[#128a52] text-[#ffe500] border border-[#ffe500] font-mono-tech text-xs uppercase font-black flex items-center gap-1.5 transition shadow-xl cursor-pointer disabled:opacity-50 whitespace-nowrap"
+          title="Export 6-second 3D spin video clip"
+        >
+          {isRecording ? (
+            <>
+              <Loader2 className="w-3.5 h-3.5 text-[#ff007a] animate-spin" />
+              <span>Recording ({recordingProgress}%)...</span>
+            </>
+          ) : (
+            <>
+              <Video className="w-3.5 h-3.5 text-[#ff007a]" />
+              <span>🎬 EXPORT 3D</span>
+            </>
+          )}
+        </button>
 
         <button
           type="button"
           onClick={onClose}
-          className="px-6 py-2 rounded-xl bg-[#042616] text-[#ffe500] border border-[#ffe500]/60 font-mono-tech text-xs uppercase font-extrabold hover:bg-[#0a5c36] transition cursor-pointer"
+          className="px-4 py-2 rounded-xl bg-[#042616] text-[#ffe500] border border-[#ffe500]/60 font-mono-tech text-xs uppercase font-extrabold hover:bg-[#0a5c36] transition cursor-pointer whitespace-nowrap"
         >
-          Close 3D Render
+          ✖ Close 3D
         </button>
       </div>
     </div>
