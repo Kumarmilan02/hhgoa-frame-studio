@@ -127,8 +127,8 @@ function renderCanvas() {
   ctx.fillStyle = pal.accent;
   ctx.font = '22px "Space Mono", monospace';
   ctx.textAlign = 'center';
-  ctx.fillText('✦', 34, 38);
-  ctx.fillText('✦', w - 34, 38);
+  ctx.fillText('🌴', 34, 38);
+  ctx.fillText('🌴', w - 34, 38);
 
   if (activeFormat === 'formatA') {
     // Format A PFP Render
@@ -232,7 +232,7 @@ function renderCanvas() {
 
     ctx.fillStyle = pal.secondary;
     ctx.font = '600 13px "IBM Plex Mono", monospace';
-    ctx.fillText('28-31 OCT 2026 ✦', tagBoxX + tagBoxW / 2, tagBoxY + 68);
+    ctx.fillText('28-31 OCT 2026 🌴', tagBoxX + tagBoxW / 2, tagBoxY + 68);
     ctx.restore();
 
     ctx.fillStyle = pal.accent;

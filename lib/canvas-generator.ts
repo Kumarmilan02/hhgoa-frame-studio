@@ -1,6 +1,7 @@
 import { getEventQRCodeCanvas } from './qr-generator';
 
 export type StylePreset = 'emerald' | 'sunset' | 'cyber' | 'midnight';
+export type BadgeCategory = 'HACKER' | 'VOLUNTEER' | 'ORGANIZER' | 'HOST';
 
 export interface GeneratorConfig {
   format: 'formatA' | 'formatB';
@@ -17,6 +18,74 @@ export interface GeneratorConfig {
   qrLink?: string;
   stickers?: string[];
   stickerPositions?: Record<string, { x: number; y: number }>;
+  badgeCategory?: BadgeCategory;
+}
+
+const BADGE_EMBLEM_COLORS: Record<BadgeCategory, { border: string; innerBorder: string; bg: string; text: string; subText: string; icon: string }> = {
+  HACKER: { border: '#ff007a', innerBorder: '#ffe500', bg: '#042616', text: '#ffe500', subText: '#ff007a', icon: '💻' },
+  VOLUNTEER: { border: '#00f0ff', innerBorder: '#ffffff', bg: '#042616', text: '#ffffff', subText: '#00f0ff', icon: '🤝' },
+  ORGANIZER: { border: '#ffe500', innerBorder: '#ff007a', bg: '#042616', text: '#ffe500', subText: '#ff8800', icon: '⚡' },
+  HOST: { border: '#22c55e', innerBorder: '#ffe500', bg: '#042616', text: '#ffe500', subText: '#22c55e', icon: '🏠' },
+};
+
+export function drawRoundStampBadge(
+  ctx: CanvasRenderingContext2D,
+  centerX: number,
+  centerY: number,
+  radius: number,
+  category: BadgeCategory = 'HACKER'
+) {
+  const colors = BADGE_EMBLEM_COLORS[category] || BADGE_EMBLEM_COLORS.HACKER;
+
+  ctx.save();
+  ctx.translate(centerX, centerY);
+
+  // 1. Solid Premium Dark Background Disc
+  ctx.fillStyle = colors.bg;
+  ctx.beginPath();
+  ctx.arc(0, 0, radius, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Subtle outer shadow glow
+  ctx.shadowColor = 'rgba(0, 0, 0, 0.6)';
+  ctx.shadowBlur = 12;
+
+  // 2. Outer Solid Accent Ring
+  ctx.strokeStyle = colors.border;
+  ctx.lineWidth = 5;
+  ctx.beginPath();
+  ctx.arc(0, 0, radius - 2, 0, Math.PI * 2);
+  ctx.stroke();
+
+  ctx.shadowBlur = 0;
+
+  // 3. Inner Secondary Ring
+  ctx.strokeStyle = colors.innerBorder;
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.arc(0, 0, radius - 10, 0, Math.PI * 2);
+  ctx.stroke();
+
+  // 4. Top Category Icon
+  ctx.font = '18px sans-serif';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(colors.icon, 0, -radius + 24);
+
+  // 5. Center Category Title (HACKER, VOLUNTEER, ORGANIZER, HOST)
+  ctx.font = '900 24px "Space Mono", "Impact", sans-serif';
+  ctx.fillStyle = colors.text;
+  ctx.shadowColor = 'rgba(0,0,0,0.8)';
+  ctx.shadowBlur = 6;
+  ctx.fillText(category, 0, 4);
+  ctx.shadowBlur = 0;
+
+  // 6. Bottom Tagline "GOA 2026"
+  ctx.font = '700 11px "Space Mono", monospace';
+  ctx.fillStyle = colors.subText;
+  ctx.fillText('GOA 2026', 0, radius - 22);
+
+  ctx.restore();
 }
 
 // Pre-load Goa tropical artwork image & Hindi Goa SVG
@@ -183,6 +252,9 @@ export async function drawFormatA(
   ctx.fillText('GOA, INDIA · 28-31 OCT', width - 70, 60);
   ctx.restore();
 
+  // Official Round Rubber Stamp Badge (HACKER, VOLUNTEER, ORGANIZER, HOST)
+  drawRoundStampBadge(ctx, width - 115, 145, 68, config.badgeCategory || 'HACKER');
+
   // 3. Goan Coastal Wave Shapes & Dark Gradient Backdrop at Bottom
   ctx.save();
   const bannerY = height - 210;
@@ -286,7 +358,7 @@ export async function drawFormatA(
 
   ctx.fillStyle = palette.secondary;
   ctx.font = '600 13px "IBM Plex Mono", monospace';
-  ctx.fillText('28-31 OCT 2026 ✦', tagBoxX + tagBoxW / 2, tagBoxY + 68);
+  ctx.fillText('28-31 OCT 2026 🌴', tagBoxX + tagBoxW / 2, tagBoxY + 68);
   ctx.restore();
 
   // 9. Awesome Slogan Footer Line (No DEVELOPED BY!)
@@ -329,12 +401,12 @@ export async function drawFormatB(
   ctx.roundRect(16, 16, width - 32, height - 32, 24);
   ctx.stroke();
 
-  // Four Corner Yellow Sparkles (✦)
+  // Four Corner Yellow Sparkles (✨)
   ctx.fillStyle = palette.accent;
   ctx.font = '22px "Space Mono", monospace';
   ctx.textAlign = 'center';
-  ctx.fillText('✦', 34, 38);
-  ctx.fillText('✦', width - 34, 38);
+  ctx.fillText('🌴', 34, 38);
+  ctx.fillText('🌴', width - 34, 38);
 
   // -------------------------------------------------------------
   // 1. TOP HEADER BANNER (Full Width, Exact Match of Img 1!)
@@ -464,6 +536,9 @@ export async function drawFormatB(
 
   // Circular GOA 2026 VERIFIED BUILDER Stamp Logo
   drawExactGoaVerifiedSeal(ctx, photoX + 95, photoY + photoH - 70, 85, palette);
+
+  // Official Round Rubber Stamp Badge (HACKER, VOLUNTEER, ORGANIZER, HOST)
+  drawRoundStampBadge(ctx, photoX + photoW - 75, photoY + 75, 65, config.badgeCategory || 'HACKER');
 
   // -------------------------------------------------------------
   // 3. RIGHT COLUMN — BUILDER INFO STACKED (Balanced 475px Width!)
@@ -650,18 +725,51 @@ export async function drawFormatB(
   ctx.restore();
 
   // -------------------------------------------------------------
-  // 5. FOOTER BAR (Moved down right below scanner box, 15px gap!)
+  // 5. FOOTER BAR — HIGHLIGHTED #FrameInGoa TAG & BRANDING
   // -------------------------------------------------------------
   const footerY = 1230;
-  const footerH = 50;
+  const footerH = 52;
 
   ctx.fillStyle = palette.accent;
-  ctx.fillRect(45, footerY, width - 90, footerH);
+  ctx.beginPath();
+  ctx.roundRect(45, footerY, width - 90, footerH, 12);
+  ctx.fill();
 
+  // Left Footer Text
   ctx.fillStyle = palette.bg;
-  ctx.font = '600 22px "IBM Plex Mono", monospace';
+  ctx.font = '700 18px "Space Mono", monospace';
+  ctx.textAlign = 'left';
+  ctx.fillText('🌴 HH-GOA 2026', 70, footerY + 33);
+
+  // CENTER HIGHLIGHTED CAPSULE: 📸 #FrameInGoa
+  const tagCapsuleW = 240;
+  const tagCapsuleH = 36;
+  const tagCapsuleX = width / 2 - tagCapsuleW / 2;
+  const tagCapsuleY = footerY + 8;
+
+  ctx.save();
+  ctx.fillStyle = '#042616';
+  ctx.beginPath();
+  ctx.roundRect(tagCapsuleX, tagCapsuleY, tagCapsuleW, tagCapsuleH, 18);
+  ctx.fill();
+
+  ctx.strokeStyle = '#ff007a';
+  ctx.lineWidth = 2.5;
+  ctx.stroke();
+
+  ctx.fillStyle = '#ffe500';
+  ctx.font = '900 20px "Space Mono", monospace';
   ctx.textAlign = 'center';
-  ctx.fillText('🌴 — #FrameInGoa · 28-31 OCT 2026 · OFFICIAL HACKER HOUSE GOA BADGE — 🌴', width / 2, footerY + 32);
+  ctx.shadowColor = '#ff007a';
+  ctx.shadowBlur = 10;
+  ctx.fillText('📸 #FrameInGoa', width / 2, tagCapsuleY + 24);
+  ctx.restore();
+
+  // Right Footer Text
+  ctx.fillStyle = palette.bg;
+  ctx.font = '700 18px "Space Mono", monospace';
+  ctx.textAlign = 'right';
+  ctx.fillText('28-31 OCT 2026 🌴', width - 70, footerY + 33);
 }
 
 /**
@@ -877,8 +985,8 @@ function drawWizardHatWithStars(ctx: CanvasRenderingContext2D, cx: number, cy: n
   // Magic Sparkles
   ctx.fillStyle = color;
   ctx.font = '12px system-ui';
-  ctx.fillText('✦', -18, -12);
-  ctx.fillText('✦', 16, -8);
+  ctx.fillText('✨', -18, -12);
+  ctx.fillText('✨', 16, -8);
 
   ctx.restore();
 }

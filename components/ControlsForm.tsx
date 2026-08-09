@@ -1,6 +1,6 @@
 import React from 'react';
-import { ZoomIn, Move, User, Code, RotateCcw, Sparkles, Palette, Zap, Flame, QrCode, Smile } from 'lucide-react';
-import { StylePreset } from '@/lib/canvas-generator';
+import { ZoomIn, Move, User, Code, RotateCcw, Sparkles, Palette, Zap, Flame, QrCode, Smile, Award } from 'lucide-react';
+import { StylePreset, BadgeCategory } from '@/lib/canvas-generator';
 
 interface ControlsFormProps {
   format: 'formatA' | 'formatB';
@@ -13,6 +13,7 @@ interface ControlsFormProps {
   panX: number;
   panY: number;
   stylePreset: StylePreset;
+  badgeCategory: BadgeCategory;
   qrLink?: string;
   stickers?: string[];
   onNameChange: (val: string) => void;
@@ -24,6 +25,7 @@ interface ControlsFormProps {
   onPanXChange: (val: number) => void;
   onPanYChange: (val: number) => void;
   onStyleChange: (preset: StylePreset) => void;
+  onBadgeCategoryChange: (cat: BadgeCategory) => void;
   onQrLinkChange?: (val: string) => void;
   onToggleSticker?: (sticker: string) => void;
   onStickerMove?: (sticker: string, preset: 'topLeft' | 'topRight' | 'center' | 'bottomLeft' | 'bottomRight') => void;
@@ -34,6 +36,13 @@ const STYLES: { id: StylePreset; label: string; color: string }[] = [
   { id: 'sunset', label: 'Sunset Gold', color: '#C84B15' },
   { id: 'cyber', label: 'Cyber Pink', color: '#0B1D3A' },
   { id: 'midnight', label: 'Midnight Beach', color: '#062B2B' },
+];
+
+const BADGE_CATEGORIES: { id: BadgeCategory; label: string; icon: string }[] = [
+  { id: 'HACKER', label: 'HACKER', icon: '💻' },
+  { id: 'VOLUNTEER', label: 'VOLUNTEER', icon: '🤝' },
+  { id: 'ORGANIZER', label: 'ORGANIZER', icon: '⚡' },
+  { id: 'HOST', label: 'HOST', icon: '🏠' },
 ];
 
 const RANDOM_TITLES = [
@@ -73,6 +82,7 @@ export default function ControlsForm({
   panX,
   panY,
   stylePreset,
+  badgeCategory,
   qrLink,
   stickers,
   onNameChange,
@@ -84,6 +94,7 @@ export default function ControlsForm({
   onPanXChange,
   onPanYChange,
   onStyleChange,
+  onBadgeCategoryChange,
   onQrLinkChange,
   onToggleSticker,
   onStickerMove,
@@ -227,6 +238,30 @@ export default function ControlsForm({
                 }`}
             >
               {s.label.split(' ')[0]}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Official Round Emblem Category Badge Section */}
+      <div className="space-y-2 pt-1 border-t border-[#148048]/40">
+        <label className="block font-mono-tech text-xs text-[#ffe500] uppercase font-bold flex items-center gap-1.5">
+          <Award className="w-3.5 h-3.5 text-[#ff007a]" /> Official Category Emblem Badge
+        </label>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5">
+          {BADGE_CATEGORIES.map((cat) => (
+            <button
+              key={cat.id}
+              type="button"
+              onClick={() => onBadgeCategoryChange(cat.id)}
+              className={`py-1.5 px-2 rounded-xl font-mono-tech text-[11px] uppercase font-black flex items-center justify-center gap-1 border transition-all cursor-pointer ${
+                badgeCategory === cat.id
+                  ? 'bg-[#ffe500] text-[#042616] border-[#ffe500] shadow-lg scale-[1.03]'
+                  : 'bg-[#042616] text-[#e5c200] border-[#148048] hover:border-[#ffe500] hover:text-white'
+              }`}
+            >
+              <span>{cat.icon}</span>
+              <span>{cat.label}</span>
             </button>
           ))}
         </div>

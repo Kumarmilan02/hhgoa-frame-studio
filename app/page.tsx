@@ -8,7 +8,7 @@ import ControlsForm from '@/components/ControlsForm';
 import ExportBar from '@/components/ExportBar';
 import FloatingGoaVibes from '@/components/FloatingParticles';
 import MovingGoaScooty from '@/components/MovingGoaScooty';
-import { GeneratorConfig, StylePreset } from '@/lib/canvas-generator';
+import { GeneratorConfig, StylePreset, BadgeCategory } from '@/lib/canvas-generator';
 
 export default function Home() {
   const [format, setFormat] = useState<'formatA' | 'formatB'>('formatA');
@@ -22,6 +22,7 @@ export default function Home() {
   const [panX, setPanX] = useState(0);
   const [panY, setPanY] = useState(0);
   const [stylePreset, setStylePreset] = useState<StylePreset>('emerald');
+  const [badgeCategory, setBadgeCategory] = useState<BadgeCategory>('HACKER');
   const [qrLink, setQrLink] = useState('');
   const [stickers, setStickers] = useState<string[]>([]);
   const [stickerPositions, setStickerPositions] = useState<Record<string, { x: number; y: number }>>({});
@@ -63,10 +64,11 @@ export default function Home() {
     panX,
     panY,
     stylePreset,
+    badgeCategory,
     qrLink,
     stickers,
     stickerPositions,
-  }), [format, photo, name, role, builderTitle, superpower, codingMood, zoom, panX, panY, stylePreset, qrLink, stickers, stickerPositions]);
+  }), [format, photo, name, role, builderTitle, superpower, codingMood, zoom, panX, panY, stylePreset, badgeCategory, qrLink, stickers, stickerPositions]);
 
   const handlePhotoLoaded = (img: HTMLImageElement) => {
     setPhoto(img);
@@ -167,6 +169,7 @@ export default function Home() {
                 panX={panX}
                 panY={panY}
                 stylePreset={stylePreset}
+                badgeCategory={badgeCategory}
                 qrLink={qrLink}
                 stickers={stickers}
                 onNameChange={setName}
@@ -178,6 +181,7 @@ export default function Home() {
                 onPanXChange={setPanX}
                 onPanYChange={setPanY}
                 onStyleChange={setStylePreset}
+                onBadgeCategoryChange={setBadgeCategory}
                 onQrLinkChange={setQrLink}
                 onToggleSticker={handleToggleSticker}
                 onStickerMove={handleStickerMove}

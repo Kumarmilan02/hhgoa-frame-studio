@@ -4,7 +4,8 @@ import React, { useEffect, useRef, useImperativeHandle, forwardRef, useState } f
 import { drawFormatA, drawFormatB, GeneratorConfig } from '@/lib/canvas-generator';
 import { compressAndProcessImage } from '@/lib/image-compressor';
 import CameraModal from './CameraModal';
-import { Upload, Move, ZoomIn, Loader2, Sparkles, Camera } from 'lucide-react';
+import Card3DViewer from './Card3DViewer';
+import { Upload, Move, ZoomIn, Loader2, Sparkles, Camera, Box, Image as ImageIcon } from 'lucide-react';
 
 interface CanvasPreviewProps {
   config: GeneratorConfig;
@@ -38,6 +39,7 @@ const CanvasPreview = forwardRef<CanvasPreviewRef, CanvasPreviewProps>(
     const [isDragging, setIsDragging] = useState(false);
     const [sloganIdx, setSloganIdx] = useState(0);
     const [isCameraOpen, setIsCameraOpen] = useState(false);
+    const [is3DModalOpen, setIs3DModalOpen] = useState(false);
 
     useEffect(() => {
       const interval = setInterval(() => {
@@ -198,8 +200,8 @@ const CanvasPreview = forwardRef<CanvasPreviewRef, CanvasPreviewProps>(
           }}
         />
 
-        {/* Top Floating Header Bar with Funny Goan Slogan Badge */}
-        <div className="w-full flex items-center justify-between mb-3 px-1">
+        {/* Top Floating Header Bar with Funny Goan Slogan & 3D Pop-In Render Button */}
+        <div className="w-full flex flex-wrap items-center justify-between gap-2 mb-3 px-1">
           <div
             onClick={() => setSloganIdx((prev) => (prev + 1) % GOA_SLOGANS.length)}
             className="font-mono-tech text-[10px] sm:text-xs text-[#ffe500] bg-[#042616] px-3 py-1 rounded-full border border-[#ff007a] uppercase tracking-wider flex items-center gap-1.5 shadow-md cursor-pointer hover:scale-105 transition-transform"
@@ -208,6 +210,17 @@ const CanvasPreview = forwardRef<CanvasPreviewRef, CanvasPreviewProps>(
             <span className="w-2 h-2 rounded-full bg-[#ff007a] animate-ping" />
             {GOA_SLOGANS[sloganIdx]}
           </div>
+
+          {/* 3D Pop-In Render Badge Trigger Button */}
+          <button
+            type="button"
+            onClick={() => setIs3DModalOpen(true)}
+            className="px-3.5 py-1.5 rounded-xl bg-[#ff007a] text-white font-mono-tech text-xs uppercase font-black flex items-center gap-1.5 shadow-lg hover:scale-105 transition-all glow-pink cursor-pointer"
+            title="Click to pop out live 3D card inspection!"
+          >
+            <Box className="w-4 h-4 animate-bounce text-[#ffe500]" />
+            <span>🔥 FLEX IN 3D, BRO! 🏄‍♂️</span>
+          </button>
         </div>
 
         {/* Fast Downscaling / Loading Overlay */}
@@ -331,6 +344,16 @@ const CanvasPreview = forwardRef<CanvasPreviewRef, CanvasPreviewProps>(
             onPanChange(0, 0);
             onZoomChange(1.0);
           }}
+        />
+
+        {/* Pop-In 3D Card Render Modal */}
+        <Card3DViewer
+          sourceCanvas={canvasRef.current}
+          format={config.format}
+          name={config.name}
+          role={config.role}
+          isOpen={is3DModalOpen}
+          onClose={() => setIs3DModalOpen(false)}
         />
       </div>
     );
