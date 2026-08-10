@@ -2,7 +2,7 @@
 
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import * as THREE from 'three';
-import { RotateCw, Sparkles, RefreshCw, Layers, X, Eye, Download, Video, Camera, Loader2 } from 'lucide-react';
+import { RotateCw, Sparkles, RefreshCw, Layers, X, Eye, Download, Video, Camera, Loader2, Upload } from 'lucide-react';
 
 interface Card3DViewerProps {
   sourceCanvas: HTMLCanvasElement | null;
@@ -12,6 +12,8 @@ interface Card3DViewerProps {
   isOpen: boolean;
   onClose: () => void;
   autoStartRecording?: boolean;
+  onUploadPhoto?: () => void;
+  onSnapSelfie?: () => void;
 }
 
 export default function Card3DViewer({
@@ -22,6 +24,8 @@ export default function Card3DViewer({
   isOpen,
   onClose,
   autoStartRecording = false,
+  onUploadPhoto,
+  onSnapSelfie,
 }: Card3DViewerProps) {
   const mountRef = useRef<HTMLDivElement>(null);
   const [autoRotate, setAutoRotate] = useState(true);
@@ -614,7 +618,29 @@ export default function Card3DViewer({
           </div>
         </div>
 
-        <div className="flex items-center gap-1.5 sm:gap-3 shrink-0">
+        <div className="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
+          {onUploadPhoto && (
+            <button
+              type="button"
+              onClick={onUploadPhoto}
+              className="px-2 py-1 sm:px-3 sm:py-1.5 rounded-xl bg-[#ffe500] text-[#042616] font-mono-tech text-[10px] sm:text-xs uppercase font-black flex items-center gap-1 hover:bg-[#fff066] transition cursor-pointer"
+              title="Upload new photo"
+            >
+              <Upload className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">Upload</span>
+            </button>
+          )}
+          {onSnapSelfie && (
+            <button
+              type="button"
+              onClick={onSnapSelfie}
+              className="px-2 py-1 sm:px-3 sm:py-1.5 rounded-xl bg-[#ff007a] text-white font-mono-tech text-[10px] sm:text-xs uppercase font-black flex items-center gap-1 hover:bg-[#e0006b] transition cursor-pointer glow-pink"
+              title="Snap live selfie"
+            >
+              <Camera className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">Selfie</span>
+            </button>
+          )}
           <button
             type="button"
             onClick={handleShowFront}

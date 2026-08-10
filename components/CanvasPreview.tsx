@@ -373,6 +373,8 @@ const CanvasPreview = forwardRef<CanvasPreviewRef, CanvasPreviewProps>(
             setIs3DModalOpen(false);
             setAutoRecord3D(false);
           }}
+          onUploadPhoto={() => fileInputRef.current?.click()}
+          onSnapSelfie={() => setIsCameraOpen(true)}
         />
       </div>
     );

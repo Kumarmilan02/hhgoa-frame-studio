@@ -153,11 +153,6 @@ export default function ExportBar({
 
   // Master Download Trigger Action
   const handleDownloadAction = () => {
-    if (exportFormat === 'video') {
-      handleDownloadVideo();
-      return;
-    }
-
     if (!hasPhoto) {
       triggerWarning();
       return;
@@ -167,6 +162,8 @@ export default function ExportBar({
       handleDownloadPng();
     } else if (exportFormat === 'jpg') {
       handleDownloadJpg();
+    } else if (exportFormat === 'video') {
+      handleDownloadVideo();
     }
   };
 
@@ -403,6 +400,10 @@ export default function ExportBar({
                 onClick={() => {
                   setExportFormat('video');
                   setShowDropdown(false);
+                  if (!hasPhoto) {
+                    triggerWarning();
+                    return;
+                  }
                   handleDownloadVideo();
                 }}
                 className={`w-full p-2.5 rounded-lg text-left text-xs font-bold uppercase flex items-center justify-between transition cursor-pointer ${
