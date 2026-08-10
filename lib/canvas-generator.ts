@@ -1150,39 +1150,39 @@ export async function drawFormatC(
 
     // Top Official Passport Header
     ctx.fillStyle = '#ffe500';
-    ctx.font = '900 22px "Courier New", monospace, sans-serif';
+    ctx.font = '900 20px "Courier New", monospace, sans-serif';
     ctx.textAlign = 'left';
-    ctx.fillText('🛂 REPUBLIC OF GOA · OFFICIAL BUILDER PASSPORT', 45, 58);
+    ctx.fillText(' Republic of Goa · Official Builder Passport', 45, 54);
 
     ctx.textAlign = 'right';
-    ctx.fillText('PASSPORT NO: GOA-2026-HH', stubX - 30, 58);
+    ctx.fillText('Passport No: GOA-2026-HH', stubX - 30, 54);
 
     // Passport Visa Metadata Header Box
     ctx.fillStyle = '#042616';
-    ctx.fillRect(45, 75, stubX - 75, 75);
+    ctx.fillRect(45, 70, stubX - 75, 70);
     ctx.strokeStyle = '#ff007a';
     ctx.lineWidth = 2;
-    ctx.strokeRect(45, 75, stubX - 75, 75);
+    ctx.strokeRect(45, 70, stubX - 75, 70);
 
-    ctx.font = '900 24px "Courier New", monospace, sans-serif';
+    ctx.font = '900 18px "Courier New", monospace, sans-serif';
     ctx.fillStyle = '#ffe500';
     ctx.textAlign = 'left';
-    ctx.fillText('TYPE: P  |  NATIONALITY: HACKER  |  AUTHORITY: HH GOA 2026', 60, 105);
-    ctx.font = '900 20px "Courier New", monospace, sans-serif';
+    ctx.fillText('TYPE: P  |  NAT: HACKER  |  AUTH: HH GOA 2026', 60, 98);
+    ctx.font = '900 16px "Courier New", monospace, sans-serif';
     ctx.fillStyle = '#ff007a';
-    ctx.fillText('FLIGHT: HH-2026  |  GATE: 4B  |  SEAT: FIRST CLASS HACKER', 60, 133);
+    ctx.fillText('FLIGHT: HH-2026  |  GATE: 4B  |  SEAT: FIRST CLASS HACKER', 60, 124);
 
     // Main Squad Passport Name Title
-    ctx.font = '900 42px "Cinzel Decorative", serif, sans-serif';
+    ctx.font = '900 38px "Cinzel Decorative", serif, sans-serif';
     ctx.fillStyle = '#ffe500';
     ctx.textAlign = 'left';
-    ctx.fillText((squadName || 'GOA BUILDER SQUAD').toUpperCase(), 45, 195);
+    ctx.fillText((squadName || 'GOA BUILDER SQUAD').toUpperCase(), 45, 185);
 
     // Main Passport Photo Window (815 x 880 - EXPANDED ROOM FOR GROUP SELFIE)
     const photoFrameX = 45;
-    const photoFrameY = 215;
+    const photoFrameY = 205;
     const photoFrameW = stubX - 75; // 815px
-    const photoFrameH = 880;
+    const photoFrameH = 870;
 
     ctx.save();
     ctx.beginPath();
@@ -1212,7 +1212,7 @@ export async function drawFormatC(
 
     // Immigration Approved Stamp Overlay
     ctx.save();
-    ctx.translate(photoFrameX + photoFrameW - 170, photoFrameY + 130);
+    ctx.translate(photoFrameX + photoFrameW - 170, photoFrameY + 120);
     ctx.rotate(-0.25);
     ctx.strokeStyle = '#ff007a';
     ctx.lineWidth = 4;
@@ -1232,7 +1232,7 @@ export async function drawFormatC(
 
     // Passenger Passport Manifest Badges at Bottom Left
     if (members.length > 0) {
-      const memberY = 1115;
+      const memberY = 1095;
       const tagWidth = Math.min(250, (photoFrameW - 30) / members.length - 8);
       const totalW = members.length * tagWidth + (members.length - 1) * 8;
       let startX = photoFrameX + (photoFrameW - totalW) / 2;
@@ -1241,7 +1241,7 @@ export async function drawFormatC(
         const tagX = startX + idx * (tagWidth + 8);
         ctx.fillStyle = idx % 2 === 0 ? '#ffe500' : '#ff007a';
         ctx.beginPath();
-        ctx.roundRect(tagX, memberY, tagWidth, 56, 14);
+        ctx.roundRect(tagX, memberY, tagWidth, 50, 12);
         ctx.fill();
 
         ctx.strokeStyle = '#042616';
@@ -1249,54 +1249,55 @@ export async function drawFormatC(
         ctx.stroke();
 
         ctx.fillStyle = idx % 2 === 0 ? '#042616' : '#ffffff';
-        ctx.font = '900 18px sans-serif';
+        ctx.font = '900 17px sans-serif';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
         let nameText = memName.trim();
         if (nameText.length > 14) nameText = nameText.slice(0, 12) + '..';
-        ctx.fillText(`PAX ${idx + 1}: ${nameText}`, tagX + tagWidth / 2, memberY + 28);
+        ctx.fillText(`PAX ${idx + 1}: ${nameText}`, tagX + tagWidth / 2, memberY + 25);
       });
     }
 
     // Passport Machine Readable Zone (MRZ) & Footer
-    const footerY = 1190;
+    const footerY = 1170;
     ctx.fillStyle = '#042616';
-    ctx.fillRect(45, footerY, photoFrameW, 260);
+    ctx.fillRect(45, footerY, photoFrameW, 280);
     ctx.strokeStyle = '#148048';
     ctx.lineWidth = 4;
-    ctx.strokeRect(45, footerY, photoFrameW, 260);
+    ctx.strokeRect(45, footerY, photoFrameW, 280);
 
-    ctx.font = '900 42px sans-serif';
+    ctx.font = '900 36px sans-serif';
     ctx.fillStyle = '#ff007a';
     ctx.textAlign = 'left';
-    ctx.fillText('P<INDGOA<<HACKER<<2026', 75, footerY + 65);
+    ctx.textBaseline = 'alphabetic';
+    ctx.fillText('P<INDGOA<<HACKER<<2026', 75, footerY + 50);
 
-    ctx.font = 'bold 20px "Courier New", monospace, sans-serif';
+    ctx.font = 'bold 18px "Courier New", monospace, sans-serif';
     ctx.fillStyle = '#ffe500';
-    ctx.fillText('OFFICIAL BUILDER PASSPORT · HACKER HOUSE GOA 2026', 75, footerY + 115);
+    ctx.fillText('OFFICIAL BUILDER PASSPORT · HACKER HOUSE GOA 2026', 75, footerY + 88);
 
-    // Prominent Highlighted #FrameInGoa Badge
+    // Prominent Highlighted #FrameInGoa Badge (Clean No Overlap)
     ctx.fillStyle = '#ff007a';
     ctx.beginPath();
-    ctx.roundRect(75, footerY + 130, 270, 46, 12);
+    ctx.roundRect(75, footerY + 110, 240, 44, 10);
     ctx.fill();
     ctx.strokeStyle = '#ffe500';
     ctx.lineWidth = 2;
     ctx.stroke();
 
-    ctx.font = '900 26px "Courier New", monospace, sans-serif';
+    ctx.font = '900 24px "Courier New", monospace, sans-serif';
     ctx.fillStyle = '#ffffff';
     ctx.textAlign = 'center';
-    ctx.fillText('✨ #FrameInGoa', 75 + 135, footerY + 160);
+    ctx.fillText('✨ #FrameInGoa', 75 + 120, footerY + 140);
 
-    ctx.font = '900 20px "Courier New", monospace, sans-serif';
+    ctx.font = '900 18px "Courier New", monospace, sans-serif';
     ctx.fillStyle = '#ffe500';
     ctx.textAlign = 'left';
-    ctx.fillText('#HHGOA2026  #AnjunaSunsetPassport', 365, footerY + 160);
+    ctx.fillText('#HHGOA2026  #AnjunaSunsetPassport', 335, footerY + 140);
 
-    ctx.font = '16px "Courier New", monospace, sans-serif';
+    ctx.font = '15px "Courier New", monospace, sans-serif';
     ctx.fillStyle = '#e5c200';
-    ctx.fillText('VALID FOR ENTRY TO ALL GOA BUILDER SESSIONS & SUNSET PARTIES 🌅', 75, footerY + 195);
+    ctx.fillText('VALID FOR ENTRY TO ALL GOA BUILDER SESSIONS & SUNSET PARTIES 🌅', 75, footerY + 225);
 
     // =========================================================================
     // RIGHT BOARDING PASS STUB (Flight Ticket & Barcode)
@@ -1304,42 +1305,42 @@ export async function drawFormatC(
     const rightX = stubX + 20;
     const rightW = width - rightX - 25;
 
-    ctx.font = '900 22px "Courier New", monospace, sans-serif';
+    ctx.font = '900 20px "Courier New", monospace, sans-serif';
     ctx.fillStyle = '#ffe500';
     ctx.textAlign = 'center';
-    ctx.fillText('FLIGHT STUB', rightX + rightW / 2, 58);
+    ctx.fillText('FLIGHT STUB', rightX + rightW / 2, 54);
 
     ctx.fillStyle = '#042616';
-    ctx.fillRect(rightX, 80, rightW, 1370);
+    ctx.fillRect(rightX, 70, rightW, 1380);
     ctx.strokeStyle = '#ffe500';
     ctx.lineWidth = 3;
-    ctx.strokeRect(rightX, 80, rightW, 1370);
+    ctx.strokeRect(rightX, 70, rightW, 1380);
 
     // Flight Info Text on Stub
-    ctx.font = '900 20px "Courier New", monospace, sans-serif';
+    ctx.font = '900 18px "Courier New", monospace, sans-serif';
     ctx.fillStyle = '#ff007a';
-    ctx.fillText('GATE: 4B', rightX + rightW / 2, 130);
-    ctx.fillText('ZONE: 1', rightX + rightW / 2, 170);
+    ctx.fillText('GATE: 4B', rightX + rightW / 2, 115);
+    ctx.fillText('ZONE: 1', rightX + rightW / 2, 150);
     ctx.fillStyle = '#ffe500';
-    ctx.fillText('SEAT: 01A-06F', rightX + rightW / 2, 210);
-    ctx.fillText('CLASS: FIRST', rightX + rightW / 2, 250);
+    ctx.fillText('SEAT: 01A-06F', rightX + rightW / 2, 185);
+    ctx.fillText('CLASS: FIRST', rightX + rightW / 2, 220);
 
     // Vertical Barcode Simulation on Stub
     ctx.fillStyle = '#ffffff';
-    ctx.fillRect(rightX + 25, 300, rightW - 50, 780);
+    ctx.fillRect(rightX + 20, 255, rightW - 40, 750);
     ctx.fillStyle = '#000000';
-    for (let bx = rightX + 35; bx < rightX + rightW - 35; bx += 10) {
+    for (let bx = rightX + 30; bx < rightX + rightW - 30; bx += 10) {
       const bWidth = Math.random() > 0.4 ? 4 : 2;
-      ctx.fillRect(bx, 310, bWidth, 760);
+      ctx.fillRect(bx, 265, bWidth, 730);
     }
 
-    ctx.font = '900 16px "Courier New", monospace, sans-serif';
+    ctx.font = '900 15px "Courier New", monospace, sans-serif';
     ctx.fillStyle = '#ffe500';
-    ctx.fillText('GOA-PASS-2026', rightX + rightW / 2, 1120);
+    ctx.fillText('GOA-PASS-2026', rightX + rightW / 2, 1040);
 
     const qrCanvas = await getEventQRCodeCanvas('https://hhgoa-frame-studio.vercel.app/');
     if (qrCanvas) {
-      ctx.drawImage(qrCanvas, rightX + (rightW - 160) / 2, 1160, 160, 160);
+      ctx.drawImage(qrCanvas, rightX + (rightW - 150) / 2, 1080, 150, 150);
     }
   }
 
