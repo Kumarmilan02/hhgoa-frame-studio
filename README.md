@@ -137,6 +137,13 @@ http://localhost:3000
 - HEIC (iPhone)
 
 ---
+# 📷 FLow Diagrams
+
+<img width="6822" height="2205" alt="Untitled diagram-2026-08-10-032812" src="https://github.com/user-attachments/assets/07ebb557-bcee-4cce-8c41-45c30f85f88f" />
+---
+<img width="8192" height="5812" alt="Untitled diagram-2026-08-10-034031" src="https://github.com/user-attachments/assets/2871c872-5d7f-4330-837b-440525d7ce22" />
+
+---
 
 # 🎯 Key Features
 
