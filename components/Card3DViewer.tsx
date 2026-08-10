@@ -11,9 +11,18 @@ interface Card3DViewerProps {
   role?: string;
   isOpen: boolean;
   onClose: () => void;
+  autoStartRecording?: boolean;
 }
 
-export default function Card3DViewer({ sourceCanvas, format = 'formatA', name = '', role = '', isOpen, onClose }: Card3DViewerProps) {
+export default function Card3DViewer({
+  sourceCanvas,
+  format = 'formatA',
+  name = '',
+  role = '',
+  isOpen,
+  onClose,
+  autoStartRecording = false,
+}: Card3DViewerProps) {
   const mountRef = useRef<HTMLDivElement>(null);
   const [autoRotate, setAutoRotate] = useState(true);
   const [isFlipped, setIsFlipped] = useState(false);
@@ -576,6 +585,16 @@ export default function Card3DViewer({ sourceCanvas, format = 'formatA', name = 
       setIsRecording(false);
     }
   };
+
+  // Auto-trigger 3D Video Spin recording if launched via Export 3D Video button action
+  useEffect(() => {
+    if (isOpen && autoStartRecording && !isRecording) {
+      const timer = setTimeout(() => {
+        handleDownload3DSpin();
+      }, 400);
+      return () => clearTimeout(timer);
+    }
+  }, [isOpen, autoStartRecording]);
 
   if (!isOpen) return null;
 

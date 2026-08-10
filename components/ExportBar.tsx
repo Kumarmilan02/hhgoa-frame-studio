@@ -1,7 +1,7 @@
 'use client';
 
-import React, { useState } from 'react';
-import { Download, Share2, Loader2, Check, AlertTriangle, AlertCircle } from 'lucide-react';
+import React, { useState, useRef, useEffect } from 'react';
+import { Download, Share2, Loader2, Check, AlertTriangle, AlertCircle, ChevronDown, Video, Image as ImageIcon, FileType } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
 interface ExportBarProps {
@@ -9,15 +9,38 @@ interface ExportBarProps {
   format: 'formatA' | 'formatB';
   hasPhoto?: boolean;
   onTriggerUpload?: () => void;
+  onOpen3D?: (autoRecord?: boolean) => void;
 }
 
-export default function ExportBar({ getCanvas, format, hasPhoto = false, onTriggerUpload }: ExportBarProps) {
+export default function ExportBar({
+  getCanvas,
+  format,
+  hasPhoto = false,
+  onTriggerUpload,
+  onOpen3D,
+}: ExportBarProps) {
   const [downloading, setDownloading] = useState(false);
   const [sharingX, setSharingX] = useState(false);
   const [sharingLinkedIn, setSharingLinkedIn] = useState(false);
   const [sharedPlatform, setSharedPlatform] = useState<'x' | 'linkedin' | null>(null);
   const [warningMsg, setWarningMsg] = useState<string | null>(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+
+  // Download format selection state: 'png' | 'jpg' | 'video'
+  const [exportFormat, setExportFormat] = useState<'png' | 'jpg' | 'video'>('png');
+  const [showDropdown, setShowDropdown] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // Close dropdown on outside click
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setShowDropdown(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   const triggerWarning = () => {
     setWarningMsg('⚠️ Please upload your photo first to download or share your badge!');
@@ -53,12 +76,8 @@ export default function ExportBar({ getCanvas, format, hasPhoto = false, onTrigg
     return window.location.origin;
   };
 
-  const handleDownload = () => {
-    if (!hasPhoto) {
-      triggerWarning();
-      return;
-    }
-
+  // 1. Download High-Res PNG
+  const handleDownloadPng = () => {
     const canvas = getCanvas();
     if (!canvas) return;
 
@@ -70,7 +89,6 @@ export default function ExportBar({ getCanvas, format, hasPhoto = false, onTrigg
       link.href = dataUrl;
       link.click();
 
-      // Trigger celebratory confetti
       confetti({
         particleCount: 50,
         spread: 60,
@@ -78,11 +96,77 @@ export default function ExportBar({ getCanvas, format, hasPhoto = false, onTrigg
         colors: ['#ffe500', '#ff007a', '#0a5c36', '#ffffff'],
       });
     } catch (err) {
-      console.error('Download error:', err);
-      setErrorMsg('Failed to download image. Please try again.');
+      console.error('PNG Download error:', err);
+      setErrorMsg('Failed to download PNG image. Please try again.');
       setTimeout(() => setErrorMsg(null), 4000);
     } finally {
       setDownloading(false);
+    }
+  };
+
+  // 2. Download High-Res JPG
+  const handleDownloadJpg = () => {
+    const canvas = getCanvas();
+    if (!canvas) return;
+
+    setDownloading(true);
+    try {
+      // Draw onto offscreen canvas with emerald background for JPEG
+      const offscreen = document.createElement('canvas');
+      offscreen.width = canvas.width;
+      offscreen.height = canvas.height;
+      const ctx = offscreen.getContext('2d');
+      if (ctx) {
+        ctx.fillStyle = '#0a5c36'; // Primary HH GOA emerald green background
+        ctx.fillRect(0, 0, offscreen.width, offscreen.height);
+        ctx.drawImage(canvas, 0, 0);
+
+        const dataUrl = offscreen.toDataURL('image/jpeg', 0.95);
+        const link = document.createElement('a');
+        link.download = `hh-goa-2026-${format}.jpg`;
+        link.href = dataUrl;
+        link.click();
+      }
+
+      confetti({
+        particleCount: 50,
+        spread: 60,
+        origin: { y: 0.8 },
+        colors: ['#ffe500', '#ff007a', '#0a5c36', '#ffffff'],
+      });
+    } catch (err) {
+      console.error('JPG Download error:', err);
+      setErrorMsg('Failed to download JPG image. Please try again.');
+      setTimeout(() => setErrorMsg(null), 4000);
+    } finally {
+      setDownloading(false);
+    }
+  };
+
+  // 3. Trigger 3D Video Spin Player & Recorder
+  const handleDownloadVideo = () => {
+    if (onOpen3D) {
+      onOpen3D(true);
+    }
+    window.dispatchEvent(new CustomEvent('open-3d-modal', { detail: { autoRecord: true } }));
+  };
+
+  // Master Download Trigger Action
+  const handleDownloadAction = () => {
+    if (exportFormat === 'video') {
+      handleDownloadVideo();
+      return;
+    }
+
+    if (!hasPhoto) {
+      triggerWarning();
+      return;
+    }
+
+    if (exportFormat === 'png') {
+      handleDownloadPng();
+    } else if (exportFormat === 'jpg') {
+      handleDownloadJpg();
     }
   };
 
@@ -99,7 +183,6 @@ export default function ExportBar({ getCanvas, format, hasPhoto = false, onTrigg
     setErrorMsg(null);
 
     try {
-      // rawText = `🌴 Hacker mode: ON.\n\nJust claimed my official Hacker House Goa 2026 Builder Badge! 🚀\n\ngit checkout goa-2026\ngit commit -m "Ready to build."\ngit push origin hacker-house 🚀\n\nNow it's time to build fast, break less, ship more, and maybe survive on coffee & Feni. 😄\n\nCan't wait to build with amazing hackers and builders from around the world. See you in Goa, Oct 28–31!\n\n#FrameInGoa #HHGOA2026`;
       const rawText = `🌴 Hacker mode: ON!\n\nCoffee ☕ + Code 💻 + Goa 🌴\n\nJust created my HH Goa 2026 Builder Badge 🚀\n\nCreate yours 👇\nhttps://hhgoa-frame-studio.vercel.app/\n\n#FrameInGoa #HHGOA2026`;
 
       // 1. Try Web Share API (native share on mobile/supported desktop)
@@ -152,9 +235,7 @@ export default function ExportBar({ getCanvas, format, hasPhoto = false, onTrigg
     setErrorMsg(null);
 
     try {
-      //const rawText = `🌴 Hacker mode: ON.\n\nJust claimed my official Hacker House Goa 2026 Builder Badge! 🚀\n\ngit checkout goa-2026\ngit commit -m "Ready to build."\ngit push origin hacker-house 🚀\n\nNow it's time to build fast, break less, ship more, and maybe survive on coffee & Feni. 😄\n\nCan't wait to build with amazing hackers and builders from around the world. See you in Goa, Oct 28–31!\n\n#FrameInGoa #HHGOA2026`;
       const rawText = `🌴 Hacker mode: ON!\n\nCoffee ☕ + Code 💻 + Goa 🌴\n\nJust created my HH Goa 2026 Builder Badge 🚀\n\nCreate yours 👇\nhttps://hhgoa-frame-studio.vercel.app/\n\n#FrameInGoa #HHGOA2026`;
-      // 1. Try Web Share API (native share on mobile/supported desktop)
       const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, 'image/png'));
       if (blob) {
         const pngFile = new File([blob], `hh-goa-2026-${format}.png`, { type: 'image/png' });
@@ -174,7 +255,6 @@ export default function ExportBar({ getCanvas, format, hasPhoto = false, onTrigg
         }
       }
 
-      // 2. Copy post text to clipboard as convenience for LinkedIn Web fallback
       if (navigator.clipboard) {
         try {
           await navigator.clipboard.writeText(rawText);
@@ -183,7 +263,6 @@ export default function ExportBar({ getCanvas, format, hasPhoto = false, onTrigg
         }
       }
 
-      // 3. Fallback to LinkedIn Web Share (https://www.linkedin.com/sharing/share-offsite/)
       const shareUrl = await prepareShareUrl(canvas);
       const linkedInUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}`;
       window.open(linkedInUrl, '_blank', 'noopener,noreferrer');
@@ -231,20 +310,119 @@ export default function ExportBar({ getCanvas, format, hasPhoto = false, onTrigg
         </div>
       )}
 
-      <div className="w-full flex flex-col sm:flex-row gap-4">
-        {/* Download Button */}
-        <button
-          onClick={handleDownload}
-          disabled={isAnyProcessing}
-          className="btn-hh-yellow flex-1 py-4 px-6 rounded-xl text-sm font-bold uppercase tracking-wider flex items-center justify-center gap-2 cursor-pointer shadow-lg disabled:opacity-60 disabled:cursor-not-allowed"
-        >
-          {downloading ? (
-            <Loader2 className="w-5 h-5 animate-spin" />
-          ) : (
-            <Download className="w-5 h-5" />
+      {/* Single Multi-Format Download Button & Share Buttons Row */}
+      <div className="w-full flex flex-col sm:flex-row gap-3">
+        {/* Multi-Format Download Button with Dropdown */}
+        <div ref={dropdownRef} className="relative flex-1 flex items-stretch">
+          <button
+            type="button"
+            onClick={handleDownloadAction}
+            disabled={isAnyProcessing}
+            className={`btn-hh-yellow flex-1 py-4 px-4 sm:px-6 rounded-l-xl text-xs sm:text-sm font-bold uppercase tracking-wider flex items-center justify-center gap-2 cursor-pointer shadow-lg disabled:opacity-60 disabled:cursor-not-allowed ${
+              exportFormat === 'video' ? 'bg-[#ff007a] text-white border-[#ffe500]' : ''
+            }`}
+          >
+            {downloading ? (
+              <Loader2 className="w-5 h-5 animate-spin" />
+            ) : exportFormat === 'video' ? (
+              <Video className="w-5 h-5 text-[#ffe500] animate-bounce" />
+            ) : (
+              <Download className="w-5 h-5" />
+            )}
+            <span>
+              {downloading
+                ? 'Processing...'
+                : exportFormat === 'png'
+                ? 'DOWNLOAD PNG (HD)'
+                : exportFormat === 'jpg'
+                ? 'DOWNLOAD JPG (HD)'
+                : 'EXPORT 3D VIDEO 🎬'}
+            </span>
+          </button>
+
+          {/* Dropdown Toggle Button */}
+          <button
+            type="button"
+            onClick={() => setShowDropdown((prev) => !prev)}
+            disabled={isAnyProcessing}
+            className="px-3 bg-[#ffe500] text-[#042616] border-l border-[#042616]/30 rounded-r-xl flex items-center justify-center hover:bg-[#fff066] transition cursor-pointer"
+            title="Choose download format (PNG, JPG, 3D Video)"
+          >
+            <ChevronDown className={`w-4 h-4 transition-transform ${showDropdown ? 'rotate-180' : ''}`} />
+          </button>
+
+          {/* Dropdown Menu Popup (Opens UPWARDS so it is never clipped by page bottom) */}
+          {showDropdown && (
+            <div className="absolute bottom-full left-0 right-0 mb-2 bg-[#042616]/98 border-2 border-[#ffe500] rounded-xl shadow-[0_10px_30px_rgba(0,0,0,0.9)] z-50 p-2 space-y-1 font-mono-tech backdrop-blur-md animate-fade-in">
+              <button
+                type="button"
+                onClick={() => {
+                  setExportFormat('png');
+                  setShowDropdown(false);
+                }}
+                className={`w-full p-2.5 rounded-lg text-left text-xs font-bold uppercase flex items-center justify-between transition cursor-pointer ${
+                  exportFormat === 'png'
+                    ? 'bg-[#ffe500] text-[#042616]'
+                    : 'text-white hover:bg-[#0a5c36]'
+                }`}
+              >
+                <div className="flex items-center gap-2">
+                  <ImageIcon className="w-4 h-4 text-[#ff007a] shrink-0" />
+                  <div>
+                    <div className="font-extrabold tracking-wide">PNG Image</div>
+                    <div className="text-[9px] opacity-80 font-normal">HD 1080p · Transparent</div>
+                  </div>
+                </div>
+                {exportFormat === 'png' && <Check className="w-4 h-4 text-[#042616] shrink-0" />}
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  setExportFormat('jpg');
+                  setShowDropdown(false);
+                }}
+                className={`w-full p-2.5 rounded-lg text-left text-xs font-bold uppercase flex items-center justify-between transition cursor-pointer ${
+                  exportFormat === 'jpg'
+                    ? 'bg-[#ffe500] text-[#042616]'
+                    : 'text-white hover:bg-[#0a5c36]'
+                }`}
+              >
+                <div className="flex items-center gap-2">
+                  <FileType className="w-4 h-4 text-[#ffe500] shrink-0" />
+                  <div>
+                    <div className="font-extrabold tracking-wide">JPG Image</div>
+                    <div className="text-[9px] opacity-80 font-normal">Compressed · Quick Share</div>
+                  </div>
+                </div>
+                {exportFormat === 'jpg' && <Check className="w-4 h-4 text-[#042616] shrink-0" />}
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  setExportFormat('video');
+                  setShowDropdown(false);
+                  handleDownloadVideo();
+                }}
+                className={`w-full p-2.5 rounded-lg text-left text-xs font-bold uppercase flex items-center justify-between transition cursor-pointer ${
+                  exportFormat === 'video'
+                    ? 'bg-[#ff007a] text-white'
+                    : 'text-white hover:bg-[#0a5c36]'
+                }`}
+              >
+                <div className="flex items-center gap-2">
+                  <Video className="w-4 h-4 text-[#ffe500] shrink-0" />
+                  <div>
+                    <div className="font-extrabold tracking-wide">3D Spin Video</div>
+                    <div className="text-[9px] opacity-90 font-normal">6s 360° HD Video Clip</div>
+                  </div>
+                </div>
+                {exportFormat === 'video' && <Check className="w-4 h-4 text-white shrink-0" />}
+              </button>
+            </div>
           )}
-          {downloading ? 'Downloading...' : 'Download PNG (High-Res)'}
-        </button>
+        </div>
 
         {/* Share X Button */}
         <button

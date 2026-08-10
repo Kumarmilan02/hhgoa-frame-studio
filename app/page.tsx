@@ -148,6 +148,7 @@ export default function Home() {
                 getCanvas={() => canvasPreviewRef.current?.getCanvas() || null}
                 format={format}
                 hasPhoto={!!photo}
+                onOpen3D={(autoRecord) => canvasPreviewRef.current?.open3DModal(autoRecord)}
               />
             </div>
           </div>
@@ -195,6 +196,7 @@ export default function Home() {
               getCanvas={() => canvasPreviewRef.current?.getCanvas() || null}
               format={format}
               hasPhoto={!!photo}
+              onOpen3D={(autoRecord) => canvasPreviewRef.current?.open3DModal(autoRecord)}
             />
           </div>
         </div>

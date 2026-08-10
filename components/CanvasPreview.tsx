@@ -16,6 +16,7 @@ interface CanvasPreviewProps {
 
 export interface CanvasPreviewRef {
   getCanvas: () => HTMLCanvasElement | null;
+  open3DModal: (autoRecord?: boolean) => void;
 }
 
 const GOA_SLOGANS = [
@@ -40,13 +41,23 @@ const CanvasPreview = forwardRef<CanvasPreviewRef, CanvasPreviewProps>(
     const [sloganIdx, setSloganIdx] = useState(0);
     const [isCameraOpen, setIsCameraOpen] = useState(false);
     const [is3DModalOpen, setIs3DModalOpen] = useState(false);
+    const [autoRecord3D, setAutoRecord3D] = useState(false);
 
     useEffect(() => {
       const interval = setInterval(() => {
         setSloganIdx((prev) => (prev + 1) % GOA_SLOGANS.length);
       }, 10000);
 
-      return () => clearInterval(interval);
+      const handleOpen3DEvent = (e: any) => {
+        setAutoRecord3D(!!e.detail?.autoRecord);
+        setIs3DModalOpen(true);
+      };
+      window.addEventListener('open-3d-modal', handleOpen3DEvent);
+
+      return () => {
+        clearInterval(interval);
+        window.removeEventListener('open-3d-modal', handleOpen3DEvent);
+      };
     }, []);
 
     // Refs for tracking mouse/touch drag and pinch-to-zoom state
@@ -61,6 +72,10 @@ const CanvasPreview = forwardRef<CanvasPreviewRef, CanvasPreviewProps>(
 
     useImperativeHandle(ref, () => ({
       getCanvas: () => canvasRef.current,
+      open3DModal: (autoRecord = false) => {
+        setAutoRecord3D(autoRecord);
+        setIs3DModalOpen(true);
+      },
     }));
 
     // Process file upload with fast client-side image compression
@@ -353,7 +368,11 @@ const CanvasPreview = forwardRef<CanvasPreviewRef, CanvasPreviewProps>(
           name={config.name}
           role={config.role}
           isOpen={is3DModalOpen}
-          onClose={() => setIs3DModalOpen(false)}
+          autoStartRecording={autoRecord3D}
+          onClose={() => {
+            setIs3DModalOpen(false);
+            setAutoRecord3D(false);
+          }}
         />
       </div>
     );
