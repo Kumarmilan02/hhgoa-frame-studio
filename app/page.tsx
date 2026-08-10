@@ -175,6 +175,7 @@ export default function Home() {
               }}
               onZoomChange={(newZoom) => setZoom(newZoom)}
               onGroupFrameStyleChange={setGroupFrameStyle}
+              onResetPhoto={handleResetPhoto}
             />
 
             {/* Desktop Export Bar (Hidden on Mobile) */}

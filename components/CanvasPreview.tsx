@@ -5,7 +5,7 @@ import { drawFormatA, drawFormatB, drawFormatC, GeneratorConfig } from '@/lib/ca
 import { compressAndProcessImage } from '@/lib/image-compressor';
 import CameraModal from './CameraModal';
 import Card3DViewer from './Card3DViewer';
-import { Upload, Move, ZoomIn, Loader2, Sparkles, Camera, Box, Image as ImageIcon } from 'lucide-react';
+import { Upload, Move, ZoomIn, Loader2, Sparkles, Camera, Box, Image as ImageIcon, RotateCcw } from 'lucide-react';
 
 interface CanvasPreviewProps {
   config: GeneratorConfig;
@@ -13,6 +13,7 @@ interface CanvasPreviewProps {
   onPanChange: (newPanX: number, newPanY: number) => void;
   onZoomChange: (newZoom: number) => void;
   onGroupFrameStyleChange?: (style: 'sunset' | 'shack' | 'cyberpunk' | 'neon_party' | 'heritage' | 'scooty_cruise') => void;
+  onResetPhoto?: () => void;
 }
 
 export interface CanvasPreviewRef {
@@ -34,7 +35,7 @@ const GOA_SLOGANS = [
 ];
 
 const CanvasPreview = forwardRef<CanvasPreviewRef, CanvasPreviewProps>(
-  ({ config, onPhotoLoaded, onPanChange, onZoomChange, onGroupFrameStyleChange }, ref) => {
+  ({ config, onPhotoLoaded, onPanChange, onZoomChange, onGroupFrameStyleChange, onResetPhoto }, ref) => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
     const [loading, setLoading] = useState(false);
@@ -289,6 +290,19 @@ const CanvasPreview = forwardRef<CanvasPreviewRef, CanvasPreviewProps>(
             </svg>
           </div>
 
+          {/* Floating Top-Right Reset Photo Button (Visible when photo is loaded) */}
+          {config.photo && onResetPhoto && (
+            <button
+              type="button"
+              onClick={onResetPhoto}
+              className="absolute top-4 right-4 z-20 px-3 py-1.5 rounded-xl bg-[#ff007a] hover:bg-[#e0006b] text-white font-mono-tech text-xs uppercase font-black flex items-center gap-1.5 shadow-xl glow-pink hover:scale-105 transition cursor-pointer"
+              title="Reset current photo to upload a new image"
+            >
+              <RotateCcw className="w-4 h-4 text-white" />
+              <span>Reset Photo</span>
+            </button>
+          )}
+
           {!config.photo && (
             <div className="absolute inset-0 bg-[#042616]/40 backdrop-blur-xs rounded-xl flex flex-col items-center justify-center border-2 border-dashed border-[#ffe500]/70 hover:border-[#ffe500] transition z-10 p-4 text-center">
               <div className="flex gap-3 mb-3">
@@ -336,20 +350,31 @@ const CanvasPreview = forwardRef<CanvasPreviewRef, CanvasPreviewProps>(
           />
         </div>
 
-        {/* Touch & Zoom Instructions */}
-        <div className="mt-3 flex flex-wrap items-center justify-center gap-3 text-[10px] sm:text-[11px] font-mono-tech text-[#e5c200]">
+        {/* Touch & Zoom Instructions Bar */}
+        <div className="mt-3 flex flex-wrap items-center justify-center gap-2.5 sm:gap-4 text-[11px] sm:text-xs font-mono-tech text-[#e5c200]">
           <button
             type="button"
             onClick={() => setIsCameraOpen(true)}
-            className="flex items-center gap-1 text-[#ff007a] hover:text-[#ffe500] font-bold cursor-pointer underline"
+            className="px-3 py-1.5 rounded-xl bg-[#042616] text-[#ff007a] border border-[#ff007a]/50 hover:bg-[#ff007a] hover:text-white font-bold cursor-pointer transition flex items-center gap-1.5 shadow-md"
           >
-            <Camera className="w-3.5 h-3.5" /> 📷 Snap Live Selfie
+            <Camera className="w-4 h-4" /> Snap Live Selfie
           </button>
-          <span className="flex items-center gap-1">
-            <Move className="w-3 h-3 text-[#ff007a]" /> Drag to Pan
+          {onResetPhoto && (
+            <button
+              type="button"
+              onClick={onResetPhoto}
+              className="px-3 py-1.5 rounded-xl bg-[#ff007a] text-white font-mono-tech text-xs sm:text-sm font-black uppercase flex items-center gap-1.5 hover:bg-[#e0006b] hover:scale-105 transition shadow-lg glow-pink cursor-pointer"
+              title="Reset current photo and zoom position"
+            >
+              <RotateCcw className="w-4 h-4 text-white" />
+              <span>Reset Photo</span>
+            </button>
+          )}
+          <span className="flex items-center gap-1 font-semibold">
+            <Move className="w-3.5 h-3.5 text-[#ff007a]" /> Drag to Pan
           </span>
-          <span className="flex items-center gap-1">
-            <ZoomIn className="w-3 h-3 text-[#ffe500]" /> Pinch / Scroll to Zoom
+          <span className="flex items-center gap-1 font-semibold">
+            <ZoomIn className="w-3.5 h-3.5 text-[#ffe500]" /> Scroll to Zoom
           </span>
         </div>
 
