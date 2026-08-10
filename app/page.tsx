@@ -104,6 +104,13 @@ export default function Home() {
     setZoom(1.0);
   };
 
+  const handleResetPhoto = () => {
+    setPhoto(null);
+    setPanX(0);
+    setPanY(0);
+    setZoom(1.0);
+  };
+
   return (
     <div className="min-h-screen bg-[#0a5c36] text-white flex flex-col justify-between relative overflow-x-hidden">
       {/* Floating Goa Vibes Background (🥥🌴🕶️🍹🌊🐚) */}
@@ -167,6 +174,7 @@ export default function Home() {
                 setPanY(newY);
               }}
               onZoomChange={(newZoom) => setZoom(newZoom)}
+              onGroupFrameStyleChange={setGroupFrameStyle}
             />
 
             {/* Desktop Export Bar (Hidden on Mobile) */}
@@ -219,6 +227,7 @@ export default function Home() {
                 onSquadNameChange={setSquadName}
                 onSquadMembersChange={setSquadMembers}
                 onGroupFrameStyleChange={setGroupFrameStyle}
+                onResetPhoto={handleResetPhoto}
               />
             </div>
           </div>

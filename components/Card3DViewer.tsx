@@ -14,6 +14,8 @@ interface Card3DViewerProps {
   autoStartRecording?: boolean;
   onUploadPhoto?: () => void;
   onSnapSelfie?: () => void;
+  groupFrameStyle?: 'sunset' | 'shack' | 'cyberpunk' | 'neon_party' | 'heritage' | 'scooty_cruise';
+  onGroupFrameStyleChange?: (style: 'sunset' | 'shack' | 'cyberpunk' | 'neon_party' | 'heritage' | 'scooty_cruise') => void;
 }
 
 export default function Card3DViewer({
@@ -26,6 +28,8 @@ export default function Card3DViewer({
   autoStartRecording = false,
   onUploadPhoto,
   onSnapSelfie,
+  groupFrameStyle = 'sunset',
+  onGroupFrameStyleChange,
 }: Card3DViewerProps) {
   const mountRef = useRef<HTMLDivElement>(null);
   const [autoRotate, setAutoRotate] = useState(true);
@@ -46,7 +50,7 @@ export default function Card3DViewer({
   const targetRotationRef = useRef({ x: 0.1, y: 0.15 });
   const currentRotationRef = useRef({ x: 0.1, y: 0.15 });
 
-  // Generate Back Texture on an offscreen canvas
+  // Generate Back Texture on an offscreen canvas (Theme-matching for all 6 squad editions)
   const createBackCanvas = useCallback(() => {
     const canvas = document.createElement('canvas');
     canvas.width = 1080;
@@ -54,87 +58,486 @@ export default function Card3DViewer({
     const ctx = canvas.getContext('2d');
     if (!ctx) return canvas;
 
-    // Background Gradient (Dark Goa Emerald)
-    const bgGrad = ctx.createLinearGradient(0, 0, 1080, 1350);
-    bgGrad.addColorStop(0, '#042616');
-    bgGrad.addColorStop(0.5, '#0a5c36');
-    bgGrad.addColorStop(1, '#02180e');
-    ctx.fillStyle = bgGrad;
-    ctx.fillRect(0, 0, 1080, 1350);
+    // Default Format A/B Backside (Dark Goa Emerald PVC Badge)
+    if (format !== 'formatC') {
+      const bgGrad = ctx.createLinearGradient(0, 0, 1080, 1350);
+      bgGrad.addColorStop(0, '#042616');
+      bgGrad.addColorStop(0.5, '#0a5c36');
+      bgGrad.addColorStop(1, '#02180e');
+      ctx.fillStyle = bgGrad;
+      ctx.fillRect(0, 0, 1080, 1350);
 
-    // Border Frame
-    ctx.strokeStyle = '#ffe500';
-    ctx.lineWidth = 16;
-    ctx.strokeRect(30, 30, 1020, 1290);
+      ctx.strokeStyle = '#ffe500';
+      ctx.lineWidth = 16;
+      ctx.strokeRect(30, 30, 1020, 1290);
 
-    // Inner Neon Accent Frame
-    ctx.strokeStyle = '#ff007a';
-    ctx.lineWidth = 6;
-    ctx.strokeRect(50, 50, 980, 1250);
+      ctx.strokeStyle = '#ff007a';
+      ctx.lineWidth = 6;
+      ctx.strokeRect(50, 50, 980, 1250);
 
-    // Top Hole for Lanyard
-    ctx.fillStyle = '#042616';
-    ctx.beginPath();
-    ctx.roundRect(470, 70, 140, 36, 18);
-    ctx.fill();
-    ctx.strokeStyle = '#ffe500';
-    ctx.lineWidth = 4;
-    ctx.stroke();
+      ctx.fillStyle = '#042616';
+      ctx.beginPath();
+      ctx.roundRect(470, 70, 140, 36, 18);
+      ctx.fill();
+      ctx.strokeStyle = '#ffe500';
+      ctx.lineWidth = 4;
+      ctx.stroke();
 
-    // Black Magnetic Stripe
-    ctx.fillStyle = '#111111';
-    ctx.fillRect(0, 160, 1080, 180);
-    ctx.fillStyle = '#222222';
-    ctx.fillRect(0, 190, 1080, 120);
+      ctx.fillStyle = '#111111';
+      ctx.fillRect(0, 160, 1080, 180);
+      ctx.fillStyle = '#222222';
+      ctx.fillRect(0, 190, 1080, 120);
 
-    // Signature Strip
-    ctx.fillStyle = '#ffffff';
-    ctx.fillRect(80, 400, 700, 100);
-    ctx.font = 'italic bold 36px "Courier New", monospace';
-    ctx.fillStyle = '#111111';
-    ctx.fillText(name || 'AUTHORIZED BUILDER', 110, 465);
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(80, 400, 700, 100);
+      ctx.font = 'italic bold 36px "Courier New", monospace';
+      ctx.fillStyle = '#111111';
+      ctx.fillText(name || 'AUTHORIZED BUILDER', 110, 465);
 
-    // Security Chip / Hologram Box
-    ctx.fillStyle = '#ffe500';
-    ctx.fillRect(820, 400, 180, 100);
-    ctx.fillStyle = '#ff007a';
-    ctx.font = 'bold 22px sans-serif';
-    ctx.fillText('SECURITY', 840, 440);
-    ctx.fillText('PASS', 840, 470);
+      ctx.fillStyle = '#ffe500';
+      ctx.fillRect(820, 400, 180, 100);
+      ctx.fillStyle = '#ff007a';
+      ctx.font = 'bold 22px sans-serif';
+      ctx.fillText('SECURITY', 840, 440);
+      ctx.fillText('PASS', 840, 470);
 
-    // Terms & Info Text
-    ctx.font = '22px "Courier New", monospace';
-    ctx.fillStyle = '#e5c200';
-    ctx.fillText('• OFFICIAL HACKER HOUSE GOA ID BADGE', 80, 560);
-    ctx.fillText('• ACCESS TO ALL HACKING BAYS & SUNSET SESSIONS', 80, 600);
-    ctx.fillText('• NON-TRANSFERABLE · PROPERTY OF 2:47 PM STUDIO', 80, 640);
-    ctx.fillText('• VALID: OCT 28 - OCT 31, 2026', 80, 680);
+      ctx.font = '22px "Courier New", monospace';
+      ctx.fillStyle = '#e5c200';
+      ctx.fillText('• OFFICIAL HACKER HOUSE GOA ID BADGE', 80, 560);
+      ctx.fillText('• ACCESS TO ALL HACKING BAYS & SUNSET SESSIONS', 80, 600);
+      ctx.fillText('• NON-TRANSFERABLE · PROPERTY OF 2:47 PM STUDIO', 80, 640);
+      ctx.fillText('• VALID: OCT 28 - OCT 31, 2026', 80, 680);
 
-    // Large Decorative Goa Palm & Scooty Silhouette
-    ctx.font = '120px sans-serif';
-    ctx.fillText('🌴 🛵 🥥 🌊', 280, 840);
+      ctx.font = '120px sans-serif';
+      ctx.fillText('🌴 🛵 🥥 🌊', 280, 840);
 
-    // Barcode Simulation
-    ctx.fillStyle = '#ffffff';
-    ctx.fillRect(120, 940, 840, 140);
-    ctx.fillStyle = '#000000';
-    const barWidths = [12, 6, 24, 8, 18, 6, 30, 12, 6, 20, 14, 6, 28, 8, 16, 24, 6, 12, 20, 8, 14, 28, 6, 18, 10, 24, 6, 12, 18, 8, 22, 6, 14, 28, 8, 16, 12, 6, 24];
-    let currX = 150;
-    barWidths.forEach((w, idx) => {
-      if (idx % 2 === 0) {
-        ctx.fillRect(currX, 955, w, 110);
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(120, 940, 840, 140);
+      ctx.fillStyle = '#000000';
+      const barWidths = [12, 6, 24, 8, 18, 6, 30, 12, 6, 20, 14, 6, 28, 8, 16, 24, 6, 12, 20, 8, 14, 28, 6, 18, 10, 24, 6, 12, 18, 8, 22, 6, 14, 28, 8, 16, 12, 6, 24];
+      let currX = 150;
+      barWidths.forEach((w, idx) => {
+        if (idx % 2 === 0) ctx.fillRect(currX, 955, w, 110);
+        currX += w + 6;
+      });
+
+      ctx.font = 'bold 24px sans-serif';
+      ctx.fillStyle = '#ffe500';
+      ctx.textAlign = 'center';
+      ctx.fillText('HACKER HOUSE GOA 2026 · CODINGKOALAS', 540, 1220);
+      return canvas;
+    }
+
+    // =========================================================================
+    // FORMAT C SQUAD PASS BACKSIDES (6 Unique Real-World Object Back Covers)
+    // =========================================================================
+    if (groupFrameStyle === 'sunset') {
+      // 🌅 Anjuna Sunset Passport Back Cover
+      const bgGrad = ctx.createLinearGradient(0, 0, 1080, 1350);
+      bgGrad.addColorStop(0, '#02180e');
+      bgGrad.addColorStop(0.5, '#0a5c36');
+      bgGrad.addColorStop(1, '#ffe500');
+      ctx.fillStyle = bgGrad;
+      ctx.fillRect(0, 0, 1080, 1350);
+
+      ctx.strokeStyle = '#ffe500';
+      ctx.lineWidth = 14;
+      ctx.strokeRect(30, 30, 1020, 1290);
+
+      ctx.font = '900 36px "Cinzel Decorative", serif';
+      ctx.fillStyle = '#ffe500';
+      ctx.textAlign = 'center';
+      ctx.fillText('REPUBLIC OF GOA BUILDER PASSPORT', 540, 110);
+      ctx.fillText('OFFICIAL EMERGENCY & EMBASSY PAGE', 540, 160);
+
+      ctx.fillStyle = '#042616';
+      ctx.fillRect(80, 200, 920, 720);
+      ctx.strokeStyle = '#ff007a';
+      ctx.lineWidth = 4;
+      ctx.strokeRect(80, 200, 920, 720);
+
+      ctx.font = 'bold 24px "Courier New", monospace';
+      ctx.fillStyle = '#ffe500';
+      ctx.textAlign = 'left';
+      ctx.fillText('IMPORTANT PASSPORT INSTRUCTIONS:', 110, 260);
+      ctx.fillStyle = '#ffffff';
+      ctx.font = '20px "Courier New", monospace';
+      ctx.fillText('1. THIS PASSPORT IS PROPERTY OF HACKER HOUSE GOA 2026.', 110, 310);
+      ctx.fillText('2. ENTITLES BEARER TO UNLIMITED SUNSET & HACK SESSIONS.', 110, 360);
+      ctx.fillText('3. IF LOST, REPORT IMMEDIATELY TO ANJUNA BEACH BAY HQ.', 110, 410);
+
+      // Professional Technical Barcode Array (Replaces emojis)
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(110, 470, 860, 140);
+      ctx.fillStyle = '#000000';
+      for (let bx = 130; bx < 940; bx += 8) {
+        const bWidth = Math.random() > 0.4 ? 4 : 2;
+        ctx.fillRect(bx, 485, bWidth, 110);
       }
-      currX += w + 6;
-    });
 
-    // Bottom Copyright
-    ctx.font = 'bold 24px sans-serif';
-    ctx.fillStyle = '#ffe500';
-    ctx.textAlign = 'center';
-    ctx.fillText('HACKER HOUSE GOA 2026 · CODINGKOALAS', 540, 1220);
+      ctx.font = '900 24px "Courier New", monospace';
+      ctx.fillStyle = '#ff007a';
+      ctx.textAlign = 'center';
+      ctx.fillText('SECURITY HASH: 0x4848474F41_PASSPORT_8849', 540, 660);
+      ctx.fillText('EMBASSY STAMP: ANJUNA BEACH · OCT 2026', 540, 710);
+      ctx.fillText('✨ #FrameInGoa  #AnjunaSunsetPassport', 540, 760);
+
+      // MRZ Barcode Code
+      ctx.fillStyle = '#042616';
+      ctx.fillRect(80, 960, 920, 300);
+      ctx.strokeStyle = '#ffe500';
+      ctx.lineWidth = 3;
+      ctx.strokeRect(80, 960, 920, 300);
+
+      ctx.font = '900 38px "Courier New", monospace';
+      ctx.fillStyle = '#ff007a';
+      ctx.textAlign = 'left';
+      ctx.fillText('P<INDGOA<<HACKER<<PASSPORT<<2026<<<<<<<<', 110, 1040);
+      ctx.fillText('GOA20260810<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<', 110, 1100);
+      ctx.fillStyle = '#ffe500';
+      ctx.font = 'bold 22px "Courier New", monospace';
+      ctx.fillText('GOA IMMIGRATION AUTHORIZED ENTRY PASS · HH GOA', 110, 1180);
+
+    } else if (groupFrameStyle === 'shack') {
+      // 🍹 Baga Beach Shack Drinks Menu Back
+      ctx.fillStyle = '#180e04';
+      ctx.fillRect(0, 0, 1080, 1350);
+
+      ctx.strokeStyle = '#e5c200';
+      ctx.lineWidth = 16;
+      ctx.strokeRect(30, 30, 1020, 1290);
+
+      ctx.font = '900 38px "Cinzel Decorative", serif';
+      ctx.fillStyle = '#00f0ff';
+      ctx.textAlign = 'center';
+      ctx.fillText('BAGA BEACH SHACK · SPECIAL DRINKS MENU', 540, 100);
+
+      ctx.fillStyle = '#fdf6e2';
+      ctx.fillRect(80, 150, 920, 1020);
+      ctx.strokeStyle = '#c84b15';
+      ctx.lineWidth = 4;
+      ctx.strokeRect(80, 150, 920, 1020);
+
+      ctx.font = '900 28px "Courier New", monospace';
+      ctx.fillStyle = '#c84b15';
+      ctx.textAlign = 'left';
+      ctx.fillText('═══ DAILY SHACK SPECIALS & REFRESHMENTS ═══', 120, 220);
+
+      ctx.font = 'bold 22px "Courier New", monospace';
+      ctx.fillStyle = '#042616';
+      ctx.fillText('1. FRESH COCONUT FENI SHOT ......... 100 PTS / FREE', 120, 290);
+      ctx.fillText('2. ANJUNA SUNSET SUNRISER COCKTAIL ... INCLUDED WITH PASS', 120, 350);
+      ctx.fillText('3. HIGH TIDE CRAB SPECIAL FRY ........ UNLIMITED SHIP', 120, 410);
+      ctx.fillText('4. BAGA BEACH COCONUT WATER .......... ON TAP ALL DAY', 120, 470);
+
+      // Professional Venue Access Barcode (Replaces emojis)
+      ctx.fillStyle = '#042616';
+      ctx.fillRect(120, 520, 840, 140);
+      ctx.fillStyle = '#ffe500';
+      ctx.fillRect(140, 535, 800, 110);
+      ctx.fillStyle = '#000000';
+      for (let bx = 160; bx < 920; bx += 10) {
+        const bWidth = Math.random() > 0.3 ? 5 : 2;
+        ctx.fillRect(bx, 550, bWidth, 80);
+      }
+
+      ctx.font = '900 26px "Courier New", monospace';
+      ctx.fillStyle = '#c84b15';
+      ctx.textAlign = 'center';
+      ctx.fillText('PERMIT NO: GA-BAGA-2026-9912 · VENUE PASS', 540, 710);
+      ctx.fillText('SERVED COLD AT BAGA BEACH, GOA', 540, 760);
+      ctx.fillText('✨ #FrameInGoa  #BagaBeachShack', 540, 800);
+
+      // Barcode simulation
+      ctx.fillStyle = '#042616';
+      ctx.fillRect(120, 860, 840, 120);
+      ctx.fillStyle = '#00f0ff';
+      ctx.font = '900 22px "Courier New", monospace';
+      ctx.fillText('BAGA-SHACK-MENU-PASS-2026', 540, 930);
+
+      ctx.font = 'bold 24px sans-serif';
+      ctx.fillStyle = '#ffe500';
+      ctx.fillText('HACKER HOUSE GOA 2026 · BAGA BEACH HQ', 540, 1230);
+
+    } else if (groupFrameStyle === 'cyberpunk') {
+      // 💻 Vagator Night Hack Cyber Keycard Back
+      ctx.fillStyle = '#020f08';
+      ctx.fillRect(0, 0, 1080, 1350);
+
+      // Matrix Rain Lines
+      ctx.strokeStyle = '#0c4729';
+      ctx.lineWidth = 1.5;
+      for (let gx = 0; gx < 1080; gx += 40) {
+        ctx.beginPath();
+        ctx.moveTo(gx, 0);
+        ctx.lineTo(gx, 1350);
+        ctx.stroke();
+      }
+
+      ctx.strokeStyle = '#ffe500';
+      ctx.lineWidth = 10;
+      ctx.strokeRect(30, 30, 1020, 1290);
+
+      ctx.font = '900 34px "Courier New", monospace';
+      ctx.fillStyle = '#00f0ff';
+      ctx.textAlign = 'center';
+      ctx.fillText('VAGATOR CYBER ACCESS KEYCARD REVERSE', 540, 100);
+
+      ctx.fillStyle = '#042616';
+      ctx.fillRect(70, 140, 940, 1000);
+      ctx.strokeStyle = '#00f0ff';
+      ctx.lineWidth = 3;
+      ctx.strokeRect(70, 140, 940, 1000);
+
+      ctx.font = '900 24px "Courier New", monospace';
+      ctx.fillStyle = '#ffe500';
+      ctx.textAlign = 'left';
+      ctx.fillText('[SYSTEM_ROOT_TERMINAL // AUDIT LOG]', 100, 200);
+      ctx.fillText('> ACCESS_LEVEL: LEVEL 5 OVERLORD [OK]', 100, 250);
+      ctx.fillText('> BIOMETRIC_HASH: 0x4848474F41_HHGOA', 100, 300);
+      ctx.fillText('> ENCRYPTION: 4096-BIT RSA CYBER KEY', 100, 350);
+
+      // Single Cyber Security Code128 Barcode
+      ctx.fillStyle = '#00f0ff';
+      ctx.fillRect(100, 420, 880, 140);
+      ctx.fillStyle = '#020f08';
+      for (let bx = 120; bx < 960; bx += 6) {
+        const bWidth = Math.random() > 0.4 ? 3 : 1.5;
+        ctx.fillRect(bx, 435, bWidth, 110);
+      }
+
+      ctx.font = '900 26px "Courier New", monospace';
+      ctx.fillStyle = '#00f0ff';
+      ctx.textAlign = 'center';
+      ctx.fillText('✨ #FrameInGoa // #VagatorNightHack', 540, 610);
+
+      // EMV Cyber Security Chip & PCB Terminal Plate (Replaces 2nd barcode)
+      ctx.fillStyle = '#ffe500';
+      ctx.fillRect(100, 680, 880, 80);
+      ctx.fillStyle = '#020f08';
+      ctx.font = '900 24px "Courier New", monospace';
+      ctx.fillText('EMV CHIP ID: GOA-VAGATOR-2026-KEY', 540, 730);
+
+      // High-Tech Cyber Circuit Diagram Box
+      ctx.fillStyle = '#042616';
+      ctx.fillRect(100, 800, 880, 200);
+      ctx.strokeStyle = '#00f0ff';
+      ctx.lineWidth = 3;
+      ctx.strokeRect(100, 800, 880, 200);
+
+      ctx.font = '900 22px "Courier New", monospace';
+      ctx.fillStyle = '#ffe500';
+      ctx.textAlign = 'center';
+      ctx.fillText('⚡ SECURITY CLEARANCE: AUTHORIZED HACKER ⚡', 540, 860);
+      ctx.fillStyle = '#00f0ff';
+      ctx.font = '20px "Courier New", monospace';
+      ctx.fillText('BIOMETRIC SCAN PASSED · ENCRYPTION: 4096-BIT RSA', 540, 910);
+      ctx.fillText('VAGATOR HACKER HOUSE CYBER BAY HQ', 540, 950);
+
+      ctx.font = 'bold 24px "Courier New", monospace';
+      ctx.fillStyle = '#ffe500';
+      ctx.textAlign = 'center';
+      ctx.fillText('COORDINATES: 15.6028° N, 73.7431° E · VAGATOR LAB', 540, 1220);
+
+    } else if (groupFrameStyle === 'neon_party') {
+      // 🪩 Tito's Neon Nights VIP Back
+      const bgGrad = ctx.createLinearGradient(0, 0, 1080, 1350);
+      bgGrad.addColorStop(0, '#0d0221');
+      bgGrad.addColorStop(0.5, '#7b2cbf');
+      bgGrad.addColorStop(1, '#ff007a');
+      ctx.fillStyle = bgGrad;
+      ctx.fillRect(0, 0, 1080, 1350);
+
+      ctx.strokeStyle = '#ff007a';
+      ctx.lineWidth = 14;
+      ctx.strokeRect(30, 30, 1020, 1290);
+
+      ctx.font = '900 36px "Cinzel Decorative", serif';
+      ctx.fillStyle = '#00f0ff';
+      ctx.textAlign = 'center';
+      ctx.fillText("TITO'S NEON NIGHTS · VIP BACKSTAGE PASS", 540, 100);
+
+      ctx.fillStyle = '#0d0221';
+      ctx.fillRect(70, 150, 940, 1020);
+      ctx.strokeStyle = '#ff007a';
+      ctx.lineWidth = 4;
+      ctx.strokeRect(70, 150, 940, 1020);
+
+      ctx.font = '900 28px "Courier New", monospace';
+      ctx.fillStyle = '#ffe500';
+      ctx.textAlign = 'center';
+      ctx.fillText('★ VIP CONCERT STAGE LINEUP SCHEDULE ★', 540, 220);
+
+      ctx.font = 'bold 22px "Courier New", monospace';
+      ctx.fillStyle = '#00f0ff';
+      ctx.textAlign = 'left';
+      ctx.fillText('• 22:00 - DJ HACKER SUNSET BEATS', 110, 290);
+      ctx.fillText('• 00:00 - MAIN STAGE SHIPMENT PARTY', 110, 350);
+      ctx.fillText('• 03:00 - AFTERHOURS CODE & CHILL SESSION', 110, 410);
+
+      // VIP Pass Holographic Foil Barcode Box (Replaces emojis)
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(100, 470, 880, 140);
+      ctx.fillStyle = '#0d0221';
+      for (let bx = 120; bx < 960; bx += 8) {
+        const bWidth = Math.random() > 0.4 ? 4 : 2;
+        ctx.fillRect(bx, 485, bWidth, 110);
+      }
+
+      ctx.font = '900 26px "Courier New", monospace';
+      ctx.fillStyle = '#ff007a';
+      ctx.textAlign = 'center';
+      ctx.fillText('✨ #FrameInGoa  #TitosNeonNights', 540, 665);
+
+      // VIP Rubber stamp box
+      ctx.strokeStyle = '#00f0ff';
+      ctx.lineWidth = 6;
+      ctx.strokeRect(240, 730, 600, 140);
+      ctx.font = '900 36px "Courier New", monospace';
+      ctx.fillStyle = '#00f0ff';
+      ctx.fillText('ALL ACCESS VIP GUEST', 540, 790);
+      ctx.fillText('OCT 28-31 · GOA 2026', 540, 840);
+
+      ctx.font = 'bold 24px sans-serif';
+      ctx.fillStyle = '#ffe500';
+      ctx.fillText("TITO'S LANE, BAGA, GOA · HACKER HOUSE 2026", 540, 1230);
+
+    } else if (groupFrameStyle === 'heritage') {
+      // ⛪ Old Goa Heritage Scroll Back
+      ctx.fillStyle = '#fdf6e2';
+      ctx.fillRect(0, 0, 1080, 1350);
+
+      ctx.strokeStyle = '#d97706';
+      ctx.lineWidth = 16;
+      ctx.strokeRect(30, 30, 1020, 1290);
+      ctx.strokeStyle = '#0a5c36';
+      ctx.lineWidth = 5;
+      ctx.strokeRect(48, 48, 984, 1254);
+
+      ctx.font = '900 36px "Cinzel Decorative", serif';
+      ctx.fillStyle = '#0a5c36';
+      ctx.textAlign = 'center';
+      ctx.fillText('COMPANHIA DE GOA · REGISTRO HISTÓRICO', 540, 110);
+
+      ctx.fillStyle = '#0a5c36';
+      ctx.fillRect(80, 160, 920, 1000);
+      ctx.strokeStyle = '#d97706';
+      ctx.lineWidth = 4;
+      ctx.strokeRect(80, 160, 920, 1000);
+
+      ctx.font = '900 28px "Cinzel Decorative", serif';
+      ctx.fillStyle = '#ffe500';
+      ctx.fillText('TERMOS E CONDIÇÕES DE ACESSO HISTÓRICO', 540, 230);
+
+      ctx.font = '20px "Cinzel Decorative", serif';
+      ctx.fillStyle = '#fdf6e2';
+      ctx.textAlign = 'left';
+      ctx.fillText('1. ESTE PASSE CONCEDE ENTRADA AOS MONUMENTOS DE GOA.', 110, 300);
+      ctx.fillText('2. HOMENAGEANDO A ARQUITETURA E OS CONSTRUTORES DO FUTURO.', 110, 360);
+      ctx.fillText('3. EMISSÃO OFICIAL: CIDADE DE GOA, 1510-2026.', 110, 420);
+
+      // Official Document Archival Security Barcode (Replaces emojis)
+      ctx.fillStyle = '#0a5c36';
+      ctx.fillRect(100, 470, 880, 130);
+      ctx.fillStyle = '#fdf6e2';
+      ctx.fillRect(120, 485, 840, 100);
+      ctx.fillStyle = '#0a5c36';
+      for (let bx = 140; bx < 940; bx += 8) {
+        const bWidth = Math.random() > 0.3 ? 4 : 2;
+        ctx.fillRect(bx, 495, bWidth, 80);
+      }
+
+      ctx.font = '900 26px "Cinzel Decorative", serif';
+      ctx.fillStyle = '#ffe500';
+      ctx.textAlign = 'center';
+      ctx.fillText('✨ #FrameInGoa  #OldGoaHeritage', 540, 650);
+
+      // Royal Wax Seal Graphic
+      ctx.fillStyle = '#d97706';
+      ctx.beginPath();
+      ctx.arc(540, 840, 100, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = '#ffe500';
+      ctx.lineWidth = 4;
+      ctx.stroke();
+
+      ctx.font = '900 22px "Cinzel Decorative", serif';
+      ctx.fillStyle = '#fdf6e2';
+      ctx.fillText('SELO REAL', 540, 835);
+      ctx.fillText('GOA 2026', 540, 865);
+
+      ctx.font = 'bold 24px "Cinzel Decorative", serif';
+      ctx.fillStyle = '#0a5c36';
+      ctx.fillText('OLD GOA HERITAGE PASS · HACKER HOUSE 2026', 540, 1220);
+
+    } else {
+      // 🛵 Chapora Ride Coastal Permit Back
+      const bgGrad = ctx.createLinearGradient(0, 0, 1080, 1350);
+      bgGrad.addColorStop(0, '#020b14');
+      bgGrad.addColorStop(0.5, '#0a5c36');
+      bgGrad.addColorStop(1, '#ff4500');
+      ctx.fillStyle = bgGrad;
+      ctx.fillRect(0, 0, 1080, 1350);
+
+      ctx.strokeStyle = '#ffe500';
+      ctx.lineWidth = 14;
+      ctx.strokeRect(30, 30, 1020, 1290);
+
+      ctx.font = '900 36px "Courier New", monospace';
+      ctx.fillStyle = '#ffe500';
+      ctx.textAlign = 'center';
+      ctx.fillText('CHAPORA ROAD TRIP PERMIT GA-01 REVERSE', 540, 100);
+
+      ctx.fillStyle = '#042616';
+      ctx.fillRect(70, 150, 940, 1020);
+      ctx.strokeStyle = '#ff4500';
+      ctx.lineWidth = 4;
+      ctx.strokeRect(70, 150, 940, 1020);
+
+      ctx.font = '900 28px "Courier New", monospace';
+      ctx.fillStyle = '#ffe500';
+      ctx.fillText('═══ COASTAL HIGHWAY PERMIT RULES ═══', 540, 220);
+
+      ctx.font = 'bold 22px "Courier New", monospace';
+      ctx.fillStyle = '#ffffff';
+      ctx.textAlign = 'left';
+      ctx.fillText('• ROUTE: PANJIM ➔ ANJUNA ➔ CHAPORA FORT ➔ ARAMBOL', 110, 290);
+      ctx.fillText('• HELMET: MANDATORY FOR SCOOTER RIDE', 110, 350);
+      ctx.fillText('• SPEED LIMIT: 100 KM/H ON HIGHWAY BAYS', 110, 410);
+      ctx.fillText('• FUEL STATION: ARAMBOL COASTAL BAY', 110, 470);
+
+      // State Transport Registration Barcode (Replaces emojis)
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(100, 520, 880, 130);
+      ctx.fillStyle = '#042616';
+      for (let bx = 120; bx < 960; bx += 8) {
+        const bWidth = Math.random() > 0.4 ? 4 : 2;
+        ctx.fillRect(bx, 535, bWidth, 100);
+      }
+
+      ctx.font = '900 26px "Courier New", monospace';
+      ctx.fillStyle = '#ff4500';
+      ctx.textAlign = 'center';
+      ctx.fillText('✨ #FrameInGoa  #ChaporaRide', 540, 700);
+
+      // License tag graphic
+      ctx.fillStyle = '#ffe500';
+      ctx.fillRect(160, 780, 760, 140);
+      ctx.strokeStyle = '#042616';
+      ctx.lineWidth = 4;
+      ctx.strokeRect(160, 780, 760, 140);
+
+      ctx.font = '900 44px sans-serif';
+      ctx.fillStyle = '#042616';
+      ctx.fillText('GA-01 • ROADTRIP • 2026', 540, 885);
+
+      ctx.font = 'bold 24px sans-serif';
+      ctx.fillStyle = '#ffe500';
+      ctx.fillText('CHAPORA FORT ROADTRIP PERMIT · HACKER HOUSE 2026', 540, 1230);
+    }
 
     return canvas;
-  }, [name]);
+  }, [format, groupFrameStyle, name]);
 
   // Create proper woven fabric lanyard strap texture with repeating text "HHGOA 2026 🌴 HACKER HOUSE GOA"
   const createLanyardFabricTexture = useCallback(() => {
@@ -600,7 +1003,24 @@ export default function Card3DViewer({
     }
   }, [isOpen, autoStartRecording]);
 
+  // Live texture update effect whenever theme or canvas changes while 3D view is active
+  useEffect(() => {
+    if (frontTextureRef.current && sourceCanvas) {
+      frontTextureRef.current.image = sourceCanvas;
+      frontTextureRef.current.needsUpdate = true;
+    }
+  }, [groupFrameStyle, format, sourceCanvas, isOpen]);
+
   if (!isOpen) return null;
+
+  const SQUAD_THEMES = [
+    { id: 'sunset', label: '🌅 Anjuna Sunset' },
+    { id: 'shack', label: '🍹 Baga Beach Shack' },
+    { id: 'cyberpunk', label: '💻 Vagator Night Hack' },
+    { id: 'neon_party', label: "🪩 Tito's Neon Nights" },
+    { id: 'heritage', label: '⛪ Old Goa Heritage' },
+    { id: 'scooty_cruise', label: '🛵 Chapora Ride' },
+  ] as const;
 
   return (
     <div className="fixed inset-0 z-50 bg-[#02180e]/95 backdrop-blur-xl flex flex-col items-center justify-between p-3 sm:p-6 animate-fade-in select-none overflow-y-auto">
@@ -610,7 +1030,7 @@ export default function Card3DViewer({
           <span className="text-xl sm:text-2xl shrink-0">🌴</span>
           <div className="min-w-0">
             <h2 className="font-mono-tech text-xs sm:text-xl text-[#ffe500] font-black uppercase tracking-wider truncate">
-              HH GOA 2026 · 3D BADGE
+              HH GOA 2026 · 3D BADGE STUDIO
             </h2>
             <p className="text-[9px] sm:text-xs font-mono-tech text-[#e5c200] hidden xs:block truncate">
               Interactive 360° PVC Card Render with Woven HHGOA Lanyard

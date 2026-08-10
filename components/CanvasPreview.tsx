@@ -12,6 +12,7 @@ interface CanvasPreviewProps {
   onPhotoLoaded: (img: HTMLImageElement) => void;
   onPanChange: (newPanX: number, newPanY: number) => void;
   onZoomChange: (newZoom: number) => void;
+  onGroupFrameStyleChange?: (style: 'sunset' | 'shack' | 'cyberpunk' | 'neon_party' | 'heritage' | 'scooty_cruise') => void;
 }
 
 export interface CanvasPreviewRef {
@@ -33,7 +34,7 @@ const GOA_SLOGANS = [
 ];
 
 const CanvasPreview = forwardRef<CanvasPreviewRef, CanvasPreviewProps>(
-  ({ config, onPhotoLoaded, onPanChange, onZoomChange }, ref) => {
+  ({ config, onPhotoLoaded, onPanChange, onZoomChange, onGroupFrameStyleChange }, ref) => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
     const [loading, setLoading] = useState(false);
@@ -371,6 +372,8 @@ const CanvasPreview = forwardRef<CanvasPreviewRef, CanvasPreviewProps>(
           role={config.role}
           isOpen={is3DModalOpen}
           autoStartRecording={autoRecord3D}
+          groupFrameStyle={config.groupFrameStyle}
+          onGroupFrameStyleChange={onGroupFrameStyleChange}
           onClose={() => {
             setIs3DModalOpen(false);
             setAutoRecord3D(false);

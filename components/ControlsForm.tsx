@@ -35,6 +35,7 @@ interface ControlsFormProps {
   onSquadNameChange?: (val: string) => void;
   onSquadMembersChange?: (members: string[]) => void;
   onGroupFrameStyleChange?: (style: 'sunset' | 'shack' | 'cyberpunk' | 'neon_party' | 'heritage' | 'scooty_cruise') => void;
+  onResetPhoto?: () => void;
 }
 
 const STYLES: { id: StylePreset; label: string; color: string }[] = [
@@ -110,6 +111,7 @@ export default function ControlsForm({
   onSquadNameChange,
   onSquadMembersChange,
   onGroupFrameStyleChange,
+  onResetPhoto,
 }: ControlsFormProps) {
   const handleReset = (e?: React.MouseEvent) => {
     e?.preventDefault();
@@ -468,6 +470,25 @@ export default function ControlsForm({
           <label className="font-mono-tech text-xs text-[#ffe500] uppercase flex items-center gap-1.5 font-bold">
             <ZoomIn className="w-3.5 h-3.5 text-[#ff007a]" /> Zoom Scale ({zoom.toFixed(2)}x)
           </label>
+          <div className="flex items-center gap-2">
+            {onResetPhoto && (
+              <button
+                type="button"
+                onClick={onResetPhoto}
+                className="px-2 py-0.5 rounded bg-[#ff007a] hover:bg-[#e0006b] text-white text-[10px] font-mono-tech uppercase font-bold flex items-center gap-1 cursor-pointer transition glow-pink"
+                title="Remove photo to upload another image"
+              >
+                <RotateCcw className="w-3 h-3" /> Reset Photo
+              </button>
+            )}
+            <button
+              type="button"
+              onClick={handleReset}
+              className="text-[10px] font-mono-tech text-[#e5c200] hover:text-[#ffe500] flex items-center gap-1 underline cursor-pointer"
+            >
+              Reset Fit
+            </button>
+          </div>
         </div>
         <input
           type="range"
