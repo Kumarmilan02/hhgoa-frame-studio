@@ -6,7 +6,7 @@ import { RotateCw, Sparkles, RefreshCw, Layers, X, Eye, Download, Video, Camera,
 
 interface Card3DViewerProps {
   sourceCanvas: HTMLCanvasElement | null;
-  format?: 'formatA' | 'formatB';
+  format?: 'formatA' | 'formatB' | 'formatC';
   name?: string;
   role?: string;
   isOpen: boolean;

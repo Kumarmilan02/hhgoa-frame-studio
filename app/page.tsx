@@ -11,7 +11,7 @@ import MovingGoaScooty from '@/components/MovingGoaScooty';
 import { GeneratorConfig, StylePreset, BadgeCategory } from '@/lib/canvas-generator';
 
 export default function Home() {
-  const [format, setFormat] = useState<'formatA' | 'formatB'>('formatA');
+  const [format, setFormat] = useState<'formatA' | 'formatB' | 'formatC'>('formatA');
   const [photo, setPhoto] = useState<HTMLImageElement | null>(null);
   const [name, setName] = useState('');
   const [role, setRole] = useState('');
@@ -26,6 +26,11 @@ export default function Home() {
   const [qrLink, setQrLink] = useState('');
   const [stickers, setStickers] = useState<string[]>([]);
   const [stickerPositions, setStickerPositions] = useState<Record<string, { x: number; y: number }>>({});
+  
+  // Group / Squad Photo Studio State
+  const [squadName, setSquadName] = useState('HH GOA HACKER SQUAD 2026');
+  const [squadMembers, setSquadMembers] = useState<string[]>(['Milan (Lead)', 'Rohan (Dev)', 'Ananya (Design)']);
+  const [groupFrameStyle, setGroupFrameStyle] = useState<'sunset' | 'shack' | 'cyberpunk' | 'neon_party' | 'heritage' | 'scooty_cruise'>('sunset');
 
   const canvasPreviewRef = useRef<CanvasPreviewRef>(null);
 
@@ -68,7 +73,29 @@ export default function Home() {
     qrLink,
     stickers,
     stickerPositions,
-  }), [format, photo, name, role, builderTitle, superpower, codingMood, zoom, panX, panY, stylePreset, badgeCategory, qrLink, stickers, stickerPositions]);
+    squadName,
+    squadMembers,
+    groupFrameStyle,
+  }), [
+    format,
+    photo,
+    name,
+    role,
+    builderTitle,
+    superpower,
+    codingMood,
+    zoom,
+    panX,
+    panY,
+    stylePreset,
+    badgeCategory,
+    qrLink,
+    stickers,
+    stickerPositions,
+    squadName,
+    squadMembers,
+    groupFrameStyle,
+  ]);
 
   const handlePhotoLoaded = (img: HTMLImageElement) => {
     setPhoto(img);
@@ -186,6 +213,12 @@ export default function Home() {
                 onQrLinkChange={setQrLink}
                 onToggleSticker={handleToggleSticker}
                 onStickerMove={handleStickerMove}
+                squadName={squadName}
+                squadMembers={squadMembers}
+                groupFrameStyle={groupFrameStyle}
+                onSquadNameChange={setSquadName}
+                onSquadMembersChange={setSquadMembers}
+                onGroupFrameStyleChange={setGroupFrameStyle}
               />
             </div>
           </div>

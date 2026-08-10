@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useRef, useImperativeHandle, forwardRef, useState } from 'react';
-import { drawFormatA, drawFormatB, GeneratorConfig } from '@/lib/canvas-generator';
+import { drawFormatA, drawFormatB, drawFormatC, GeneratorConfig } from '@/lib/canvas-generator';
 import { compressAndProcessImage } from '@/lib/image-compressor';
 import CameraModal from './CameraModal';
 import Card3DViewer from './Card3DViewer';
@@ -103,16 +103,18 @@ const CanvasPreview = forwardRef<CanvasPreviewRef, CanvasPreviewProps>(
       const ctx = canvas.getContext('2d');
       if (!ctx) return;
 
-      const width = 1080;
-      const height = 1350;
+      const width = config.format === 'formatC' ? 1200 : 1080;
+      const height = config.format === 'formatC' ? 1500 : 1350;
 
       canvas.width = width;
       canvas.height = height;
 
       if (config.format === 'formatA') {
         drawFormatA(ctx, width, height, config);
-      } else {
+      } else if (config.format === 'formatB') {
         drawFormatB(ctx, width, height, config);
+      } else if (config.format === 'formatC') {
+        drawFormatC(ctx, width, height, config);
       }
     }, [config]);
 

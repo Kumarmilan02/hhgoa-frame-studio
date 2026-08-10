@@ -6,7 +6,7 @@ import confetti from 'canvas-confetti';
 
 interface ExportBarProps {
   getCanvas: () => HTMLCanvasElement | null;
-  format: 'formatA' | 'formatB';
+  format: 'formatA' | 'formatB' | 'formatC';
   hasPhoto?: boolean;
   onTriggerUpload?: () => void;
   onOpen3D?: (autoRecord?: boolean) => void;
