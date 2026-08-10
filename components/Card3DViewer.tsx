@@ -580,43 +580,43 @@ export default function Card3DViewer({ sourceCanvas, format = 'formatA', name = 
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 bg-[#02180e]/95 backdrop-blur-xl flex flex-col items-center justify-between p-3 sm:p-6 animate-fade-in select-none">
+    <div className="fixed inset-0 z-50 bg-[#02180e]/95 backdrop-blur-xl flex flex-col items-center justify-between p-3 sm:p-6 animate-fade-in select-none overflow-y-auto">
       {/* Pop-In Modal Header Bar */}
-      <div className="w-full max-w-6xl flex items-center justify-between border-b border-[#ffe500]/30 pb-3">
-        <div className="flex items-center gap-2">
-          <span className="text-2xl">🌴</span>
-          <div>
-            <h2 className="font-mono-tech text-sm sm:text-xl text-[#ffe500] font-black uppercase tracking-wider flex items-center gap-2">
-              HACKER HOUSE GOA 2026 · 3D BADGE RENDER
+      <div className="w-full max-w-6xl flex items-center justify-between border-b border-[#ffe500]/30 pb-2 sm:pb-3 gap-2">
+        <div className="flex items-center gap-1.5 sm:gap-2 min-w-0">
+          <span className="text-xl sm:text-2xl shrink-0">🌴</span>
+          <div className="min-w-0">
+            <h2 className="font-mono-tech text-xs sm:text-xl text-[#ffe500] font-black uppercase tracking-wider truncate">
+              HH GOA 2026 · 3D BADGE
             </h2>
-            <p className="text-[10px] sm:text-xs font-mono-tech text-[#e5c200]">
+            <p className="text-[9px] sm:text-xs font-mono-tech text-[#e5c200] hidden xs:block truncate">
               Interactive 360° PVC Card Render with Woven HHGOA Lanyard
             </p>
           </div>
         </div>
 
-        <div className="flex items-center gap-2 sm:gap-3">
+        <div className="flex items-center gap-1.5 sm:gap-3 shrink-0">
           <button
             type="button"
             onClick={handleShowFront}
-            className="px-3 py-1.5 rounded-xl bg-[#042616] text-[#ffe500] border border-[#ffe500]/40 font-mono-tech text-xs uppercase font-extrabold hover:bg-[#ffe500] hover:text-[#042616] transition cursor-pointer"
+            className="px-2 py-1 sm:px-3 sm:py-1.5 rounded-xl bg-[#042616] text-[#ffe500] border border-[#ffe500]/40 font-mono-tech text-[10px] sm:text-xs uppercase font-extrabold hover:bg-[#ffe500] hover:text-[#042616] transition cursor-pointer"
           >
-            👤 Front Side
+            👤 <span className="hidden sm:inline">Front</span>
           </button>
           <button
             type="button"
             onClick={handleShowBack}
-            className="px-3 py-1.5 rounded-xl bg-[#042616] text-[#ffe500] border border-[#ffe500]/40 font-mono-tech text-xs uppercase font-extrabold hover:bg-[#ffe500] hover:text-[#042616] transition cursor-pointer"
+            className="px-2 py-1 sm:px-3 sm:py-1.5 rounded-xl bg-[#042616] text-[#ffe500] border border-[#ffe500]/40 font-mono-tech text-[10px] sm:text-xs uppercase font-extrabold hover:bg-[#ffe500] hover:text-[#042616] transition cursor-pointer"
           >
-            📜 Back Side
+            📜 <span className="hidden sm:inline">Back</span>
           </button>
           <button
             type="button"
             onClick={onClose}
-            className="w-10 h-10 rounded-full bg-[#ff007a] text-white flex items-center justify-center hover:scale-110 transition shadow-lg glow-pink cursor-pointer"
+            className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-[#ff007a] text-white flex items-center justify-center hover:scale-110 transition shadow-lg glow-pink cursor-pointer"
             title="Close 3D Rendering"
           >
-            <X className="w-6 h-6" />
+            <X className="w-4 h-4 sm:w-6 sm:h-6" />
           </button>
         </div>
       </div>
@@ -644,27 +644,28 @@ export default function Card3DViewer({ sourceCanvas, format = 'formatA', name = 
           }
         }}
         onTouchEnd={handleMouseUp}
-        className="w-full h-[72vh] max-w-5xl rounded-2xl bg-gradient-to-b from-[#042616] via-[#02180e] to-[#000d07] border-2 border-[#ffe500]/60 shadow-2xl cursor-grab active:cursor-grabbing relative overflow-hidden my-3"
+        className="w-full h-[58vh] sm:h-[70vh] max-w-5xl rounded-2xl bg-gradient-to-b from-[#042616] via-[#02180e] to-[#000d07] border-2 border-[#ffe500]/60 shadow-2xl cursor-grab active:cursor-grabbing relative overflow-hidden my-2 sm:my-3"
       >
-        <div className="absolute top-4 left-4 bg-[#042616]/90 backdrop-blur-md px-4 py-1.5 rounded-full border border-[#ff007a] font-mono-tech text-xs text-[#ffe500] font-bold uppercase tracking-widest flex items-center gap-2 z-10 shadow-lg">
-          <Sparkles className="w-4 h-4 text-[#ff007a] animate-pulse" />
-          <span>Real-time 360° HD PVC Badge &amp; Lanyard</span>
+        <div className="absolute top-3 left-3 sm:top-4 sm:left-4 bg-[#042616]/90 backdrop-blur-md px-2.5 py-1 sm:px-4 sm:py-1.5 rounded-full border border-[#ff007a] font-mono-tech text-[10px] sm:text-xs text-[#ffe500] font-bold uppercase tracking-widest flex items-center gap-1.5 sm:gap-2 z-10 shadow-lg max-w-[90%] truncate">
+          <Sparkles className="w-3.5 h-3.5 text-[#ff007a] animate-pulse shrink-0" />
+          <span className="truncate">Real-time 360° HD PVC Badge</span>
         </div>
 
-        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-[#042616]/80 backdrop-blur-xs px-4 py-1.5 rounded-full text-xs font-mono-tech text-[#e5c200] border border-[#ffe500]/30 z-10">
+        <div className="absolute bottom-3 left-1/2 -translate-x-1/2 bg-[#042616]/80 backdrop-blur-xs px-3 py-1 sm:py-1.5 rounded-full text-[10px] sm:text-xs font-mono-tech text-[#e5c200] border border-[#ffe500]/30 z-10 text-center w-[90%] sm:w-auto truncate">
           🖱️ Drag mouse or finger to rotate 360° in HD space
         </div>
       </div>
 
-      {/* Pop-In Modal Bottom Controls (All 4 buttons neatly in ONE single row!) */}
-      <div className="w-full max-w-5xl flex items-center justify-between gap-2 border-t border-[#ffe500]/30 pt-3">
+      {/* Pop-In Modal Bottom Controls (Responsive 2x2 Grid on Mobile, 1 Row on Desktop) */}
+      <div className="w-full max-w-5xl grid grid-cols-2 sm:flex sm:items-center sm:justify-between gap-2 border-t border-[#ffe500]/30 pt-3">
         <button
           type="button"
           onClick={() => setAutoRotate((prev) => !prev)}
-          className={`px-3 py-2 rounded-xl font-mono-tech text-xs uppercase font-extrabold flex items-center gap-1.5 transition-all cursor-pointer whitespace-nowrap ${autoRotate
+          className={`px-2.5 py-2 sm:px-3 sm:py-2 rounded-xl font-mono-tech text-[11px] sm:text-xs uppercase font-extrabold flex items-center justify-center gap-1.5 transition-all cursor-pointer whitespace-nowrap ${
+            autoRotate
               ? 'bg-[#ff007a] text-white glow-pink'
               : 'bg-[#042616] text-[#e5c200] border border-[#ffe500]/30'
-            }`}
+          }`}
         >
           <RotateCw className={`w-3.5 h-3.5 ${autoRotate ? 'animate-spin' : ''}`} />
           <span>Orbit: {autoRotate ? 'ON' : 'OFF'}</span>
@@ -673,7 +674,7 @@ export default function Card3DViewer({ sourceCanvas, format = 'formatA', name = 
         <button
           type="button"
           onClick={handleFlipCard}
-          className="px-3 py-2 rounded-xl bg-[#ffe500] text-[#042616] font-mono-tech text-xs uppercase font-black flex items-center gap-1.5 hover:bg-[#fff066] transition cursor-pointer whitespace-nowrap"
+          className="px-2.5 py-2 sm:px-3 sm:py-2 rounded-xl bg-[#ffe500] text-[#042616] font-mono-tech text-[11px] sm:text-xs uppercase font-black flex items-center justify-center gap-1.5 hover:bg-[#fff066] transition cursor-pointer whitespace-nowrap"
         >
           <RefreshCw className="w-3.5 h-3.5" />
           <span>Flip 180°</span>
@@ -684,7 +685,7 @@ export default function Card3DViewer({ sourceCanvas, format = 'formatA', name = 
           type="button"
           disabled={isRecording}
           onClick={handleDownload3DSpin}
-          className="px-4 py-2 rounded-xl bg-gradient-to-r from-[#0a5c36] to-[#0f7a47] hover:from-[#0d6b40] hover:to-[#128a52] text-[#ffe500] border border-[#ffe500] font-mono-tech text-xs uppercase font-black flex items-center gap-1.5 transition shadow-xl cursor-pointer disabled:opacity-50 whitespace-nowrap"
+          className="px-3 py-2 sm:px-4 sm:py-2 rounded-xl bg-gradient-to-r from-[#0a5c36] to-[#0f7a47] hover:from-[#0d6b40] hover:to-[#128a52] text-[#ffe500] border border-[#ffe500] font-mono-tech text-[11px] sm:text-xs uppercase font-black flex items-center justify-center gap-1.5 transition shadow-xl cursor-pointer disabled:opacity-50 whitespace-nowrap"
           title="Export 6-second 3D spin video clip"
         >
           {isRecording ? (
@@ -703,9 +704,9 @@ export default function Card3DViewer({ sourceCanvas, format = 'formatA', name = 
         <button
           type="button"
           onClick={onClose}
-          className="px-4 py-2 rounded-xl bg-[#042616] text-[#ffe500] border border-[#ffe500]/60 font-mono-tech text-xs uppercase font-extrabold hover:bg-[#0a5c36] transition cursor-pointer whitespace-nowrap"
+          className="px-3 py-2 sm:px-4 sm:py-2 rounded-xl bg-[#042616] text-[#ffe500] border border-[#ffe500]/60 font-mono-tech text-[11px] sm:text-xs uppercase font-extrabold hover:bg-[#0a5c36] transition cursor-pointer flex items-center justify-center gap-1 whitespace-nowrap"
         >
-          ✖ Close 3D
+          <span>✖ Close 3D</span>
         </button>
       </div>
     </div>
