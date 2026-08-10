@@ -1275,9 +1275,24 @@ export async function drawFormatC(
     ctx.fillStyle = '#ffe500';
     ctx.fillText('OFFICIAL BUILDER PASSPORT · HACKER HOUSE GOA 2026', 75, footerY + 115);
 
-    ctx.font = '900 19px "Courier New", monospace, sans-serif';
+    // Prominent Highlighted #FrameInGoa Badge
     ctx.fillStyle = '#ff007a';
-    ctx.fillText('#HHGOA2026  #AnjunaSunsetPassport  #GoaSquad2026', 75, footerY + 155);
+    ctx.beginPath();
+    ctx.roundRect(75, footerY + 130, 270, 46, 12);
+    ctx.fill();
+    ctx.strokeStyle = '#ffe500';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    ctx.font = '900 26px "Courier New", monospace, sans-serif';
+    ctx.fillStyle = '#ffffff';
+    ctx.textAlign = 'center';
+    ctx.fillText('✨ #FrameInGoa', 75 + 135, footerY + 160);
+
+    ctx.font = '900 20px "Courier New", monospace, sans-serif';
+    ctx.fillStyle = '#ffe500';
+    ctx.textAlign = 'left';
+    ctx.fillText('#HHGOA2026  #AnjunaSunsetPassport', 365, footerY + 160);
 
     ctx.font = '16px "Courier New", monospace, sans-serif';
     ctx.fillStyle = '#e5c200';
@@ -1491,9 +1506,24 @@ export async function drawFormatC(
     ctx.fillStyle = '#ffe500';
     ctx.fillText('BAGA BEACH SHACK MENU SQUAD PASS · HACKER HOUSE 2026', 100, footerY + 115);
 
-    ctx.font = '900 19px "Courier New", monospace, sans-serif';
+    // Prominent Highlighted #FrameInGoa Badge
+    ctx.fillStyle = '#ffe500';
+    ctx.beginPath();
+    ctx.roundRect(100, footerY + 130, 270, 46, 12);
+    ctx.fill();
+    ctx.strokeStyle = '#00f0ff';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    ctx.font = '900 26px "Courier New", monospace, sans-serif';
+    ctx.fillStyle = '#042616';
+    ctx.textAlign = 'center';
+    ctx.fillText('✨ #FrameInGoa', 100 + 135, footerY + 160);
+
+    ctx.font = '900 20px "Courier New", monospace, sans-serif';
     ctx.fillStyle = '#00f0ff';
-    ctx.fillText('#BagaBeach  #BeachShackVibes  #HHGOA2026', 100, footerY + 150);
+    ctx.textAlign = 'left';
+    ctx.fillText('#BagaBeach  #HHGOA2026', 390, footerY + 160);
 
     ctx.font = '16px "Courier New", monospace, sans-serif';
     ctx.fillStyle = '#e5c200';
@@ -1578,10 +1608,10 @@ export async function drawFormatC(
     ctx.lineWidth = 2;
     ctx.strokeRect(55, 165, width - 110, 36);
 
-    ctx.font = '900 16px "Courier New", monospace, sans-serif';
+    ctx.font = '900 20px "Courier New", monospace, sans-serif';
     ctx.fillStyle = '#ffe500';
     ctx.textAlign = 'center';
-    ctx.fillText('#BiometricSecurity // #VagatorCyberLab // #HHGOA2026', width / 2, 189);
+    ctx.fillText('✨ #FrameInGoa // #VagatorCyberLab // #HHGOA2026', width / 2, 189);
 
     // Biometric HUD Photo Frame (1100 x 880 - EXPANDED PHOTO AREA)
     const photoFrameX = 55;
@@ -1683,9 +1713,21 @@ export async function drawFormatC(
     ctx.fillStyle = '#ffe500';
     ctx.fillText('VAGATOR CYBER ACCESS KEYCARD · HACKER HOUSE GOA 2026', 90, footerY + 115);
 
-    ctx.font = '900 19px "Courier New", monospace, sans-serif';
+    // Prominent Highlighted #FrameInGoa Badge
+    ctx.fillStyle = '#ffe500';
+    ctx.beginPath();
+    ctx.roundRect(90, footerY + 130, 270, 46, 12);
+    ctx.fill();
+
+    ctx.font = '900 26px "Courier New", monospace, sans-serif';
+    ctx.fillStyle = '#042616';
+    ctx.textAlign = 'center';
+    ctx.fillText('✨ #FrameInGoa', 90 + 135, footerY + 160);
+
+    ctx.font = '900 20px "Courier New", monospace, sans-serif';
     ctx.fillStyle = '#00f0ff';
-    ctx.fillText('#VagatorNightHack // #BuildInPublic // #HHGOA2026', 90, footerY + 150);
+    ctx.textAlign = 'left';
+    ctx.fillText('// #VagatorCyberLab // #HHGOA2026', 380, footerY + 160);
 
     ctx.font = '16px "Courier New", monospace, sans-serif';
     ctx.fillStyle = '#e5c200';
@@ -1756,9 +1798,9 @@ export async function drawFormatC(
     ctx.lineWidth = 2;
     ctx.stroke();
 
-    ctx.font = '900 18px "Courier New", monospace, sans-serif';
-    ctx.fillStyle = '#ff007a';
-    ctx.fillText('#TitosNeonNights   #GoaNightlife   #HHGOA2026', width / 2, 181);
+    ctx.font = '900 22px "Courier New", monospace, sans-serif';
+    ctx.fillStyle = '#ffe500';
+    ctx.fillText('✨ #FrameInGoa   #TitosNeonNights   #HHGOA2026', width / 2, 181);
 
     // Stadium Arch Oval Photo Viewport (1090 x 885 - EXPANDED PHOTO AREA)
     const photoFrameX = 55;
@@ -1867,9 +1909,24 @@ export async function drawFormatC(
     ctx.fillStyle = '#00f0ff';
     ctx.fillText("TITO'S NEON NIGHTS VIP FESTIVAL PASS · HACKER HOUSE 2026", 90, footerY + 115);
 
-    ctx.font = '900 19px "Courier New", monospace, sans-serif';
+    // Prominent Highlighted #FrameInGoa Badge
     ctx.fillStyle = '#ff007a';
-    ctx.fillText('#TitosNeonNights  #GoaNightlife  #HHGOA2026', 90, footerY + 150);
+    ctx.beginPath();
+    ctx.roundRect(90, footerY + 130, 270, 46, 12);
+    ctx.fill();
+    ctx.strokeStyle = '#00f0ff';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    ctx.font = '900 26px "Courier New", monospace, sans-serif';
+    ctx.fillStyle = '#ffffff';
+    ctx.textAlign = 'center';
+    ctx.fillText('✨ #FrameInGoa', 90 + 135, footerY + 160);
+
+    ctx.font = '900 20px "Courier New", monospace, sans-serif';
+    ctx.fillStyle = '#ff007a';
+    ctx.textAlign = 'left';
+    ctx.fillText('#TitosNeonNights  #HHGOA2026', 380, footerY + 160);
 
     ctx.font = '16px "Courier New", monospace, sans-serif';
     ctx.fillStyle = '#ffe500';
@@ -1924,13 +1981,18 @@ export async function drawFormatC(
     ctx.textAlign = 'center';
     ctx.fillText('🏛️ COMPANHIA DE GOA · BILHETE DE ENTRADA № 1510-2026 ⚜️', width / 2, 85);
 
-    // Title
-    ctx.font = '900 52px "Cinzel Decorative", serif, sans-serif';
+    // Hashtag Ribbon
     ctx.fillStyle = '#0a5c36';
-    ctx.shadowColor = '#d97706';
-    ctx.shadowBlur = 10;
-    ctx.fillText((squadName || 'GOA BUILDER SQUAD').toUpperCase(), width / 2, 140);
-    ctx.shadowBlur = 0;
+    ctx.beginPath();
+    ctx.roundRect(width / 2 - 300, 155, 600, 40, 10);
+    ctx.fill();
+    ctx.strokeStyle = '#d97706';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    ctx.font = '900 22px "Courier New", monospace, sans-serif';
+    ctx.fillStyle = '#ffe500';
+    ctx.fillText('✨ #FrameInGoa   #OldGoaHeritage   #HHGOA2026', width / 2, 181);
 
     // Gothic Cathedral Arch Photo Window (1090 x 880 - EXPANDED ROOM)
     const photoFrameX = 55;
@@ -2025,9 +2087,24 @@ export async function drawFormatC(
     ctx.fillStyle = '#ffe500';
     ctx.fillText('OLD GOA PORTUGUESE HERITAGE PASS · HACKER HOUSE 2026', 90, footerY + 115);
 
-    ctx.font = '900 19px "Courier New", monospace, sans-serif';
+    // Prominent Highlighted #FrameInGoa Badge
     ctx.fillStyle = '#d97706';
-    ctx.fillText('#OldGoaHeritage  #PortugueseVibes  #HHGOA2026', 90, footerY + 150);
+    ctx.beginPath();
+    ctx.roundRect(90, footerY + 130, 270, 46, 12);
+    ctx.fill();
+    ctx.strokeStyle = '#fdf6e2';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    ctx.font = '900 26px "Cinzel Decorative", serif, sans-serif';
+    ctx.fillStyle = '#fdf6e2';
+    ctx.textAlign = 'center';
+    ctx.fillText('✨ #FrameInGoa', 90 + 135, footerY + 160);
+
+    ctx.font = '900 20px "Courier New", monospace, sans-serif';
+    ctx.fillStyle = '#d97706';
+    ctx.textAlign = 'left';
+    ctx.fillText('#OldGoaHeritage  #HHGOA2026', 380, footerY + 160);
 
     ctx.font = '16px "Cinzel Decorative", serif, sans-serif';
     ctx.fillStyle = '#fdf6e2';
@@ -2201,9 +2278,24 @@ export async function drawFormatC(
     ctx.fillStyle = '#ffe500';
     ctx.fillText('CHAPORA ROAD TRIP PERMIT GA-01 · HACKER HOUSE 2026', 90, footerY + 115);
 
-    ctx.font = '900 19px "Courier New", monospace, sans-serif';
+    // Prominent Highlighted #FrameInGoa Badge
+    ctx.fillStyle = '#ffe500';
+    ctx.beginPath();
+    ctx.roundRect(90, footerY + 130, 270, 46, 12);
+    ctx.fill();
+    ctx.strokeStyle = '#ff4500';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    ctx.font = '900 26px "Courier New", monospace, sans-serif';
+    ctx.fillStyle = '#042616';
+    ctx.textAlign = 'center';
+    ctx.fillText('✨ #FrameInGoa', 90 + 135, footerY + 160);
+
+    ctx.font = '900 20px "Courier New", monospace, sans-serif';
     ctx.fillStyle = '#ff4500';
-    ctx.fillText('#ChaporaRide  #CoastalRoadtrip  #HHGOA2026', 90, footerY + 150);
+    ctx.textAlign = 'left';
+    ctx.fillText('#ChaporaRide  #HHGOA2026', 380, footerY + 160);
 
     ctx.font = '16px "Courier New", monospace, sans-serif';
     ctx.fillStyle = '#e5c200';
